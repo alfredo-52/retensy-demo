@@ -31,8 +31,13 @@
   @media(max-width:760px){.bar nav{display:none}}
 
   /* герой */
-  .hero{position:relative;padding:90px 0 70px;border-bottom:1px solid var(--line);
-    background:radial-gradient(700px 400px at 80% -10%,rgba(201,164,90,.1),transparent 60%),var(--bg)}
+  .hero{position:relative;padding:120px 0 84px;border-bottom:1px solid var(--line);overflow:hidden;isolation:isolate}
+  .hero::before{content:"";position:absolute;inset:0;z-index:-2;
+    background:url(img/bb-07.jpg) center/cover no-repeat;transform:scale(1.04)}
+  .hero::after{content:"";position:absolute;inset:0;z-index:-1;
+    background:linear-gradient(97deg,rgba(11,10,9,.97) 26%,rgba(11,10,9,.72) 58%,rgba(11,10,9,.42) 100%),
+               radial-gradient(600px 300px at 82% 8%,rgba(201,164,90,.14),transparent 60%)}
+  @media(max-width:700px){.hero::after{background:linear-gradient(180deg,rgba(11,10,9,.7),rgba(11,10,9,.95) 60%)}}
   .eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--brass);font-size:13px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:22px}
   .eyebrow .ln{width:34px;height:1px;background:var(--brass)}
   .hero h1{font-family:Manrope;font-weight:800;font-size:clamp(36px,7vw,80px);line-height:1.06;letter-spacing:-.02em;margin:0 0 16px;text-transform:uppercase;overflow-wrap:break-word}
