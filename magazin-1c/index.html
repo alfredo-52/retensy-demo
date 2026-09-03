@@ -184,6 +184,10 @@
   .citem .crm{border:none;background:none;color:#c0c4cb;cursor:pointer;font-size:18px;align-self:flex-start}
   .citem .crm:hover{color:var(--red)}
   .cempty{padding:40px 0;text-align:center;color:var(--dim)}
+  .cok{padding:48px 10px;text-align:center}
+  .cok .cokic{width:56px;height:56px;border-radius:50%;background:var(--green);color:#fff;font-size:30px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+  .cok b{display:block;font-size:18px;margin-bottom:6px}
+  .cok span{color:var(--dim);font-size:13.5px}
   .cfoot{border-top:1px solid var(--line);padding:18px 20px}
   .ctot{display:flex;justify-content:space-between;font-size:16px;margin-bottom:14px}
   .ctot b{font-size:20px}
@@ -211,7 +215,7 @@
   </div>
   <div class="search"><input placeholder="Поиск по 3 400+ товарам: перфоратор, саморезы, кабель…"><button>Найти</button></div>
   <div class="hicons">
-    <div class="hicon"><span class="ic">❤</span>Избранное</div>
+    <div class="hicon"><span class="ic">❤</span><span class="badge" id="favN" hidden>0</span>Избранное</div>
     <div class="hicon"><span class="ic">⚖</span>Сравнить</div>
     <div class="hicon"><span class="ic">🛒</span><span class="badge">3</span>Корзина</div>
   </div>
@@ -331,6 +335,7 @@
   function stk(n){return n===0?['no','нет в наличии']:(n<=3?['low','осталось '+n+' шт']:['ok',n+' шт на складе']);}
   function plural(n,a,b,c){var m=n%100;if(m>=11&&m<=14)return c;var d=n%10;return d===1?a:(d>=2&&d<=4?b:c);}
   function toEl(el){if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+  var FAV={};
 
   // фильтр по брендам
   var BR=[];TOVAR.forEach(function(t){if(BR.indexOf(t[8])<0)BR.push(t[8]);});
@@ -340,7 +345,7 @@
 
   function card(t,i){
     var s=stk(t[6]);
-    return '<div class="prod" data-i="'+i+'">'+(t[7]?'<span class="tag">'+t[7]+'</span>':'')+'<span class="fav">♡</span>'+
+    return '<div class="prod" data-i="'+i+'">'+(t[7]?'<span class="tag">'+t[7]+'</span>':'')+'<span class="fav"'+(FAV[i]?' style="color:var(--org)"':'')+'>'+(FAV[i]?'♥':'♡')+'</span>'+
       '<div class="im" style="background-image:url('+t[0]+')"></div>'+
       '<div class="art">Арт. '+t[1]+'</div><div class="nm">'+t[2]+'</div>'+
       '<div class="rate"><span class="stars">'+stars(t[3])+'</span>'+t[3].toFixed(1)+' · '+t[4]+' отзывов</div>'+
@@ -352,10 +357,13 @@
     var oS=document.getElementById('f-stock').checked, oH=document.getElementById('f-hit').checked;
     var brs=[].slice.call(document.querySelectorAll('.f-brand:checked')).map(function(x){return x.value;});
     var pmin=+document.getElementById('pmin').value||0, pmax=+document.getElementById('pmax').value||1e9;
+    var q=(document.querySelector('.search input').value||'').trim().toLowerCase();
     var srt=document.getElementById('sort').value;
     var list=TOVAR.map(function(t,i){return {t:t,i:i};}).filter(function(o){var t=o.t;
       if(oS&&t[6]===0)return false; if(oH&&t[7]!=='Хит')return false;
-      if(brs.length&&brs.indexOf(t[8])<0)return false; if(t[5]<pmin||t[5]>pmax)return false; return true;
+      if(brs.length&&brs.indexOf(t[8])<0)return false; if(t[5]<pmin||t[5]>pmax)return false;
+      if(q&&t[2].toLowerCase().indexOf(q)<0&&t[1].toLowerCase().indexOf(q)<0&&t[8].toLowerCase().indexOf(q)<0)return false;
+      return true;
     });
     list.sort(function(a,b){
       if(srt==='cheap')return a.t[5]-b.t[5]; if(srt==='exp')return b.t[5]-a.t[5];
@@ -376,6 +384,9 @@
   };
   apply();
 
+  // избранное (не сбрасывается при фильтре)
+  function favBadge(){var n=Object.keys(FAV).filter(function(k){return FAV[k];}).length;var bd=document.getElementById('favN');if(bd){bd.textContent=n;bd.hidden=n===0;}}
+
   // мини-корзина
   var CART=[0,4];
   function badge(){var bd=document.querySelector('.hicon .badge');if(bd)bd.textContent=CART.length;}
@@ -395,6 +406,11 @@
   document.getElementById('cx').onclick=closeCart;
   document.getElementById('cov').onclick=closeCart;
   document.querySelectorAll('.hicon').forEach(function(h){if(h.textContent.indexOf('Корзина')>-1)h.onclick=openCart;});
+  document.querySelector('.cbtn').onclick=function(){
+    if(!CART.length)return;
+    document.getElementById('cbody').innerHTML='<div class="cok"><div class="cokic">✓</div><b>Заказ оформлен</b><span>Менеджер перезвонит для подтверждения. Это демо-витрина.</span></div>';
+    CART.length=0;badge();document.getElementById('ctot').textContent='0 ₽';
+  };
 
   // в корзину + избранное (делегирование по сетке)
   document.getElementById('grid').addEventListener('click',function(e){
@@ -402,7 +418,7 @@
     if(b&&!b.disabled){var i=+b.closest('.prod').getAttribute('data-i');CART.push(i);badge();
       b.textContent='✓ В корзине';b.style.background='var(--green)';setTimeout(function(){b.textContent='В корзину';b.style.background='';},1100);return;}
     var f=e.target.closest('.fav');
-    if(f){var on=f.textContent==='♡';f.textContent=on?'♥':'♡';f.style.color=on?'var(--org)':'';return;}
+    if(f){var fi=+f.closest('.prod').getAttribute('data-i');FAV[fi]=!FAV[fi];f.textContent=FAV[fi]?'♥':'♡';f.style.color=FAV[fi]?'var(--org)':'';favBadge();return;}
     var p=e.target.closest('.prod');
     if(p&&!e.target.closest('button'))openQuick(+p.getAttribute('data-i'));
   });
@@ -467,16 +483,20 @@
     document.getElementById('q-price').textContent=rub(t[5]);
     var buy=document.getElementById('q-buy');buy.disabled=t[6]===0;buy.textContent=t[6]===0?'Нет в наличии':'В корзину';buy.style.background='';
     buy.onclick=function(){if(t[6]===0)return;CART.push(i);badge();buy.textContent='✓ В корзине';buy.style.background='var(--green)';};
-    var qf=document.getElementById('q-fav');qf.textContent='♡';qf.style.color='';
-    qf.onclick=function(){var on=qf.textContent==='♡';qf.textContent=on?'♥':'♡';qf.style.color=on?'var(--org)':'';};
+    var qf=document.getElementById('q-fav');qf.textContent=FAV[i]?'♥':'♡';qf.style.color=FAV[i]?'var(--org)':'';
+    qf.onclick=function(){FAV[i]=!FAV[i];qf.textContent=FAV[i]?'♥':'♡';qf.style.color=FAV[i]?'var(--org)':'';favBadge();};
     document.getElementById('qov').classList.add('on');
   }
   document.getElementById('qx').onclick=function(){document.getElementById('qov').classList.remove('on');};
   document.getElementById('qov').addEventListener('click',function(e){if(e.target.id==='qov')document.getElementById('qov').classList.remove('on');});
 
   // навигация меню/категорий/поиска к листингу
-  document.querySelectorAll('.cat,.menu a,.hero .b,.search button').forEach(function(el){el.onclick=function(){toEl(document.querySelector('.listing'));};});
-  document.querySelector('.search input').addEventListener('keydown',function(e){if(e.key==='Enter')toEl(document.querySelector('.listing'));});
+  document.querySelectorAll('.cat,.menu a,.hero .b').forEach(function(el){el.onclick=function(){toEl(document.querySelector('.listing'));};});
+  var searchInp=document.querySelector('.search input');
+  function doSearch(){apply();toEl(document.querySelector('.listing'));}
+  searchInp.addEventListener('input',apply);
+  document.querySelector('.search button').onclick=doSearch;
+  searchInp.addEventListener('keydown',function(e){if(e.key==='Enter')doSearch();});
 
   // счётчик обновления из 1С
   var sec=12,u=document.getElementById('upd');
