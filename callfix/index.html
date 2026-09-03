@@ -139,6 +139,43 @@
   tbody td{padding:12px 18px;border-bottom:1px solid var(--line2)} tbody tr:last-child td{border:none}
   .scoremini{display:inline-block;width:52px;height:6px;border-radius:4px;background:#ece9f6;overflow:hidden;vertical-align:middle}
   .scoremini i{display:block;height:100%;border-radius:4px}
+  /* распределение оценок */
+  .hist{display:flex;align-items:flex-end;gap:8px;height:170px}
+  .hist .hb{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%}
+  .hist .hb i{width:100%;border-radius:5px 5px 0 0;transition:height .7s cubic-bezier(.2,.7,.2,1)}
+  .hist .hb small{color:var(--dim);font-size:11px} .hist .hb .hc{font-size:11px;font-weight:700}
+  /* донат приёма/тональности */
+  .ratio{display:flex;align-items:center;gap:20px;margin-bottom:16px}
+  .ratio:last-child{margin-bottom:0}
+  .donut{position:relative;width:110px;height:110px;flex:none}
+  .donut .dc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .donut .dc b{font-size:20px} .donut .dc span{font-size:11px;color:var(--dim)}
+  .leg{display:flex;flex-direction:column;gap:8px;font-size:13px}
+  .leg div{display:flex;align-items:center;gap:8px} .leg .sw{width:11px;height:11px;border-radius:3px}
+  /* инсайты / возражения */
+  .insight{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--line2);font-size:14px}
+  .insight:last-child{border:none}
+  .insight .it{flex:1} .insight .ibar{width:170px;height:8px;border-radius:4px;background:#ece9f6;overflow:hidden;flex:none}
+  .insight .ibar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#fb923c,#e5484d)}
+  .insight .iv{width:64px;text-align:right;color:var(--dim);font-size:13px;flex:none}
+  /* критерии оценки */
+  .critrow{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line2)}
+  .critrow:last-child{border:none}
+  .critrow .cn{flex:1;font-weight:500}
+  .critrow .cw{width:150px;height:8px;border-radius:4px;background:#ece9f6;overflow:hidden;flex:none}
+  .critrow .cw i{display:block;height:100%;background:linear-gradient(90deg,#8b7bff,#6d5efc);border-radius:4px}
+  .critrow .cp{width:44px;text-align:right;font-weight:700;color:var(--acc);flex:none}
+  /* триггеры-чипы */
+  .trg{margin-bottom:16px} .trg:last-child{margin-bottom:0} .trg .tl{font-size:13px;color:var(--dim);margin-bottom:9px}
+  .chip{display:inline-block;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:20px;margin:0 7px 7px 0;cursor:default}
+  .chip.g{background:#e9f7ee;color:#127a37} .chip.r{background:#fdecec;color:#c02b30}
+  .chip .x{opacity:.55;margin-left:6px;cursor:pointer}
+  /* автоправила */
+  .rule{display:flex;align-items:center;gap:14px;padding:13px 16px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:#faf9ff}
+  .rule:last-child{margin-bottom:0}
+  .rule .ri{width:34px;height:34px;border-radius:9px;background:#efecff;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+  .rule .rt{flex:1;font-size:13.5px} .rule .rt b{display:block;margin-bottom:2px}
+  .rule .rt .arr{color:var(--acc);font-weight:600}
   .set{max-width:640px}
   .sgroup{background:#fff;border:1px solid var(--line);border-radius:12px;padding:2px 18px;margin-bottom:14px}
   .sgroup h4{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 4px}
@@ -184,17 +221,24 @@
 
       <section class="sec" id="s-analytics">
         <div class="grid2">
-          <div class="box"><h3>Звонки по дням</h3><div class="sub">за последнюю неделю</div><div class="bars" id="bars"></div></div>
-          <div class="box"><h3>Тональность</h3><div class="sub">по разбору ИИ</div><div id="tone"></div></div>
+          <div class="box"><h3>Распределение оценок ИИ</h3><div class="sub">по звонкам за неделю</div><div class="hist" id="hist"></div></div>
+          <div class="box"><h3>Приём и тональность</h3><div class="sub">за неделю</div><div id="ratio"></div></div>
         </div>
-        <div class="box"><h3>Темы обращений</h3><div class="sub">что чаще всего спрашивают</div><div id="themes"></div></div>
+        <div class="box"><h3>Что снижает оценку звонков</h3><div class="sub">частые замечания ИИ к менеджерам</div><div id="insights"></div></div>
+        <div class="box"><h3>Топ возражений клиентов</h3><div class="sub">что чаще всего мешает закрыть сделку</div><div id="objections"></div></div>
       </section>
 
       <section class="sec" id="s-mgrs">
         <div class="card"><table><thead><tr><th>Менеджер</th><th class="r">Звонков</th><th class="r">Целевых</th><th class="r">Оценка</th><th>Качество</th></tr></thead><tbody id="mrows"></tbody></table></div>
       </section>
 
-      <section class="sec" id="s-settings"><div class="set" id="settings"></div></section>
+      <section class="sec" id="s-settings">
+        <div style="max-width:760px">
+          <div class="box"><h3>Критерии оценки звонка</h3><div class="sub">по чему ИИ ставит балл, суммарно 100%</div><div id="crit"></div></div>
+          <div class="box"><h3>Слова-триггеры</h3><div class="sub">что ИИ отслеживает в разговоре</div><div id="triggers"></div></div>
+          <div class="box"><h3>Автоправила</h3><div class="sub">что делать по итогу разбора</div><div id="rules"></div></div>
+        </div>
+      </section>
     </div>
   </main>
 </div>
@@ -311,15 +355,24 @@
   }
   renderDetail(0);
 
-  // ── аналитика ──
-  var DAYS=[['Пн',41],['Вт',53],['Ср',47],['Чт',62],['Пт',58],['Сб',33],['Вс',12]];
-  var mx=Math.max.apply(null,DAYS.map(function(d){return d[1];}));
-  document.getElementById('bars').innerHTML=DAYS.map(function(d){return '<div class="b"><i data-h="'+Math.round(d[1]/mx*100)+'" style="height:0"></i><small>'+d[0]+'</small></div>';}).join('');
-  function abar(lab,val,max,color){var w=Math.round(val/max*100);return '<div class="abar"><span class="lab">'+lab+'</span><span class="track"><span class="fill" style="width:'+w+'%'+(color?';background:'+color:'')+'"></span></span><span class="val num">'+val+'</span></div>';}
-  var tc={pos:0,neu:0,neg:0}; CALLS.forEach(function(c){tc[c.tone]++;});
-  document.getElementById('tone').innerHTML=abar('Позитивная',tc.pos,CALLS.length,'#16a34a')+abar('Нейтральная',tc.neu,CALLS.length,'#7b839a')+abar('Негативная',tc.neg,CALLS.length,'#e5484d');
-  var THEMES=[['Цена и скидки',34],['Сроки и график',27],['Гарантия и качество',19],['Оплата и договор',12],['Прочее',8]];
-  document.getElementById('themes').innerHTML=THEMES.map(function(t){return abar(t[0],t[1],THEMES[0][1]);}).join('');
+  // ── аналитика (звонковая) ──
+  var DIST=[[1,2],[2,3],[3,4],[4,6],[5,9],[6,12],[7,18],[8,22],[9,15],[10,9]];
+  var dmx=Math.max.apply(null,DIST.map(function(d){return d[1];}));
+  document.getElementById('hist').innerHTML=DIST.map(function(d){var h=Math.round(d[1]/dmx*100);
+    return '<div class="hb"><span class="hc" style="color:'+scoreColor(d[0])+'">'+d[1]+'</span><i data-h="'+h+'" style="height:0;background:'+scoreColor(d[0])+'"></i><small>'+d[0]+'</small></div>';}).join('');
+  function donut(segs,center,sub){var tot=segs.reduce(function(a,s){return a+s[0];},0),off=25,parts='';
+    segs.forEach(function(s){var pct=Math.round(s[0]/tot*100);parts+='<circle cx="21" cy="21" r="15.9" fill="none" stroke="'+s[1]+'" stroke-width="5" stroke-dasharray="'+pct+' '+(100-pct)+'" stroke-dashoffset="'+off+'" transform="rotate(-90 21 21)"></circle>';off-=pct;});
+    return '<div class="donut"><svg width="110" height="110" viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#ece9f6" stroke-width="5"></circle>'+parts+'</svg><div class="dc"><b>'+center+'</b><span>'+sub+'</span></div></div>';}
+  document.getElementById('ratio').innerHTML=
+    '<div class="ratio">'+donut([[47,'#6d5efc'],[8,'#e5484d']],'85%','принято')+
+      '<div class="leg"><div><span class="sw" style="background:#6d5efc"></span>Принято · 47</div><div><span class="sw" style="background:#e5484d"></span>Пропущено · 8</div></div></div>'+
+    '<div class="ratio">'+donut([[38,'#16a34a'],[49,'#7b839a'],[13,'#e5484d']],'38%','позитив')+
+      '<div class="leg"><div><span class="sw" style="background:#16a34a"></span>Позитивная · 38%</div><div><span class="sw" style="background:#7b839a"></span>Нейтральная · 49%</div><div><span class="sw" style="background:#e5484d"></span>Негативная · 13%</div></div></div>';
+  function insrow(name,val,max,violet){return '<div class="insight"><span class="it">'+name+'</span><span class="ibar"><i style="width:'+Math.round(val/max*100)+'%'+(violet?';background:linear-gradient(90deg,#8b7bff,#6d5efc)':'')+'"></i></span><span class="iv">'+val+(violet?'':' зв.')+'</span></div>';}
+  var INS=[['Не назвал цену сразу',14],['Не закрыл на следующий шаг',11],['Перебивал клиента',8],['Долгая пауза / удержание',5],['Не отработал возражение',4]];
+  document.getElementById('insights').innerHTML=INS.map(function(x){return insrow(x[0],x[1],INS[0][1],false);}).join('');
+  var OBJ=[['Дорого',22],['Долгие сроки',17],['Надо подумать',13],['Уже есть подрядчик',9]];
+  document.getElementById('objections').innerHTML=OBJ.map(function(x){return insrow(x[0],x[1],OBJ[0][1],true);}).join('');
 
   // ── менеджеры ──
   var byM={}; CALLS.forEach(function(c){if(c.mgr==='—')return;var m=byM[c.mgr]=byM[c.mgr]||{n:0,tgt:0,sum:0};m.n++;m.sum+=c.score;if(c.type==='target')m.tgt++;});
@@ -329,12 +382,22 @@
       '<td class="r num" style="color:'+scoreColor(avg)+'">'+avg+'</td>'+
       '<td><span class="scoremini"><i style="width:'+(avg*10)+'%;background:'+scoreColor(avg)+'"></i></span></td></tr>';}).join('');
 
-  // ── настройки ──
-  var SET=[['Интеграции',[['📞','Телефония (запись звонков)','источник звонков для разбора',true],['🤖','ИИ-модель разбора','расшифровка, теги, оценка, тональность',true],['🧩','CRM (Битрикс24/amoCRM)','задачи и статусы из разбора',true]]],
-    ['Оповещения',[['🔴','Пропущенный целевой','мгновенный пуш руководителю',true],['📉','Низкая оценка звонка','если ИИ ставит ниже 4',true],['📧','Отчёт по отделу утром','сводка звонков и оценок',false]]]];
-  document.getElementById('settings').innerHTML=SET.map(function(g){return '<div class="sgroup"><h4>'+g[0]+'</h4>'+g[1].map(function(s){
-    return '<div class="srow"><span class="si">'+s[0]+'</span><span class="sd"><b>'+s[1]+'</b><span>'+s[2]+'</span></span><span class="sw'+(s[3]?' on':'')+'"></span></div>';}).join('')+'</div>';}).join('');
-  document.getElementById('settings').addEventListener('click',function(e){var w=e.target.closest('.sw');if(w)w.classList.toggle('on');});
+  // ── настройки (QA-конфиг звонков) ──
+  var CRIT=[['Приветствие и представление',15],['Выявление потребности',25],['Презентация выгод',20],['Работа с возражениями',20],['Договорённость о следующем шаге',20]];
+  document.getElementById('crit').innerHTML=CRIT.map(function(x){return '<div class="critrow"><span class="cn">'+x[0]+'</span><span class="cw"><i style="width:'+x[1]+'%"></i></span><span class="cp">'+x[1]+'%</span></div>';}).join('');
+  function chips(list,cls){return list.map(function(w){return '<span class="chip '+cls+'">'+w+'<span class="x">×</span></span>';}).join('');}
+  document.getElementById('triggers').innerHTML=
+    '<div class="trg"><div class="tl">Целевые сигналы (повышают оценку)</div>'+chips(['купить','оформить','счёт','договор','когда начнёте','беру'],'g')+'</div>'+
+    '<div class="trg"><div class="tl">Тревожные сигналы (флаг для РОПа)</div>'+chips(['дорого','подумаю','конкуренты','перезвоните','отказ'],'r')+'</div>';
+  function ruleHTML(ic,when,then){return '<div class="rule"><span class="ri">'+ic+'</span><div class="rt"><b>Если: '+when+'</b><span class="arr">→ '+then+'</span></div><span class="sw on"></span></div>';}
+  document.getElementById('rules').innerHTML=
+    ruleHTML('📋','оценка звонка ниже 4','поставить РОПу задачу на прослушку')+
+    ruleHTML('⏱️','пропущен целевой звонок','пуш ответственному и перезвон за 5 минут')+
+    ruleHTML('⚠️','3 негатива за день у менеджера','сигнал руководителю отдела');
+  document.getElementById('s-settings').addEventListener('click',function(e){
+    var w=e.target.closest('.sw'); if(w){w.classList.toggle('on');return;}
+    var x=e.target.closest('.chip .x'); if(x)x.closest('.chip').remove();
+  });
 
   // ── навигация ──
   var TITLES={calls:'Звонки',analytics:'Аналитика',mgrs:'Менеджеры',settings:'Настройки'};
@@ -343,7 +406,7 @@
     ['calls','analytics','mgrs','settings'].forEach(function(k){document.getElementById('s-'+k).classList.toggle('on',k===s);});
     document.getElementById('ptitle').textContent=TITLES[s];
     document.getElementById('search').hidden=(s!=='calls');
-    if(s==='analytics')setTimeout(function(){document.querySelectorAll('.bars i').forEach(function(el){el.style.height=el.getAttribute('data-h')+'%';});},60);
+    if(s==='analytics')setTimeout(function(){document.querySelectorAll('.hist .hb i').forEach(function(el){el.style.height=el.getAttribute('data-h')+'%';});},60);
   }
   document.getElementById('nav').addEventListener('click',function(e){var a=e.target.closest('[data-s]');if(a)showSec(a.getAttribute('data-s'));});
   document.getElementById('search').addEventListener('input',function(e){QUERY=e.target.value.trim().toLowerCase();renderList();});
