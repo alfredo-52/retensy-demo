@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Воронка продаж — интеграция с CRM</title>
+<style>
+  :root{--bg:#eef1f6;--rail:#1f2b3a;--card:#fff;--line:#e2e6ee;--txt:#26313f;--dim:#7a8699;
+    --blue:#2f8de4;--orange:#f2994a;--violet:#8b5cf6;--green:#27ae60;--red:#eb5757;--teal:#12b3a6}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.45 "Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .num{font-variant-numeric:tabular-nums}
+  .app{display:grid;grid-template-columns:60px 1fr;height:100vh}
+  @media(max-width:700px){.app{grid-template-columns:48px 1fr}}
+
+  /* левый рейл, как в amoCRM/Битрикс */
+  .rail{background:var(--rail);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px}
+  .rail .lg{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#2f8de4,#12b3a6);margin-bottom:14px}
+  .rail a{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#8ea0b6;font-size:18px;text-decoration:none}
+  .rail a.on{background:rgba(255,255,255,.12);color:#fff}
+  .rail a:hover{color:#fff}
+
+  .main{display:flex;flex-direction:column;overflow:hidden}
+  .bar{display:flex;align-items:center;gap:14px;padding:12px 20px;background:#fff;border-bottom:1px solid var(--line)}
+  .bar h1{font-size:17px;margin:0;font-weight:700}
+  .bar .tabs{display:flex;gap:4px;margin-left:8px}
+  .bar .tabs span{font-size:13px;color:var(--dim);padding:5px 11px;border-radius:6px;cursor:pointer}
+  .bar .tabs span.on{background:#eef4fb;color:var(--blue);font-weight:600}
+  .bar .add{margin-left:auto;background:var(--blue);color:#fff;border:none;border-radius:7px;padding:8px 15px;font-weight:600;font-size:13px;cursor:pointer}
+  .bar .search{border:1px solid var(--line);border-radius:7px;padding:7px 12px;font-size:13px;color:var(--dim);background:#f6f8fb;min-width:180px}
+
+  /* воронка */
+  .pipe{flex:1;display:flex;gap:12px;padding:16px 20px;overflow-x:auto;align-items:flex-start}
+  .col{flex:0 0 244px;display:flex;flex-direction:column;max-height:100%}
+  .col .head{border-radius:8px 8px 0 0;padding:9px 12px;color:#fff}
+  .col .head .st{font-weight:700;font-size:13px;display:flex;justify-content:space-between}
+  .col .head .sum{font-size:12px;opacity:.9;margin-top:2px}
+  .col .body{background:rgba(255,255,255,.5);border:1px solid var(--line);border-top:none;border-radius:0 0 8px 8px;padding:8px;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+  .deal{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:11px;box-shadow:0 1px 2px rgba(20,30,50,.05);cursor:pointer;transition:.12s}
+  .deal:hover{box-shadow:0 6px 16px -6px rgba(20,30,50,.22);transform:translateY(-1px)}
+  .deal .co{font-weight:600;font-size:13.5px}
+  .deal .price{font-weight:700;font-size:15px;margin:5px 0 7px}
+  .deal .row{display:flex;align-items:center;gap:7px}
+  .deal .src{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
+  .s-site{background:#eaf4fd;color:var(--blue)} .s-bot{background:#eefaf5;color:var(--green)}
+  .s-call{background:#fdf0e6;color:var(--orange)} .s-wa{background:#eefaf3;color:var(--teal)}
+  .deal .ava{margin-left:auto;width:22px;height:22px;border-radius:50%;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .deal .days{font-size:11px;color:var(--dim);margin-top:6px}
+  .note{padding:8px 20px;background:#fff;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px;display:flex;gap:8px;align-items:center}
+  .note b{color:var(--txt)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="rail">
+    <div class="lg"></div>
+    <a class="on" title="Сделки">▦</a>
+    <a title="Задачи">✓</a>
+    <a title="Списки">☰</a>
+    <a title="Почта">✉</a>
+    <a title="Аналитика">▤</a>
+    <a title="Настройки">⚙</a>
+  </div>
+  <div class="main">
+    <div class="bar">
+      <h1>Воронка продаж</h1>
+      <div class="tabs"><span class="on">Канбан</span><span>Список</span><span>Аналитика</span></div>
+      <input class="search" placeholder="Поиск сделки, компании...">
+      <button class="add">+ Сделка</button>
+    </div>
+    <div class="pipe" id="pipe"></div>
+    <div class="note"><span class="dot"></span><b>Синхронизация с сайтом, телефонией и 1С активна.</b> Заявки со всех каналов падают сюда автоматически. Демо, данные вымышлены.</div>
+  </div>
+</div>
+
+<script>
+  var STAGES=[
+    ['Первичный контакт','#2f8de4',[
+      ['ООО СтройБаза','92 000','s-bot','Telegram-бот','И','#2f8de4','2 часа'],
+      ['Автотрейд Юг','48 500','s-site','Сайт','П','#8b5cf6','сегодня'],
+      ['ИП Морозов','17 200','s-call','Звонок','И','#2f8de4','1 день']]],
+    ['Переговоры','#f2994a',[
+      ['Дом-Строй','128 000','s-site','Сайт','П','#8b5cf6','2 дня'],
+      ['СервисМонтаж','54 000','s-wa','WhatsApp','А','#27ae60','1 день']]],
+    ['Согласование КП','#8b5cf6',[
+      ['РемонтПро','76 400','s-bot','Telegram-бот','И','#2f8de4','3 дня'],
+      ['Кофейня «Зерно»','31 000','s-site','Сайт','А','#27ae60','сегодня']]],
+    ['Счёт на оплату','#12b3a6',[
+      ['Гранд Отель','210 000','s-call','Звонок','П','#8b5cf6','1 день']]],
+    ['Успешно реализовано','#27ae60',[
+      ['Барбершоп «Бор»','38 900','s-bot','Telegram-бот','А','#27ae60','вчера'],
+      ['ООО Логист','64 500','s-site','Сайт','И','#2f8de4','2 дня']]]
+  ];
+  function rub(s){return s.replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽';}
+  document.getElementById('pipe').innerHTML=STAGES.map(function(st){
+    var deals=st[2];
+    var total=deals.reduce(function(a,d){return a+(+d[1].replace(/\s/g,''));},0);
+    var cards=deals.map(function(d){
+      return '<div class="deal"><div class="co">'+d[0]+'</div>'+
+        '<div class="price num">'+rub(d[1])+'</div>'+
+        '<div class="row"><span class="src '+d[2]+'">'+d[3]+'</span>'+
+        '<span class="ava" style="background:'+d[5]+'">'+d[4]+'</span></div>'+
+        '<div class="days">в этапе '+d[6]+'</div></div>';
+    }).join('');
+    return '<div class="col"><div class="head" style="background:'+st[1]+'">'+
+      '<div class="st"><span>'+st[0]+'</span><span>'+deals.length+'</span></div>'+
+      '<div class="sum num">'+rub(String(total))+'</div></div>'+
+      '<div class="body">'+cards+'</div></div>';
+  }).join('');
+</script>
+</body>
+</html>
