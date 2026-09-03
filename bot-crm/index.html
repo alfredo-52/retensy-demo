@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лоск — запись через бота, ни одной потерянной заявки</title>
+<style>
+  :root{
+    --bg:#f6f1ea; --paper:#fffdfa; --ink:#2b2620; --soft:#8a8175; --line:#e7ddcf;
+    --acc:#0f7a5a; --acc-s:#e7f2ec; --gold:#c99b3f; --tg:#2aabee;
+    --shadow:0 24px 60px -32px rgba(60,45,20,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif}
+  .serif{font-family:Georgia,"Times New Roman",serif}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  .num{font-variant-numeric:tabular-nums}
+
+  header{padding:26px 0}
+  .bar{display:flex;align-items:center;gap:20px}
+  .logo{font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:.02em}
+  .logo em{color:var(--acc);font-style:normal}
+  .bar nav{margin-left:auto;display:flex;gap:26px;color:var(--soft);font-size:15px}
+  .bar nav a:hover{color:var(--ink)}
+  .book{background:var(--acc);color:#fff;padding:11px 20px;border-radius:40px;font-weight:600;font-size:14px}
+  @media(max-width:760px){.bar nav{display:none}}
+
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center;padding:34px 0 60px}
+  @media(max-width:900px){.hero{grid-template-columns:1fr;gap:36px}}
+  .eyebrow{display:inline-block;background:var(--acc-s);color:var(--acc);font-weight:600;font-size:13px;
+    padding:6px 14px;border-radius:30px;letter-spacing:.03em;margin-bottom:20px}
+  .hero h1{font-family:Georgia,serif;font-size:clamp(36px,5.4vw,58px);line-height:1.08;margin:0 0 20px;font-weight:700}
+  .hero h1 em{font-style:italic;color:var(--acc)}
+  .hero p{font-size:19px;color:var(--soft);margin:0 0 30px;max-width:480px}
+  .hbtns{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .b1{background:var(--acc);color:#fff;padding:15px 28px;border-radius:40px;font-weight:600;border:none;font-size:16px;cursor:pointer}
+  .b1:hover{background:#0c6349}
+  .b2{color:var(--acc);font-weight:600;font-size:15px}
+
+  /* телефон с чатом бота */
+  .phone{justify-self:center;width:310px;background:#0b141a;border-radius:34px;padding:12px;box-shadow:var(--shadow)}
+  .screen{background:#eae6df;border-radius:24px;overflow:hidden;height:560px;display:flex;flex-direction:column}
+  .tgtop{background:var(--tg);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:11px}
+  .tgav{width:36px;height:36px;border-radius:50%;background:#fff;color:var(--tg);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:Georgia,serif}
+  .tgtop b{font-size:15px}.tgtop small{display:block;font-size:11px;opacity:.85}
+  .msgs{flex:1;padding:16px 14px;display:flex;flex-direction:column;gap:9px;overflow:hidden;
+    background:linear-gradient(#dfe7e2,#eae6df)}
+  .m{max-width:80%;padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.4;opacity:0;transform:translateY(8px);animation:pop .4s forwards}
+  .m.bot{background:#fff;border-bottom-left-radius:5px;align-self:flex-start}
+  .m.usr{background:#c6f0d9;border-bottom-right-radius:5px;align-self:flex-end}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;align-self:flex-start;max-width:85%}
+  .chip{background:#fff;border:1px solid #cdd8d1;color:var(--acc);font-size:12.5px;padding:6px 11px;border-radius:20px}
+  @keyframes pop{to{opacity:1;transform:none}}
+
+  /* блок боли/решения */
+  .band{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;padding:56px 0}
+  @media(max-width:820px){.cols{grid-template-columns:1fr;gap:26px}}
+  .col h3{font-family:Georgia,serif;font-size:21px;margin:0 0 8px}
+  .col p{color:var(--soft);margin:0;font-size:15px}
+  .col .n{font-family:Georgia,serif;font-size:15px;color:var(--gold);font-weight:700;letter-spacing:.1em}
+
+  /* CRM карточка — куда падает заявка */
+  .crm{padding:64px 0}
+  .crm .lead{text-align:center;max-width:620px;margin:0 auto 40px}
+  .crm h2{font-family:Georgia,serif;font-size:clamp(28px,4vw,40px);margin:0 0 12px}
+  .crm .lead p{color:var(--soft);font-size:18px;margin:0}
+  .board{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:820px){.board{grid-template-columns:1fr}}
+  .lane{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px}
+  .lane .lh{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between}
+  .rec{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px;margin-bottom:10px;box-shadow:0 6px 18px -14px rgba(60,45,20,.4)}
+  .rec b{font-size:15px}
+  .rec .meta{color:var(--soft);font-size:13px;margin-top:3px}
+  .rec .tag{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:var(--acc);background:var(--acc-s);padding:3px 9px;border-radius:20px}
+
+  footer{background:var(--ink);color:#d8cfc0;padding:38px 0;font-size:14px}
+  footer .wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  footer .made{margin-left:auto}
+  footer a{color:#f0c86a;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="bar">
+      <div class="logo">Ло<em>с</em>к</div>
+      <nav><a href="#how">Как работает</a><a href="#crm">Заявки</a><a href="#">Услуги</a></nav>
+      <a class="book" href="#">Записаться</a>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Студия красоты · Сочи</span>
+      <h1 class="serif">Запись через бота, <em>ни одной</em> потерянной заявки</h1>
+      <p>Клиент пишет в Telegram в любое время — бот сам подберёт мастера и окно, запишет и напомнит за день. А вы видите все записи в одном месте, а не в трёх переписках.</p>
+      <div class="hbtns">
+        <button class="b1" onclick="document.getElementById('crm').scrollIntoView({behavior:'smooth'})">Куда падают заявки</button>
+        <a class="b2" href="#how">Смотреть диалог →</a>
+      </div>
+    </div>
+
+    <div class="phone" id="how">
+      <div class="screen">
+        <div class="tgtop"><div class="tgav">Л</div><div><b>Лоск · бот записи</b><small>отвечает сразу</small></div></div>
+        <div class="msgs" id="msgs"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="band">
+  <div class="wrap cols">
+    <div class="col"><div class="n">01</div><h3 class="serif">Не теряете заявки</h3><p>Сообщения из Директа, WhatsApp и Telegram больше не тонут между сменами. Бот отвечает в ту же секунду, даже ночью.</p></div>
+    <div class="col"><div class="n">02</div><h3 class="serif">Меньше неявок</h3><p>Напоминание за день до визита и кнопка «перенести». Пустые окна добираются автоматически.</p></div>
+    <div class="col"><div class="n">03</div><h3 class="serif">Всё в одном окне</h3><p>Каждая запись сразу в CRM: кто, на что, к какому мастеру. Администратору не надо сводить вручную.</p></div>
+  </div>
+</div>
+
+<div class="wrap crm" id="crm">
+  <div class="lead">
+    <h2 class="serif">Заявка из бота — сразу в CRM</h2>
+    <p>Пока клиент пишет боту, запись уже появляется у администратора. Живой пример доски:</p>
+  </div>
+  <div class="board">
+    <div class="lane">
+      <div class="lh"><span>Новые</span><span class="num">3</span></div>
+      <div class="rec"><b>Полина</b><div class="meta">Маникюр · сегодня 18:00</div><span class="tag">из бота, 2 мин назад</span></div>
+      <div class="rec"><b>Ника</b><div class="meta">Окрашивание · завтра 12:30</div><span class="tag">из бота</span></div>
+      <div class="rec"><b>Алина</b><div class="meta">Брови · сб 15:00</div><span class="tag">из бота</span></div>
+    </div>
+    <div class="lane">
+      <div class="lh"><span>Подтверждены</span><span class="num">2</span></div>
+      <div class="rec"><b>Марина</b><div class="meta">Стрижка · сегодня 16:00</div><span class="tag">напоминание ушло</span></div>
+      <div class="rec"><b>Оля</b><div class="meta">Педикюр · завтра 11:00</div><span class="tag">напоминание ушло</span></div>
+    </div>
+    <div class="lane">
+      <div class="lh"><span>Пришли</span><span class="num">4</span></div>
+      <div class="rec"><b>Света</b><div class="meta">Маникюр · 3 200 ₽</div><span class="tag">визит закрыт</span></div>
+      <div class="rec"><b>Дина</b><div class="meta">Окрашивание · 5 900 ₽</div><span class="tag">визит закрыт</span></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>«Лоск» — демо бота записи с выгрузкой в CRM.</div>
+    <div class="made">Собрано студией <a href="https://retensy.com">Retensy</a> · боты, интеграции, CRM</div>
+  </div>
+</footer>
+
+<script>
+  // Диалог печатается сам, будто клиент прямо сейчас записывается через бота.
+  var SCENARIO = [
+    ['bot','Здравствуйте! Я помогу записаться 💚 На какую услугу?'],
+    ['chips',['Маникюр','Стрижка','Окрашивание','Брови']],
+    ['usr','Маникюр'],
+    ['bot','Отлично. Ближайшие окна к мастеру Полине:'],
+    ['chips',['Сегодня 18:00','Завтра 12:30','Сб 15:00']],
+    ['usr','Сегодня 18:00'],
+    ['bot','Записала вас на маникюр сегодня в 18:00 ✨ Напомню за день. Как вас зовут?'],
+    ['usr','Полина'],
+    ['bot','Готово, Полина! Ждём вас. Запись уже у администратора.']
+  ];
+  var box=document.getElementById('msgs'), i=0;
+  function step(){
+    if(i>=SCENARIO.length){ setTimeout(function(){box.innerHTML='';i=0;step();},3200); return; }
+    var it=SCENARIO[i++];
+    if(it[0]==='chips'){
+      var c=document.createElement('div'); c.className='chips';
+      c.innerHTML=it[1].map(function(x){return '<span class="chip">'+x+'</span>';}).join('');
+      box.appendChild(c);
+    } else {
+      var m=document.createElement('div'); m.className='m '+it[0]; m.textContent=it[1];
+      box.appendChild(m);
+    }
+    // держим в пределах экрана: старые сообщения убираем
+    while(box.children.length>7) box.removeChild(box.firstChild);
+    setTimeout(step, it[0]==='usr'?700:(it[0]==='chips'?900:1300));
+  }
+  step();
+</script>
+</body>
+</html>
