@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BORIS BRITVA — барбершоп в Сочи</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e0c0a; --bg2:#151109; --ink:#f4ede1; --dim:#a99f8f; --line:rgba(244,237,225,.10);
+    --gold:#c99a4e; --gold2:#e6c07f; --card:#17130d;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .dsp{font-family:Oswald,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.01em;line-height:1.04}
+  .num{font-variant-numeric:tabular-nums}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+  .gold{color:var(--gold2)}
+
+  /* НАВ */
+  nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;gap:26px;
+    padding:16px 28px;transition:.3s;border-bottom:1px solid transparent}
+  nav.solid{background:rgba(14,12,10,.86);backdrop-filter:blur(10px);border-bottom-color:var(--line);padding:11px 28px}
+  .logo{font-family:Oswald;font-weight:700;font-size:22px;letter-spacing:.14em;text-transform:uppercase}
+  .logo b{color:var(--gold2)}
+  .nlinks{display:flex;gap:24px;margin-left:auto;font-size:14px;letter-spacing:.02em}
+  .nlinks a{color:var(--dim);transition:.2s}
+  .nlinks a:hover{color:var(--ink)}
+  .book{font-family:Oswald;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:14px;
+    background:var(--gold);color:#1a1206;padding:11px 22px;border-radius:2px;transition:.2s}
+  .book:hover{background:var(--gold2)}
+  @media(max-width:820px){.nlinks{display:none}}
+
+  /* ГЕРОЙ */
+  .hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;overflow:hidden}
+  .hero .bg{position:absolute;inset:0}
+  .hero .bg img{width:100%;height:100%;object-fit:cover;filter:saturate(1.02) contrast(1.03)}
+  .hero .bg::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(14,12,10,.55) 0%,rgba(14,12,10,.15) 38%,rgba(14,12,10,.72) 82%,var(--bg) 100%)}
+  .hero .in{position:relative;padding-bottom:74px;width:100%}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--gold2);font-family:Oswald;font-weight:500;
+    letter-spacing:.22em;text-transform:uppercase;font-size:13px;margin-bottom:20px}
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--gold)}
+  h1{font-family:Oswald;font-weight:700;text-transform:uppercase;letter-spacing:.005em;line-height:.98;
+    font-size:clamp(44px,8.2vw,104px);margin:0 0 20px}
+  h1 span{color:var(--gold2)}
+  .hero p.sub{max-width:540px;color:#e7ddcd;font-size:19px;margin:0 0 30px}
+  .cta{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  .btn-g{font-family:Oswald;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:16px;
+    background:var(--gold);color:#1a1206;padding:16px 34px;border-radius:2px;transition:.2s}
+  .btn-g:hover{background:var(--gold2);transform:translateY(-1px)}
+  .btn-o{font-family:Oswald;font-weight:500;text-transform:uppercase;letter-spacing:.05em;font-size:16px;
+    border:1px solid rgba(244,237,225,.35);color:var(--ink);padding:16px 28px;border-radius:2px;transition:.2s}
+  .btn-o:hover{border-color:var(--gold2);color:var(--gold2)}
+  .trust{display:flex;align-items:center;gap:22px;margin-top:34px;flex-wrap:wrap;color:var(--dim);font-size:15px}
+  .trust b{color:var(--ink)}
+  .stars{color:var(--gold2);letter-spacing:2px}
+
+  /* СЕКЦИИ */
+  section{padding:100px 0}
+  .lbl{font-family:Oswald;font-weight:500;letter-spacing:.22em;text-transform:uppercase;font-size:13px;color:var(--gold2);margin-bottom:14px}
+  h2{font-family:Oswald;font-weight:600;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;
+    font-size:clamp(32px,4.6vw,52px);margin:0 0 18px}
+  .lead{color:var(--dim);font-size:18px;max-width:560px}
+
+  /* УСЛУГИ */
+  .svc-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:44px;flex-wrap:wrap}
+  .price{border-top:1px solid var(--line)}
+  .price .row{display:flex;align-items:baseline;gap:18px;padding:20px 4px;border-bottom:1px solid var(--line);transition:.2s}
+  .price .row:hover{background:linear-gradient(90deg,rgba(201,154,78,.06),transparent);padding-left:14px}
+  .price .nm{font-family:Oswald;font-weight:500;text-transform:uppercase;letter-spacing:.02em;font-size:22px}
+  .price .ds{color:var(--dim);font-size:14px;flex:1;min-width:0}
+  .price .dots{flex:1;border-bottom:1px dotted rgba(244,237,225,.2);transform:translateY(-5px);min-width:20px}
+  .price .pr{font-family:Oswald;font-weight:600;font-size:22px;color:var(--gold2);white-space:nowrap}
+  @media(max-width:640px){.price .ds{display:none}}
+
+  /* РАБОТЫ */
+  .gal{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:220px;gap:14px}
+  .gal a{overflow:hidden;position:relative}
+  .gal img{width:100%;height:100%;object-fit:cover;transition:.5s;filter:grayscale(.15)}
+  .gal a:hover img{transform:scale(1.06);filter:grayscale(0)}
+  .gal .big{grid-column:span 2;grid-row:span 2}
+  .gal .tall{grid-row:span 2}
+  @media(max-width:820px){.gal{grid-template-columns:repeat(2,1fr);grid-auto-rows:180px}.gal .big{grid-column:span 2}}
+
+  /* ИНТЕРЬЕР band */
+  .band{position:relative;min-height:520px;display:flex;align-items:center;overflow:hidden}
+  .band .bg{position:absolute;inset:0}
+  .band .bg img{width:100%;height:100%;object-fit:cover}
+  .band .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,8,6,.9) 0%,rgba(10,8,6,.55) 55%,rgba(10,8,6,.2) 100%)}
+  .band .in{position:relative;max-width:520px}
+  .band h2{margin-bottom:16px}
+
+  /* СТАТ полоса */
+  .stat{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stat .wrap{display:flex;justify-content:space-around;gap:24px;flex-wrap:wrap;padding-top:56px;padding-bottom:56px;text-align:center}
+  .stat .v{font-family:Oswald;font-weight:600;font-size:clamp(40px,6vw,64px);color:var(--gold2);line-height:1}
+  .stat .k{color:var(--dim);letter-spacing:.14em;text-transform:uppercase;font-size:12px;margin-top:10px}
+
+  /* КОНТАКТЫ */
+  .cont{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line)}
+  .cont .info{padding:52px 46px}
+  .cont .pic{position:relative;min-height:420px}
+  .cont .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .cont .k{color:var(--gold2);font-family:Oswald;letter-spacing:.14em;text-transform:uppercase;font-size:12px;margin:26px 0 6px}
+  .cont .val{font-size:20px}
+  .cont .val.big{font-family:Oswald;font-weight:500;font-size:26px}
+  @media(max-width:820px){.cont{grid-template-columns:1fr}.cont .pic{min-height:260px;order:-1}}
+
+  footer{padding:40px 0;border-top:1px solid var(--line);color:var(--dim);font-size:13px;text-align:center}
+  footer .cr{margin-top:8px;color:#6f665a}
+  footer .cr a{color:var(--gold2)}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <span class="logo">BORIS<b>·</b>BRITVA</span>
+  <div class="nlinks">
+    <a href="#uslugi">Услуги</a>
+    <a href="#raboty">Работы</a>
+    <a href="#interier">Интерьер</a>
+    <a href="#kontakty">Контакты</a>
+  </div>
+  <a class="book" href="#zapis">Записаться</a>
+</nav>
+
+<header class="hero">
+  <div class="bg"><img src="img/p1.jpg" alt="Барбер за работой"></div>
+  <div class="wrap in">
+    <span class="eyebrow">Барбершоп · Сочи, Воровского 49</span>
+    <h1 class="dsp">Мужская<br>стрижка<br><span>с характером</span></h1>
+    <p class="sub">Стрижка, борода и королевское бритьё опасной бритвой. Один мастер ведёт вас от кресла до зеркала — без спешки и конвейера.</p>
+    <div class="cta">
+      <a class="btn-g" href="#zapis">Записаться онлайн</a>
+      <a class="btn-o" href="#uslugi">Услуги и цены</a>
+    </div>
+    <div class="trust">
+      <span class="stars">★★★★★</span>
+      <span><b class="num">5.0</b> на Яндекс.Картах</span>
+      <span><b class="num">282</b> оценки · <b class="num">194</b> отзыва</span>
+      <span>с <b class="num">2015</b> года</span>
+    </div>
+  </div>
+</header>
+
+<section id="uslugi">
+  <div class="wrap">
+    <div class="svc-head">
+      <div>
+        <div class="lbl">Прайс</div>
+        <h2 class="dsp">Услуги и цены</h2>
+      </div>
+      <p class="lead">Честный прайс без «звёздочек». Итоговую цену мастер называет до начала — она не меняется в кресле.</p>
+    </div>
+    <div class="price">
+      <div class="row"><span class="nm">Мужская стрижка</span><span class="ds">машинка + ножницы, укладка</span><span class="dots"></span><span class="pr num">от 1 500 ₽</span></div>
+      <div class="row"><span class="nm">Стрижка + борода</span><span class="ds">комплекс, горячее полотенце</span><span class="dots"></span><span class="pr num">от 2 400 ₽</span></div>
+      <div class="row"><span class="nm">Моделирование бороды</span><span class="ds">контур, окантовка опасной</span><span class="dots"></span><span class="pr num">от 1 100 ₽</span></div>
+      <div class="row"><span class="nm">Королевское бритьё</span><span class="ds">опасная бритва, уходы</span><span class="dots"></span><span class="pr num">от 1 600 ₽</span></div>
+      <div class="row"><span class="nm">Камуфляж седины</span><span class="ds">волосы или борода</span><span class="dots"></span><span class="pr num">от 900 ₽</span></div>
+      <div class="row"><span class="nm">Отец + сын</span><span class="ds">две стрижки, одно время</span><span class="dots"></span><span class="pr num">от 2 300 ₽</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="raboty" style="padding-top:0">
+  <div class="wrap">
+    <div class="lbl">Наши работы</div>
+    <h2 class="dsp" style="margin-bottom:40px">Результат, а не обещания</h2>
+    <div class="gal">
+      <a class="big" href="#zapis"><img src="img/p3.jpg" alt="Стрижка клиента"></a>
+      <a href="#zapis"><img src="img/p2.jpg" alt="Стрижка ножницами"></a>
+      <a href="#zapis"><img src="img/p4.jpg" alt="Фейд"></a>
+      <a class="tall" href="#zapis"><img src="img/p10.jpg" alt="Бритьё опасной бритвой"></a>
+      <a href="#zapis"><img src="img/p9.jpg" alt="Инструмент барбера"></a>
+      <a href="#zapis"><img src="img/p6.jpg" alt="Барберские инструменты"></a>
+    </div>
+  </div>
+</section>
+
+<div class="band" id="interier">
+  <div class="bg"><img src="img/p5.jpg" alt="Интерьер барбершопа"></div>
+  <div class="wrap in">
+    <div class="lbl">Атмосфера</div>
+    <h2 class="dsp">Место, куда хочется вернуться</h2>
+    <p class="lead" style="color:#d8cebd">Кирпич, тёплый свет, кресла из настоящей кожи и кофе, пока ждёте. Сюда приходят не «постричься», а провести час по-мужски.</p>
+  </div>
+</div>
+
+<div class="stat">
+  <div class="wrap">
+    <div><div class="v num">10</div><div class="k">лет на Воровского</div></div>
+    <div><div class="v num">194</div><div class="k">отзыва, рейтинг 5.0</div></div>
+    <div><div class="v num">6</div><div class="k">мастеров в команде</div></div>
+    <div><div class="v num">10–22</div><div class="k">работаем ежедневно</div></div>
+  </div>
+</div>
+
+<section id="kontakty">
+  <div class="wrap">
+    <div class="lbl">Как добраться</div>
+    <h2 class="dsp" style="margin-bottom:40px">Контакты и запись</h2>
+    <div class="cont" id="zapis">
+      <div class="info">
+        <div class="k">Адрес</div>
+        <div class="val big">Сочи, ул. Воровского, 49</div>
+        <div class="k">Часы</div>
+        <div class="val">Ежедневно, 10:00 — 22:00</div>
+        <div class="k">Запись</div>
+        <div class="val">Онлайн за 20 секунд — выберите мастера, дату и услугу.</div>
+        <a class="btn-g" style="margin-top:26px;display:inline-block" href="https://n125741.yclients.com" target="_blank" rel="noopener">Записаться онлайн</a>
+      </div>
+      <div class="pic"><img src="img/p8.jpg" alt="Барбершоп внутри"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    BORIS BRITVA — барбершоп в Сочи. Стрижка, борода, бритьё.
+    <div class="cr">Демо-макет страницы · собрала студия <a href="https://retensy.com">Retensy</a> · фото и цены заменяются на ваши</div>
+  </div>
+</footer>
+
+<script>
+  var nav=document.getElementById('nav');
+  addEventListener('scroll',function(){nav.classList.toggle('solid',scrollY>40);});
+</script>
+</body>
+</html>
