@@ -123,7 +123,7 @@
     <div class="hicon"><span class="ic">⚖</span>Сравнить</div>
     <div class="hicon"><span class="ic">🛒</span><span class="badge">3</span>Корзина</div>
   </div>
-  <div class="phone"><div class="n">8 862 271-03-88</div><div class="s">ежедневно 8:00-20:00</div></div>
+  <div class="phone"><div class="n">8 862 555-12-34</div><div class="s">ежедневно 8:00-20:00</div></div>
 </div></header>
 
 <div class="onec"><div class="wrap">
@@ -197,6 +197,18 @@
     b.textContent='✓ В корзине';b.style.background='var(--green)';
   });
   document.querySelectorAll('.fav').forEach(function(f){f.onclick=function(){f.textContent=f.textContent==='♡'?'♥':'♡';f.style.color=f.textContent==='♥'?'var(--org)':'';};});
+  // навигация: всё ведёт к товарам/категориям
+  function toEl(el){if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+  document.querySelector('.catbtn').onclick=function(){toEl(document.querySelector('.h2'));};
+  document.querySelectorAll('.cat,.menu a,.hero .b,.search button').forEach(function(el){
+    el.onclick=function(){toEl(document.getElementById('grid'));};});
+  document.querySelector('.search input').addEventListener('keydown',function(e){if(e.key==='Enter')toEl(document.getElementById('grid'));});
+  // счётчик корзины
+  var cartN=3;
+  document.getElementById('grid').addEventListener('click',function(e){
+    if(e.target.closest('.buy')&&!e.target.closest('.buy').disabled){cartN++;var bd=document.querySelector('.hicon .badge');if(bd)bd.textContent=cartN;}
+  });
+
   // живой счётчик обновления из 1С
   var sec=12,u=document.getElementById('upd');
   setInterval(function(){sec++;if(sec>=300)sec=0;u.textContent='обновлено '+sec+' сек назад';},1000);

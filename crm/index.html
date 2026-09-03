@@ -75,6 +75,46 @@
   .ev .t{color:var(--dim);flex:none;width:52px}
   .ev .d b{color:var(--txt)}
   [hidden]{display:none!important}
+  .rail .lg{display:flex;align-items:center;justify-content:center}
+  .rail .lg svg{width:19px;height:19px}
+  .rail a{cursor:pointer}
+  /* разделы */
+  .sec{flex:1;display:flex;flex-direction:column;min-height:0}
+  .sbar{display:flex;align-items:center;gap:14px;padding:13px 20px;background:#fff;border-bottom:1px solid var(--line)}
+  .sbar h1{font-size:17px;margin:0;font-weight:700}
+  .sbar .add{margin-left:auto}
+  .secbody{flex:1;overflow:auto;padding:20px}
+  .tasks{max-width:760px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .task{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line)}
+  .task:last-child{border-bottom:none}
+  .task input{width:17px;height:17px;accent-color:var(--blue);flex:none}
+  .task .tt{flex:1}
+  .task input:checked+.tt{text-decoration:line-through;color:var(--dim)}
+  .task .tm{color:var(--dim);font-size:12.5px}
+  .task .ta{width:24px;height:24px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+  .mail{max-width:900px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .mrow{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer}
+  .mrow:last-child{border-bottom:none}
+  .mrow:hover{background:#f6f9fd}
+  .mrow.un{background:#f2f8ff}
+  .mrow .mf{width:180px;flex:none;font-weight:600}
+  .mrow.un .mf::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--blue);margin-right:7px}
+  .mrow .ms{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .mrow .ms span{color:var(--dim)}
+  .mrow .mt{color:var(--dim);font-size:12.5px;flex:none}
+  .settings{max-width:640px;display:flex;flex-direction:column;gap:14px}
+  .sgroup{background:#fff;border:1px solid var(--line);border-radius:10px;padding:2px 18px}
+  .sgroup h3{font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 4px}
+  .srow{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .srow:last-child{border-bottom:none}
+  .srow .si{font-size:19px;width:24px;text-align:center}
+  .srow .sd{flex:1}
+  .srow .sd b{display:block;font-weight:600}
+  .srow .sd span{color:var(--dim);font-size:12.5px}
+  .sw{width:42px;height:24px;border-radius:20px;background:#cfd5de;position:relative;cursor:pointer;flex:none;transition:.15s}
+  .sw.on{background:var(--green)}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.15s}
+  .sw.on::after{left:20px}
   /* Список */
   .listview{flex:1;overflow:auto;background:#fff}
   .ltable{width:100%;border-collapse:collapse;font-size:13px}
@@ -108,7 +148,7 @@
 <body>
 <div class="app">
   <div class="rail">
-    <div class="lg"></div>
+    <div class="lg"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v5l-4 2v-7z"/></svg></div>
     <a class="on" title="Сделки">▦</a>
     <a title="Задачи">✓</a>
     <a title="Списки">☰</a>
@@ -117,16 +157,33 @@
     <a title="Настройки">⚙</a>
   </div>
   <div class="main">
-    <div class="bar">
-      <h1>Воронка продаж</h1>
-      <div class="tabs"><span class="on">Канбан</span><span>Список</span><span>Аналитика</span></div>
-      <input class="search" placeholder="Поиск сделки, компании...">
-      <button class="add">+ Сделка</button>
+    <div class="sec" id="sec-deals">
+      <div class="bar">
+        <h1>Воронка продаж</h1>
+        <div class="tabs"><span class="on">Канбан</span><span>Список</span><span>Аналитика</span></div>
+        <input class="search" placeholder="Поиск сделки, компании...">
+        <button class="add">+ Сделка</button>
+      </div>
+      <div class="pipe" id="pipe"></div>
+      <div class="listview" id="list" hidden></div>
+      <div class="anaview" id="ana" hidden></div>
+      <div class="note"><span class="dot"></span><b>Синхронизация с сайтом, телефонией и 1С активна.</b> Заявки со всех каналов падают сюда автоматически. Демо, данные вымышлены.</div>
     </div>
-    <div class="pipe" id="pipe"></div>
-    <div class="listview" id="list" hidden></div>
-    <div class="anaview" id="ana" hidden></div>
-    <div class="note"><span class="dot"></span><b>Синхронизация с сайтом, телефонией и 1С активна.</b> Заявки со всех каналов падают сюда автоматически. Демо, данные вымышлены.</div>
+
+    <div class="sec" id="sec-tasks" hidden>
+      <div class="sbar"><h1>Задачи</h1><button class="add">+ Задача</button></div>
+      <div class="secbody"><div class="tasks" id="tasks"></div></div>
+    </div>
+
+    <div class="sec" id="sec-mail" hidden>
+      <div class="sbar"><h1>Почта</h1></div>
+      <div class="secbody"><div class="mail" id="mail"></div></div>
+    </div>
+
+    <div class="sec" id="sec-settings" hidden>
+      <div class="sbar"><h1>Настройки</h1></div>
+      <div class="secbody"><div class="settings" id="settings"></div></div>
+    </div>
   </div>
 </div>
 
@@ -176,7 +233,7 @@
       ['ООО Логист','64 500','s-site','Сайт','И','#2f8de4','2 дня']]]
   ];
   var RESP={'И':'Илья Р.','П':'Пётр С.','А':'Анна К.'};
-  var PHONE=['+7 918 340‑12‑07','+7 988 512‑44‑90','+7 862 271‑03‑88','+7 928 419‑77‑15','+7 900 602‑18‑34'];
+  var PHONE=['+7 918 555‑10‑07','+7 988 555‑24‑90','+7 862 555‑03‑88','+7 928 555‑17‑15','+7 900 555‑18‑34'];
   var SRCLABEL={'s-site':'Сайт','s-bot':'Telegram-бот','s-call':'Звонок','s-wa':'WhatsApp'};
   var SRCC={'s-site':'#2f8de4','s-bot':'#27ae60','s-call':'#f2994a','s-wa':'#12b3a6'};
   function rub(s){return String(s).replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽';}
@@ -292,12 +349,72 @@
     });
   });
 
-  // рейл: Сделки → канбан, Аналитика → аналитика
+  // ── ЗАДАЧИ ──
+  var TASKS=[
+    ['Позвонить ООО СтройБаза по КП','сегодня 15:00','И','#2f8de4',false],
+    ['Отправить счёт Гранд Отелю','сегодня 17:00','П','#8b5cf6',false],
+    ['Перезвонить ИП Морозову','завтра 11:00','И','#2f8de4',false],
+    ['Согласовать смету с РемонтПро','завтра','И','#2f8de4',false],
+    ['Подготовить договор для Дом-Строй','ср, 10:00','П','#8b5cf6',true],
+    ['Собрать отзыв у Барбершоп «Бор»','закрыто','А','#27ae60',true]
+  ];
+  document.getElementById('tasks').innerHTML=TASKS.map(function(t){
+    return '<label class="task"><input type="checkbox"'+(t[4]?' checked':'')+'>'+
+      '<span class="tt">'+t[0]+'</span><span class="tm">'+t[1]+'</span>'+
+      '<span class="ta" style="background:'+t[3]+'">'+t[2]+'</span></label>';
+  }).join('');
+  document.querySelector('#sec-tasks .add').onclick=function(){
+    var d=document.createElement('label');d.className='task';
+    d.innerHTML='<input type="checkbox"><span class="tt">Новая задача</span><span class="tm">без срока</span><span class="ta" style="background:#9aa5b8"></span>';
+    document.getElementById('tasks').prepend(d);
+  };
+
+  // ── ПОЧТА ──
+  var MAIL=[
+    ['ООО СтройБаза','<b>Re: Коммерческое предложение</b> <span>по профлисту всё устраивает, ждём счёт</span>','9:41',true],
+    ['Гранд Отель','<b>Счёт на оплату</b> <span>пришлите, пожалуйста, с реквизитами</span>','вчера',true],
+    ['Дом-Строй','<b>Гипсокартон, 300 листов</b> <span>когда сможете отгрузить?</span>','вчера',false],
+    ['bot@retensy.com','<b>Новая заявка с сайта</b> <span>СервисМонтаж, кабель ВВГ 2 км</span>','пн',false],
+    ['РемонтПро','<b>По смете</b> <span>согласовали, можно в работу</span>','пн',false]
+  ];
+  document.getElementById('mail').innerHTML=MAIL.map(function(m){
+    return '<div class="mrow'+(m[3]?' un':'')+'"><span class="mf">'+m[0]+'</span>'+
+      '<span class="ms">'+m[1]+'</span><span class="mt">'+m[2]+'</span></div>';
+  }).join('');
+  document.getElementById('mail').addEventListener('click',function(e){var r=e.target.closest('.mrow');if(r)r.classList.remove('un');});
+
+  // ── НАСТРОЙКИ ──
+  var SET=[
+    ['Интеграции',[
+      ['🌐','Сайт retensy.com','заявки с форм падают в воронку',true],
+      ['🧮','1С:Предприятие 8.3','обмен номенклатурой и заказами',true],
+      ['📞','Телефония','запись и ИИ-разбор звонков',true],
+      ['💬','Telegram-бот','приём заявок и запись',false]
+    ]],
+    ['Уведомления',[
+      ['🔔','Новая сделка','пуш при заявке с любого канала',true],
+      ['📧','Дайджест на почту','сводка по воронке каждое утро',false]
+    ]]
+  ];
+  document.getElementById('settings').innerHTML=SET.map(function(g){
+    return '<div class="sgroup"><h3>'+g[0]+'</h3>'+g[1].map(function(s){
+      return '<div class="srow"><span class="si">'+s[0]+'</span><span class="sd"><b>'+s[1]+'</b><span>'+s[2]+'</span></span>'+
+        '<span class="sw'+(s[3]?' on':'')+'"></span></div>';
+    }).join('')+'</div>';
+  }).join('');
+  document.getElementById('settings').addEventListener('click',function(e){var w=e.target.closest('.sw');if(w)w.classList.toggle('on');});
+
+  // ── рейл переключает разделы ──
+  var SECT={'Сделки':'sec-deals','Задачи':'sec-tasks','Списки':'sec-deals','Почта':'sec-mail','Аналитика':'sec-deals','Настройки':'sec-settings'};
+  var SECIDS=['sec-deals','sec-tasks','sec-mail','sec-settings'];
   var links=[].slice.call(document.querySelectorAll('.rail a'));
   links.forEach(function(a){a.onclick=function(){
     links.forEach(function(x){x.classList.remove('on');});a.classList.add('on');
-    if(a.title==='Аналитика')showView('Аналитика');
-    else if(a.title==='Сделки')showView('Канбан');
+    var t=a.title, target=SECT[t]||'sec-deals';
+    SECIDS.forEach(function(id){document.getElementById(id).hidden=(id!==target);});
+    if(t==='Аналитика')showView('Аналитика');
+    else if(t==='Списки')showView('Список');
+    else if(t==='Сделки')showView('Канбан');
   };});
 
   // + Сделка → карточка новой сделки
