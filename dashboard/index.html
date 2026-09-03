@@ -3,172 +3,402 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ОптПоток — заявки со всех каналов в одном окне</title>
+<title>ОптПоток — управление заказами и складом</title>
 <style>
   :root{
-    --bg:#0a0f1c; --panel:#111827; --panel2:#161f31; --line:#233047;
-    --txt:#e6edf7; --dim:#7b8aa3; --brand:#3b82f6; --cyan:#22d3ee; --emer:#34d399;
-    --amber:#fbbf24; --rose:#fb7185;
+    --bg:#eef1f6; --panel:#fff; --line:#e4e8f0; --line2:#eef1f6; --txt:#1b2536; --dim:#7c879b;
+    --rail:#101a2b; --green:#16a34a; --green2:#12833c; --blue:#2f6ff0; --amber:#e08a1e; --teal:#0ea5a4; --red:#e5484d;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--txt);
-    font:15px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif}
-  .mono{font-family:"JetBrains Mono",Consolas,ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  [hidden]{display:none!important}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 -apple-system,"Segoe UI",Roboto,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .num{font-variant-numeric:tabular-nums}
   a{color:inherit;text-decoration:none}
-
-  .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
-  @media(max-width:820px){.app{grid-template-columns:1fr}.side{display:none}}
+  .app{display:grid;grid-template-columns:230px 1fr;height:100vh}
+  @media(max-width:820px){.app{grid-template-columns:60px 1fr}.side .lbl,.side .brand span{display:none}}
 
   /* сайдбар */
-  .side{background:#080c16;border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:6px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;padding:0 8px 22px;letter-spacing:-.01em}
-  .brand i{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--cyan));display:inline-block}
-  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--dim);font-size:14.5px}
-  .nav a.on{background:var(--panel2);color:var(--txt)}
-  .nav a:hover{color:var(--txt)}
-  .nav a .ic{width:18px;text-align:center}
-  .side .foot{margin-top:auto;font-size:12px;color:var(--dim);padding:12px 8px;border-top:1px solid var(--line)}
-  .side .foot b{color:var(--emer)}
+  .side{background:var(--rail);color:#aeb9cc;display:flex;flex-direction:column;padding:16px 12px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:18px;color:#fff;padding:6px 8px 20px;letter-spacing:-.01em}
+  .brand i{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#0ea5a4);flex:none;display:flex;align-items:center;justify-content:center}
+  .brand i svg{width:17px;height:17px;stroke:#fff;stroke-width:2;fill:none}
+  .nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;color:#aeb9cc;font-size:14px;cursor:pointer;margin-bottom:2px}
+  .nav a .ic{width:18px;text-align:center;font-size:16px}
+  .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+  .nav a.on{background:linear-gradient(90deg,rgba(34,197,94,.22),rgba(34,197,94,.05));color:#fff;box-shadow:inset 2px 0 0 var(--green)}
+  .side .foot{margin-top:auto;font-size:12px;color:#8593a8;padding:12px 8px;border-top:1px solid rgba(255,255,255,.08)}
+  .side .foot b{color:#4ade80}
 
-  /* верх */
-  main{padding:24px 28px 40px;overflow:hidden}
-  .top{display:flex;align-items:center;gap:16px;margin-bottom:22px;flex-wrap:wrap}
-  .top h1{font-size:22px;margin:0;font-weight:700}
-  .live{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--emer);background:rgba(52,211,153,.1);
-    padding:5px 11px;border-radius:20px;font-weight:600}
-  .live .d{width:7px;height:7px;border-radius:50%;background:var(--emer);animation:bl 1.6s infinite}
+  main{display:flex;flex-direction:column;overflow:hidden}
+  .top{display:flex;align-items:center;gap:14px;padding:14px 24px;background:#fff;border-bottom:1px solid var(--line)}
+  .top h1{font-size:19px;margin:0;font-weight:700}
+  .live{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--green);background:rgba(22,163,74,.1);padding:5px 11px;border-radius:20px;font-weight:600}
+  .live .d{width:7px;height:7px;border-radius:50%;background:var(--green);animation:bl 1.6s infinite}
   @keyframes bl{50%{opacity:.35}}
-  .src{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-  .src span{font-size:12px;color:var(--dim);border:1px solid var(--line);border-radius:20px;padding:5px 11px}
+  .top .search{margin-left:auto;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;background:#f6f8fb;min-width:200px;outline:none}
+  .top .search:focus{border-color:var(--green)}
+  .top .add{background:var(--green);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-weight:600;font-size:13px;cursor:pointer}
+  .top .add:hover{background:var(--green2)}
+
+  .body{flex:1;overflow:auto;padding:20px 24px}
+  .sec{display:none} .sec.on{display:block}
 
   /* KPI */
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
   @media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
-  .kpi .l{color:var(--dim);font-size:12.5px;margin-bottom:8px}
-  .kpi .v{font-size:27px;font-weight:800}
-  .kpi .c{font-size:12.5px;margin-top:6px;font-weight:600}
-  .up{color:var(--emer)} .down{color:var(--rose)}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .kpi .l{color:var(--dim);font-size:12.5px;margin-bottom:7px}
+  .kpi .v{font-size:26px;font-weight:800}
+  .kpi .c{font-size:12px;margin-top:6px;font-weight:600}
+  .kpi .c.g{color:var(--green)} .kpi .c.r{color:var(--red)} .kpi .c.d{color:var(--dim)}
 
-  /* графики ряд */
-  .row{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:16px}
-  @media(max-width:900px){.row{grid-template-columns:1fr}}
-  .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
-  .box h3{margin:0 0 4px;font-size:15px}
-  .box .sub{color:var(--dim);font-size:12.5px;margin-bottom:16px}
-  .bars{display:flex;align-items:flex-end;gap:10px;height:150px}
-  .bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;justify-content:flex-end;height:100%}
-  .bars .b i{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--cyan),var(--brand));display:block;transition:height .8s cubic-bezier(.2,.7,.2,1)}
+  /* вкладки-фильтры */
+  .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .tabs span{font-size:13px;color:var(--dim);padding:7px 13px;border-radius:8px;cursor:pointer;background:#fff;border:1px solid var(--line)}
+  .tabs span .n{color:#aeb4c0;margin-left:5px}
+  .tabs span.on{background:#eaf6ee;color:var(--green2);border-color:#bfe6cc;font-weight:600}
+  .tabs span.on .n{color:var(--green)}
+
+  /* карточка-таблица */
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .card .h{padding:14px 18px;border-bottom:1px solid var(--line);font-weight:700;display:flex;align-items:center;gap:10px}
+  .card .h .cnt{color:var(--dim);font-weight:500;font-size:13px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  thead th{text-align:left;color:var(--dim);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.03em;padding:11px 18px;border-bottom:1px solid var(--line);white-space:nowrap;background:#fafbfd}
+  thead th.r,tbody td.r{text-align:right}
+  tbody td{padding:12px 18px;border-bottom:1px solid var(--line2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr.clk{cursor:pointer}
+  tbody tr.clk:hover{background:#f6f9fd}
+  .onum{font-weight:600}
+  .muted{color:var(--dim)}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 11px;border-radius:20px}
+  .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+  .s-new{background:#eaf1ff;color:var(--blue)} .s-pack{background:#fdf1e3;color:var(--amber)}
+  .s-ship{background:#e5f7f6;color:var(--teal)} .s-done{background:#e9f7ee;color:var(--green)}
+  .s-late{background:#fdecec;color:var(--red)}
+  .pay{font-size:12.5px} .pay.ok{color:var(--green)} .pay.wait{color:var(--amber)}
+  .stbadge{font-size:12px;font-weight:600;padding:3px 9px;border-radius:6px}
+  .st-ok{background:#e9f7ee;color:var(--green)} .st-low{background:#fdf1e3;color:var(--amber)} .st-no{background:#fdecec;color:var(--red)}
+  .mini{background:none;border:1px solid var(--line);border-radius:7px;padding:6px 11px;font-size:12.5px;cursor:pointer;color:var(--txt)}
+  .mini:hover{border-color:var(--green);color:var(--green)}
+
+  /* графики отчётов */
+  .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr}}
+  .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}
+  .box h3{margin:0 0 3px;font-size:15px}
+  .box .sub{color:var(--dim);font-size:12.5px;margin-bottom:18px}
+  .bars{display:flex;align-items:flex-end;gap:12px;height:170px}
+  .bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-end;height:100%}
+  .bars .b i{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#22c55e,#0ea5a4);transition:height .8s cubic-bezier(.2,.7,.2,1)}
   .bars .b small{color:var(--dim);font-size:11px}
+  .abar{display:flex;align-items:center;gap:12px;margin-bottom:13px;font-size:13px}
+  .abar .lab{width:150px;flex:none}
+  .abar .track{flex:1;height:20px;background:#eef1f6;border-radius:5px;overflow:hidden}
+  .abar .fill{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#22c55e,#0ea5a4)}
+  .abar .val{width:100px;text-align:right;flex:none;font-weight:600}
 
-  /* донат каналов */
-  .donut{display:flex;align-items:center;gap:18px}
-  .leg{display:flex;flex-direction:column;gap:9px;font-size:13px}
-  .leg div{display:flex;align-items:center;gap:8px}
-  .leg .sw{width:11px;height:11px;border-radius:3px}
+  /* настройки */
+  .set{max-width:640px}
+  .sgroup{background:#fff;border:1px solid var(--line);border-radius:12px;padding:2px 18px;margin-bottom:14px}
+  .sgroup h4{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 4px}
+  .srow{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .srow:last-child{border:none}
+  .srow .si{font-size:19px;width:24px;text-align:center}
+  .srow .sd{flex:1} .srow .sd b{display:block} .srow .sd span{color:var(--dim);font-size:12.5px}
+  .sw{width:42px;height:24px;border-radius:20px;background:#cfd6e0;position:relative;cursor:pointer;flex:none;transition:.15s}
+  .sw.on{background:var(--green)}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.15s}
+  .sw.on::after{left:20px}
 
-  /* таблица заявок */
-  .table{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-  .th,.tr{display:grid;grid-template-columns:1.4fr 1.3fr 1fr .9fr 1fr;gap:10px;padding:13px 18px;align-items:center}
-  .th{color:var(--dim);font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--line)}
-  .tr{border-bottom:1px solid var(--line);font-size:14px}
-  .tr:last-child{border:none}
-  .tr:hover{background:var(--panel2)}
-  .pill{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;width:fit-content}
-  .p-new{background:rgba(59,130,246,.15);color:#7fb0ff}
-  .p-pack{background:rgba(251,191,36,.15);color:var(--amber)}
-  .p-ship{background:rgba(34,211,238,.15);color:var(--cyan)}
-  .p-done{background:rgba(52,211,153,.15);color:var(--emer)}
-  .chan{font-size:12px;color:var(--dim)}
-  @media(max-width:900px){.th,.tr{grid-template-columns:1.4fr 1fr .9fr;}.hide{display:none}}
-
-  .made{margin-top:20px;color:var(--dim);font-size:13px}
-  .made a{color:var(--cyan);font-weight:600}
+  /* карточка заказа (панель) */
+  .ov{position:fixed;inset:0;background:rgba(20,30,50,.34);opacity:0;pointer-events:none;transition:.2s;z-index:40}
+  .ov.on{opacity:1;pointer-events:auto}
+  .panel{position:fixed;top:0;right:0;height:100%;width:460px;max-width:94vw;background:#fff;z-index:50;transform:translateX(100%);
+    transition:transform .24s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;box-shadow:-16px 0 44px -20px rgba(20,30,50,.4)}
+  .panel.on{transform:none}
+  .ph{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px}
+  .ph h2{margin:0;font-size:18px} .ph .sub{color:var(--dim);font-size:13px;margin-top:3px}
+  .ph .x{margin-left:auto;border:none;background:none;font-size:22px;color:var(--dim);cursor:pointer;line-height:1}
+  .pbody{flex:1;overflow:auto;padding:18px 22px}
+  /* степпер статуса */
+  .stepper{display:flex;margin-bottom:20px}
+  .step{flex:1;text-align:center;font-size:11.5px;color:var(--dim);position:relative}
+  .step .dot{width:22px;height:22px;border-radius:50%;background:#e4e8f0;color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:12px}
+  .step.done .dot{background:var(--green)} .step.cur .dot{background:var(--blue)}
+  .step.done,.step.cur{color:var(--txt);font-weight:600}
+  .step::before{content:"";position:absolute;top:11px;left:-50%;width:100%;height:2px;background:#e4e8f0;z-index:-1}
+  .step:first-child::before{display:none}
+  .step.done::before,.step.cur::before{background:var(--green)}
+  .field{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line2);font-size:13.5px}
+  .field .k{color:var(--dim)} .field .v{font-weight:600}
+  .pos{margin:16px 0}
+  .pos table{font-size:13px} .pos td{padding:8px 0;border-bottom:1px solid var(--line2)}
+  .pos .tot{display:flex;justify-content:space-between;padding-top:12px;font-size:15px}
+  .pos .tot b{font-size:17px}
+  .pact{display:flex;gap:10px;margin-top:18px}
+  .pact button{flex:1;border:none;border-radius:9px;padding:12px;font-weight:600;cursor:pointer;font-size:13.5px}
+  .pact .go{background:var(--green);color:#fff} .pact .go:hover{background:var(--green2)}
+  .pact .sec2{background:#eef1f6;color:var(--txt)}
 </style>
 </head>
 <body>
 <div class="app">
-
   <aside class="side">
-    <div class="brand"><i></i>ОптПоток</div>
-    <div class="nav">
-      <a class="on"><span class="ic">▤</span> Заявки</a>
-      <a><span class="ic">◷</span> Отгрузки</a>
-      <a><span class="ic">▦</span> Склад · 1С</a>
-      <a><span class="ic">☰</span> Клиенты</a>
-      <a><span class="ic">⚙</span> Настройки</a>
+    <div class="brand"><i><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></i><span>ОптПоток</span></div>
+    <div class="nav" id="nav">
+      <a class="on" data-s="orders"><span class="ic">🧾</span><span class="lbl">Заказы</span></a>
+      <a data-s="ship"><span class="ic">🚚</span><span class="lbl">Отгрузки</span></a>
+      <a data-s="stock"><span class="ic">📦</span><span class="lbl">Склад · 1С</span></a>
+      <a data-s="clients"><span class="ic">👥</span><span class="lbl">Клиенты</span></a>
+      <a data-s="reports"><span class="ic">📊</span><span class="lbl">Отчёты</span></a>
+      <a data-s="settings"><span class="ic">⚙️</span><span class="lbl">Настройки</span></a>
     </div>
-    <div class="foot">Синхронизация с 1С<br><b>● активна</b>, 2 мин назад</div>
+    <div class="foot"><span class="lbl">Синхронизация с 1С<br><b>● активна</b>, 2 мин назад</span></div>
   </aside>
 
   <main>
     <div class="top">
-      <h1>Заявки</h1>
+      <h1 id="ptitle">Заказы</h1>
       <span class="live"><span class="d"></span> в реальном времени</span>
-      <div class="src">
-        <span>Сайт</span><span>Telegram-бот</span><span>WhatsApp</span><span>1С</span><span>Звонки</span>
-      </div>
+      <input class="search" id="search" placeholder="Поиск заказа или клиента...">
+      <button class="add" id="addbtn">+ Заказ</button>
     </div>
 
-    <div class="kpis">
-      <div class="kpi"><div class="l">Заявок сегодня</div><div class="v mono">47</div><div class="c up">▲ 18% к вчера</div></div>
-      <div class="kpi"><div class="l">Сумма в работе</div><div class="v mono">1,24 млн ₽</div><div class="c up">▲ 9%</div></div>
-      <div class="kpi"><div class="l">Средний чек</div><div class="v mono">26 400 ₽</div><div class="c up">▲ 4%</div></div>
-      <div class="kpi"><div class="l">Потеряно заявок</div><div class="v mono">0</div><div class="c up">все в CRM</div></div>
-    </div>
-
-    <div class="row">
-      <div class="box">
-        <h3>Заявки по дням</h3>
-        <div class="sub">за последнюю неделю, со всех каналов</div>
-        <div class="bars" id="bars"></div>
-      </div>
-      <div class="box">
-        <h3>Откуда пришли</h3>
-        <div class="sub">каналы за неделю</div>
-        <div class="donut">
-          <svg width="130" height="130" viewBox="0 0 42 42" id="donut"></svg>
-          <div class="leg">
-            <div><span class="sw" style="background:#3b82f6"></span> Сайт · 38%</div>
-            <div><span class="sw" style="background:#22d3ee"></span> Telegram-бот · 31%</div>
-            <div><span class="sw" style="background:#34d399"></span> WhatsApp · 19%</div>
-            <div><span class="sw" style="background:#fbbf24"></span> Звонки · 12%</div>
-          </div>
+    <div class="body">
+      <!-- ЗАКАЗЫ -->
+      <section class="sec on" id="s-orders">
+        <div class="kpis" id="kpis"></div>
+        <div class="tabs" id="otabs"></div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Заказ</th><th>Клиент</th><th class="r">Позиций</th><th class="r">Сумма</th><th>Оплата</th><th>Статус</th><th>Отгрузка</th></tr></thead>
+            <tbody id="orows"></tbody>
+          </table>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <div class="table">
-      <div class="th"><div>Клиент</div><div>Товар</div><div class="hide">Канал</div><div class="hide">Сумма</div><div>Статус</div></div>
-      <div class="tr"><div>ООО СтройБаза</div><div>Профлист С8, 400 м²</div><div class="chan hide">Telegram-бот</div><div class="mono hide">92 000 ₽</div><div><span class="pill p-new">Новая</span></div></div>
-      <div class="tr"><div>ИП Ковалёв</div><div>Утеплитель, 120 уп</div><div class="chan hide">Сайт</div><div class="mono hide">54 500 ₽</div><div><span class="pill p-pack">Сборка</span></div></div>
-      <div class="tr"><div>Дом-Строй</div><div>Гипсокартон, 300 л</div><div class="chan hide">WhatsApp</div><div class="mono hide">38 900 ₽</div><div><span class="pill p-ship">В пути</span></div></div>
-      <div class="tr"><div>ООО РемонтПро</div><div>Саморезы, 80 кор</div><div class="chan hide">Звонок</div><div class="mono hide">17 200 ₽</div><div><span class="pill p-done">Отгружено</span></div></div>
-      <div class="tr"><div>СервисМонтаж</div><div>Кабель ВВГ, 2 км</div><div class="chan hide">Сайт</div><div class="mono hide">128 000 ₽</div><div><span class="pill p-new">Новая</span></div></div>
-    </div>
+      <!-- ОТГРУЗКИ -->
+      <section class="sec" id="s-ship">
+        <div class="card">
+          <div class="h">Готовы к отгрузке и в пути <span class="cnt" id="shipcnt"></span></div>
+          <table><thead><tr><th>Заказ</th><th>Клиент</th><th class="r">Сумма</th><th>Статус</th><th>Срок</th><th></th></tr></thead>
+          <tbody id="shrows"></tbody></table>
+        </div>
+      </section>
 
-    <div class="made">«ОптПоток» — демо панели заявок с интеграцией 1С и CRM. Собрано студией <a href="https://retensy.com">Retensy</a>.</div>
+      <!-- СКЛАД 1С -->
+      <section class="sec" id="s-stock">
+        <div class="card">
+          <div class="h">Остатки из 1С <span class="cnt">обновлено 2 мин назад</span></div>
+          <table><thead><tr><th>Номенклатура</th><th class="r">Остаток</th><th class="r">Резерв</th><th class="r">Доступно</th><th>Статус</th><th></th></tr></thead>
+          <tbody id="strows"></tbody></table>
+        </div>
+      </section>
+
+      <!-- КЛИЕНТЫ -->
+      <section class="sec" id="s-clients">
+        <div class="card">
+          <div class="h">Клиенты <span class="cnt" id="clcnt"></span></div>
+          <table><thead><tr><th>Клиент</th><th class="r">Заказов</th><th class="r">Оборот</th><th>Последний заказ</th><th>Канал</th></tr></thead>
+          <tbody id="clrows"></tbody></table>
+        </div>
+      </section>
+
+      <!-- ОТЧЁТЫ -->
+      <section class="sec" id="s-reports">
+        <div class="grid2">
+          <div class="box"><h3>Отгрузки по дням</h3><div class="sub">за последнюю неделю, шт</div><div class="bars" id="bars"></div></div>
+          <div class="box"><h3>Топ клиентов</h3><div class="sub">по обороту за месяц</div><div id="topcl"></div></div>
+        </div>
+      </section>
+
+      <!-- НАСТРОЙКИ -->
+      <section class="sec" id="s-settings">
+        <div class="set" id="settings"></div>
+      </section>
+    </div>
   </main>
 </div>
 
+<div class="ov" id="ov"></div>
+<aside class="panel" id="panel">
+  <div class="ph"><div><h2 id="d-num">—</h2><div class="sub" id="d-cli">—</div></div><button class="x" id="d-close">×</button></div>
+  <div class="pbody">
+    <div class="stepper" id="d-step"></div>
+    <div class="field"><span class="k">Канал</span><span class="v" id="d-chan">—</span></div>
+    <div class="field"><span class="k">Менеджер</span><span class="v" id="d-mgr">—</span></div>
+    <div class="field"><span class="k">Оплата</span><span class="v" id="d-pay">—</span></div>
+    <div class="field"><span class="k">Отгрузка</span><span class="v" id="d-due">—</span></div>
+    <div class="pos"><table id="d-pos"></table><div class="tot"><span class="muted">Итого</span><b class="num" id="d-tot">—</b></div></div>
+    <div class="pact"><button class="go" id="d-go">Провести отгрузку</button><button class="sec2">Печать</button></div>
+  </div>
+</aside>
+
 <script>
-  // Столбцы графика с анимацией высоты.
-  var DAYS=[['Пн',22],['Вт',31],['Ср',28],['Чт',39],['Пт',47],['Сб',34],['Вс',19]];
+  var STA={new:['Новая','s-new',0],pack:['Сборка','s-pack',1],ship:['Отгрузка','s-ship',2],done:['Отгружено','s-done',3]};
+  var STEPS=['Новая','Сборка','Отгрузка','Отгружено'];
+  // [№, клиент, [позиции [ном,кол,ед,цена]], оплата(ok/wait), статус, срок, канал, менеджер, поздно?]
+  var ORDERS=[
+    ['ЗК-2041','ООО СтройБаза',[['Профлист С8 оцинк., 1150×2000','220','м²',340],['Саморез кровельный 4.8×35','12','уп',950]],'ok','pack','сегодня 16:00','Telegram-бот','Илья Р.',false],
+    ['ЗК-2040','ИП Ковалёв А. С.',[['Утеплитель ТехноНиколь Роклайт 100мм','120','уп',410]],'wait','new','завтра','Сайт','Анна К.',false],
+    ['ЗК-2039','«Дом-Строй»',[['Гипсокартон Knauf 12.5мм','300','лист',389],['Профиль ПН 28×27','160','шт',142]],'ok','ship','сегодня 14:00','WhatsApp','Пётр С.',false],
+    ['ЗК-2038','ООО «РемонтПро»',[['Саморез по дереву 3.5×41','80','кор',215]],'ok','done','вчера','Звонок','Илья Р.',false],
+    ['ЗК-2037','«СервисМонтаж»',[['Кабель ВВГнг 3×2.5','2000','м',58],['Гофра ПВХ 20мм','600','м',12],['Автомат ABB 16А','40','шт',210]],'ok','pack','сегодня 18:00','Сайт','Анна К.',false],
+    ['ЗК-2036','ООО «Логист-Юг»',[['Поддон деревянный 1200×800','150','шт',380]],'wait','new','позавчера','Сайт','Пётр С.',true],
+    ['ЗК-2035','«Гранд Отель»',[['Плитка керамогранит 600×600','280','м²',690],['Клей плиточный усиленный','60','меш',280]],'ok','ship','сегодня 12:00','Звонок','Пётр С.',false],
+    ['ЗК-2034','Барбершоп «Бор»',[['Ламинат 33 класс 8мм','44','м²',620]],'ok','done','вчера','Сайт','Анна К.',false],
+    ['ЗК-2033','ИП Гаврилов',[['Профнастил С21, RAL 6005','90','м²',520]],'wait','new','завтра','Telegram-бот','Илья Р.',false],
+    ['ЗК-2032','«ТеплоДом»',[['Радиатор биметалл 500, 8 секц.','24','шт',3900]],'ok','pack','сегодня 17:00','WhatsApp','Пётр С.',false]
+  ];
+  function n(v){return +String(v).replace(/\s/g,'');}
+  function rub(v){return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽';}
+  function sumOf(o){return o[2].reduce(function(a,p){return a+n(p[1])*p[3];},0);}
+  function plural(x,a,b,c){var m=x%100;if(m>=11&&m<=14)return c;var d=x%10;return d===1?a:(d>=2&&d<=4?b:c);}
+
+  // ── KPI ──
+  (function(){
+    var toShip=ORDERS.filter(function(o){return o[4]==='pack'||o[4]==='ship';}).length;
+    var late=ORDERS.filter(function(o){return o[8];}).length;
+    var revenue=ORDERS.filter(function(o){return o[4]==='done';}).reduce(function(a,o){return a+sumOf(o);},0);
+    var kp=[['Заказов в работе',ORDERS.length,'g','▲ 6 за сегодня'],
+      ['К отгрузке',toShip,'d','собираются и в пути'],
+      ['Просрочено',late,late?'r':'g',late?'нужен контроль':'всё в срок'],
+      ['Отгружено на',rub(revenue),'g','▲ 9% к вчера']];
+    document.getElementById('kpis').innerHTML=kp.map(function(k){
+      return '<div class="kpi"><div class="l">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="c '+k[2]+'">'+k[3]+'</div></div>';
+    }).join('');
+  })();
+
+  // ── вкладки-фильтры ──
+  var FILTER='all', QUERY='';
+  var TABS=[['all','Все'],['new','Новые'],['pack','Сборка'],['ship','Отгрузка'],['done','Отгружено']];
+  function renderTabs(){
+    document.getElementById('otabs').innerHTML=TABS.map(function(t){
+      var c=t[0]==='all'?ORDERS.length:ORDERS.filter(function(o){return o[4]===t[0];}).length;
+      return '<span class="'+(FILTER===t[0]?'on':'')+'" data-f="'+t[0]+'">'+t[1]+'<span class="n">'+c+'</span></span>';
+    }).join('');
+  }
+  function orderRow(o,i){
+    var st=STA[o[4]], stcls=o[8]?'s-late':st[1], stname=o[8]?'Просрочен':st[0];
+    return '<tr class="clk" data-i="'+i+'">'+
+      '<td class="onum">'+o[0]+'</td><td>'+o[1]+'</td>'+
+      '<td class="r muted">'+o[2].length+'</td>'+
+      '<td class="r num">'+rub(sumOf(o))+'</td>'+
+      '<td><span class="pay '+(o[3]==='ok'?'ok':'wait')+'">'+(o[3]==='ok'?'Оплачен':'Ожидает')+'</span></td>'+
+      '<td><span class="pill '+stcls+'">'+stname+'</span></td>'+
+      '<td class="muted">'+o[5]+'</td></tr>';
+  }
+  function renderOrders(){
+    var rows=ORDERS.map(function(o,i){return {o:o,i:i};}).filter(function(x){
+      if(FILTER!=='all'&&x.o[4]!==FILTER)return false;
+      if(QUERY&&(x.o[0]+' '+x.o[1]).toLowerCase().indexOf(QUERY)<0)return false;
+      return true;
+    });
+    document.getElementById('orows').innerHTML=rows.length
+      ? rows.map(function(x){return orderRow(x.o,x.i);}).join('')
+      : '<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:40px">Ничего не найдено</td></tr>';
+  }
+  renderTabs(); renderOrders();
+  document.getElementById('otabs').addEventListener('click',function(e){var t=e.target.closest('[data-f]');if(!t)return;FILTER=t.getAttribute('data-f');renderTabs();renderOrders();});
+
+  // ── ОТГРУЗКИ ──
+  var ship=ORDERS.filter(function(o){return o[4]==='ship'||o[4]==='pack';});
+  document.getElementById('shipcnt').textContent=ship.length+' '+plural(ship.length,'заказ','заказа','заказов');
+  document.getElementById('shrows').innerHTML=ship.map(function(o){var st=STA[o[4]];
+    return '<tr><td class="onum">'+o[0]+'</td><td>'+o[1]+'</td><td class="r num">'+rub(sumOf(o))+'</td>'+
+      '<td><span class="pill '+st[1]+'">'+st[0]+'</span></td><td class="muted">'+o[5]+'</td>'+
+      '<td><button class="mini">Накладная</button></td></tr>';}).join('');
+
+  // ── СКЛАД 1С ──
+  // [ном, ед, остаток, резерв]
+  var STOCK=[
+    ['Профлист С8 оцинк., 1150×2000','м²',1840,420],
+    ['Гипсокартон Knauf 12.5мм','лист',60,60],
+    ['Саморез кровельный 4.8×35','уп',22,12],
+    ['Кабель ВВГнг 3×2.5','м',5400,2000],
+    ['Утеплитель ТехноНиколь Роклайт','уп',18,0],
+    ['Плитка керамогранит 600×600','м²',760,280],
+    ['Радиатор биметалл 500, 8 секц.','шт',9,0],
+    ['Профиль ПН 28×27, 3 м','шт',1200,160]
+  ];
+  function stStatus(av){return av<=0?['st-no','нет','заказать']:(av<30?['st-low','мало','поставка']:['st-ok','в наличии','']);}
+  document.getElementById('strows').innerHTML=STOCK.map(function(s){var av=s[2]-s[3],st=stStatus(av);
+    return '<tr><td>'+s[0]+'</td><td class="r num">'+s[2]+' '+s[1]+'</td><td class="r num muted">'+s[3]+'</td>'+
+      '<td class="r num"><b>'+av+'</b> '+s[1]+'</td><td><span class="stbadge '+st[0]+'">'+st[1]+'</span></td>'+
+      '<td>'+(st[2]?'<button class="mini">Заказать поставку</button>':'')+'</td></tr>';}).join('');
+
+  // ── КЛИЕНТЫ ──
+  var byCli={};
+  ORDERS.forEach(function(o){var c=byCli[o[1]]=byCli[o[1]]||{n:0,sum:0,last:o[5],chan:o[6]};c.n++;c.sum+=sumOf(o);});
+  var clients=Object.keys(byCli).map(function(k){return {name:k,d:byCli[k]};}).sort(function(a,b){return b.d.sum-a.d.sum;});
+  document.getElementById('clcnt').textContent=clients.length;
+  document.getElementById('clrows').innerHTML=clients.map(function(c){
+    return '<tr><td>'+c.name+'</td><td class="r num">'+c.d.n+'</td><td class="r num">'+rub(c.d.sum)+'</td>'+
+      '<td class="muted">'+c.d.last+'</td><td class="muted">'+c.d.chan+'</td></tr>';}).join('');
+
+  // ── ОТЧЁТЫ ──
+  var DAYS=[['Пн',18],['Вт',24],['Ср',21],['Чт',29],['Пт',33],['Сб',26],['Вс',12]];
   var mx=Math.max.apply(null,DAYS.map(function(d){return d[1];}));
   document.getElementById('bars').innerHTML=DAYS.map(function(d){
-    return '<div class="b"><i data-h="'+Math.round(d[1]/mx*100)+'" style="height:0"></i><small>'+d[0]+'</small></div>';
-  }).join('');
-  setTimeout(function(){ document.querySelectorAll('.bars i').forEach(function(el){ el.style.height=el.getAttribute('data-h')+'%'; }); },120);
+    return '<div class="b"><i data-h="'+Math.round(d[1]/mx*100)+'" style="height:0"></i><small>'+d[0]+'</small></div>';}).join('');
+  var topc=clients.slice(0,5), tmx=topc[0]?topc[0].d.sum:1;
+  document.getElementById('topcl').innerHTML=topc.map(function(c){var w=Math.round(c.d.sum/tmx*100);
+    return '<div class="abar"><span class="lab">'+c.name+'</span><span class="track"><span class="fill" style="width:'+w+'%"></span></span><span class="val num">'+rub(c.d.sum)+'</span></div>';}).join('');
 
-  // Донат каналов через stroke-dasharray.
-  var SEG=[[38,'#3b82f6'],[31,'#22d3ee'],[19,'#34d399'],[12,'#fbbf24']], off=25, svg=document.getElementById('donut');
-  var parts='<circle cx="21" cy="21" r="15.9" fill="none" stroke="#233047" stroke-width="6"></circle>';
-  SEG.forEach(function(s){
-    parts+='<circle cx="21" cy="21" r="15.9" fill="none" stroke="'+s[1]+'" stroke-width="6" '+
-      'stroke-dasharray="'+s[0]+' '+(100-s[0])+'" stroke-dashoffset="'+off+'" transform="rotate(-90 21 21)"></circle>';
-    off-=s[0];
-  });
-  svg.innerHTML=parts;
+  // ── НАСТРОЙКИ ──
+  var SET=[['Интеграции',[['🧮','1С:Предприятие 8.3','обмен остатками, ценами, заказами',true],['🌐','Сайт-каталог','заказы с сайта падают сюда',true],['📞','Телефония','звонки и запись заявок',true],['💬','Telegram / WhatsApp боты','приём заказов в мессенджерах',true]]],
+    ['Уведомления',[['🔔','Новый заказ','пуш ответственному менеджеру',true],['⏰','Просрочка отгрузки','напоминание за 2 часа до срока',true],['📧','Дайджест утром','сводка по заказам и остаткам',false]]]];
+  document.getElementById('settings').innerHTML=SET.map(function(g){
+    return '<div class="sgroup"><h4>'+g[0]+'</h4>'+g[1].map(function(s){
+      return '<div class="srow"><span class="si">'+s[0]+'</span><span class="sd"><b>'+s[1]+'</b><span>'+s[2]+'</span></span><span class="sw'+(s[3]?' on':'')+'"></span></div>';
+    }).join('')+'</div>';}).join('');
+  document.getElementById('settings').addEventListener('click',function(e){var w=e.target.closest('.sw');if(w)w.classList.toggle('on');});
+
+  // ── навигация по разделам ──
+  var TITLES={orders:'Заказы',ship:'Отгрузки',stock:'Склад · 1С',clients:'Клиенты',reports:'Отчёты',settings:'Настройки'};
+  var links=[].slice.call(document.querySelectorAll('#nav a'));
+  function showSec(s){
+    links.forEach(function(a){a.classList.toggle('on',a.getAttribute('data-s')===s);});
+    ['orders','ship','stock','clients','reports','settings'].forEach(function(k){document.getElementById('s-'+k).classList.toggle('on',k===s);});
+    document.getElementById('ptitle').textContent=TITLES[s];
+    document.getElementById('addbtn').hidden=(s!=='orders');
+    document.getElementById('search').hidden=(s!=='orders');
+    if(s==='reports')setTimeout(function(){document.querySelectorAll('.bars i').forEach(function(el){el.style.height=el.getAttribute('data-h')+'%';});},60);
+  }
+  document.getElementById('nav').addEventListener('click',function(e){var a=e.target.closest('[data-s]');if(a)showSec(a.getAttribute('data-s'));});
+
+  // ── карточка заказа ──
+  function openOrder(i){
+    var o=ORDERS[i], st=STA[o[4]];
+    document.getElementById('d-num').textContent='Заказ '+o[0];
+    document.getElementById('d-cli').textContent=o[1];
+    document.getElementById('d-chan').textContent=o[6];
+    document.getElementById('d-mgr').textContent=o[7];
+    document.getElementById('d-pay').textContent=o[3]==='ok'?'Оплачен':'Ожидает оплаты';
+    document.getElementById('d-due').textContent=o[8]?'просрочена ('+o[5]+')':o[5];
+    document.getElementById('d-step').innerHTML=STEPS.map(function(s,idx){
+      var cls=idx<st[2]?'done':(idx===st[2]?'cur':'');
+      return '<div class="step '+cls+'"><span class="dot">'+(idx<st[2]?'✓':(idx+1))+'</span>'+s+'</div>';}).join('');
+    document.getElementById('d-pos').innerHTML=o[2].map(function(p){
+      return '<tr><td>'+p[0]+'</td><td class="r muted">'+p[1]+' '+p[2]+'</td><td class="r num">'+rub(n(p[1])*p[3])+'</td></tr>';}).join('');
+    document.getElementById('d-tot').textContent=rub(sumOf(o));
+    var go=document.getElementById('d-go');
+    if(o[4]==='done'){go.textContent='Заказ отгружен';go.disabled=true;go.style.opacity=.5;}
+    else{go.textContent='Провести отгрузку';go.disabled=false;go.style.opacity=1;
+      go.onclick=function(){go.textContent='✓ Отгрузка проведена';go.style.background='var(--teal)';};}
+    document.getElementById('panel').classList.add('on');document.getElementById('ov').classList.add('on');
+  }
+  function closeOrder(){document.getElementById('panel').classList.remove('on');document.getElementById('ov').classList.remove('on');}
+  document.getElementById('orows').addEventListener('click',function(e){var tr=e.target.closest('.clk');if(tr)openOrder(+tr.getAttribute('data-i'));});
+  document.getElementById('d-close').onclick=closeOrder;
+  document.getElementById('ov').onclick=closeOrder;
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeOrder();});
+
+  // ── поиск, +Заказ ──
+  document.getElementById('search').addEventListener('input',function(e){QUERY=e.target.value.trim().toLowerCase();renderOrders();});
+  document.getElementById('addbtn').onclick=function(){var t=this.textContent;this.textContent='Форма в рабочей версии';var b=this;setTimeout(function(){b.textContent=t;},1400);};
 </script>
 </body>
 </html>
