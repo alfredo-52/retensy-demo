@@ -74,6 +74,35 @@
   .ev{display:flex;gap:10px;margin-bottom:12px;font-size:13px}
   .ev .t{color:var(--dim);flex:none;width:52px}
   .ev .d b{color:var(--txt)}
+  [hidden]{display:none!important}
+  /* Список */
+  .listview{flex:1;overflow:auto;background:#fff}
+  .ltable{width:100%;border-collapse:collapse;font-size:13px}
+  .ltable th{position:sticky;top:0;background:#f4f6fa;text-align:left;font-weight:600;color:#55607a;padding:11px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
+  .ltable th.r,.ltable td.r{text-align:right}
+  .ltable td{padding:11px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
+  .ltable tbody tr{cursor:pointer}
+  .ltable tbody tr:hover{background:#f6f9fd}
+  .ltable .co{font-weight:600}
+  .ltable .stg{display:inline-flex;align-items:center;gap:7px}
+  .ltable .stg::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--_c,#ccc)}
+  .lava{width:22px;height:22px;border-radius:50%;color:#fff;font-size:11px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;vertical-align:middle;margin-right:6px}
+  /* Аналитика */
+  .anaview{flex:1;overflow:auto;padding:20px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:15px 18px}
+  .kpi .kv{font-size:23px;font-weight:800}
+  .kpi .kk{color:var(--dim);font-size:12px;margin-top:4px}
+  .acard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px}
+  .acard h3{font-size:14px;margin:0 0 16px;font-weight:700}
+  .abar{display:flex;align-items:center;gap:12px;margin-bottom:13px;font-size:13px}
+  .abar .lab{width:160px;flex:none;color:var(--txt)}
+  .abar .track{flex:1;height:22px;background:#eef1f6;border-radius:5px;overflow:hidden}
+  .abar .track{display:block}
+  .abar .fill{display:block;height:100%;border-radius:5px;min-width:3px}
+  .abar .val{width:100px;text-align:right;flex:none;font-weight:600}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -95,6 +124,8 @@
       <button class="add">+ Сделка</button>
     </div>
     <div class="pipe" id="pipe"></div>
+    <div class="listview" id="list" hidden></div>
+    <div class="anaview" id="ana" hidden></div>
     <div class="note"><span class="dot"></span><b>Синхронизация с сайтом, телефонией и 1С активна.</b> Заявки со всех каналов падают сюда автоматически. Демо, данные вымышлены.</div>
   </div>
 </div>
@@ -146,22 +177,37 @@
   ];
   var RESP={'И':'Илья Р.','П':'Пётр С.','А':'Анна К.'};
   var PHONE=['+7 918 340‑12‑07','+7 988 512‑44‑90','+7 862 271‑03‑88','+7 928 419‑77‑15','+7 900 602‑18‑34'];
+  var SRCLABEL={'s-site':'Сайт','s-bot':'Telegram-бот','s-call':'Звонок','s-wa':'WhatsApp'};
+  var SRCC={'s-site':'#2f8de4','s-bot':'#27ae60','s-call':'#f2994a','s-wa':'#12b3a6'};
   function rub(s){return String(s).replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽';}
+  function n(v){return +String(v).replace(/\s/g,'');}
+
+  // плоский список сделок с ключами
+  var DEALS=[];
+  STAGES.forEach(function(st,si){
+    st[2].forEach(function(d){
+      DEALS.push({name:d[0],sum:n(d[1]),src:d[2],srcN:d[3],ava:d[4],avaC:d[5],days:d[6],
+        stage:st[0],color:st[1],phone:PHONE[DEALS.length%PHONE.length],si:si});
+    });
+  });
+
   function feed(d){
-    return '<div class="ev"><span class="t">'+d[6]+'</span><div class="d">этап <b>'+d._stage+'</b></div></div>'+
-      '<div class="ev"><span class="t">'+d[6]+'</span><div class="d"><b>'+RESP[d[4]]+'</b> взял в работу</div></div>'+
-      '<div class="ev"><span class="t">'+d[6]+'</span><div class="d">заявка с <b>'+d[3]+'</b> → создана автоматически</div></div>';
+    return '<div class="ev"><span class="t">'+d.days+'</span><div class="d">этап <b>'+d.stage+'</b></div></div>'+
+      '<div class="ev"><span class="t">'+d.days+'</span><div class="d"><b>'+(RESP[d.ava]||'—')+'</b> взял в работу</div></div>'+
+      '<div class="ev"><span class="t">'+d.days+'</span><div class="d">заявка с <b>'+d.srcN+'</b> создана автоматически</div></div>';
   }
   window.openDeal=function(d){
-    document.getElementById('p-co').textContent=d[0];
-    document.getElementById('p-price').textContent=rub(d[1]);
-    var ps=document.getElementById('p-stage');ps.textContent=d._stage;ps.style.background=d._color;
-    document.getElementById('p-src').textContent=d[3];
-    document.getElementById('p-resp').textContent=RESP[d[4]]||d[4];
-    document.getElementById('p-phone').textContent=d._phone;
-    document.getElementById('p-days').textContent=d[6];
-    document.getElementById('p-budget').textContent=rub(d[1]);
-    document.getElementById('p-feed').innerHTML=feed(d);
+    document.getElementById('p-co').textContent=d.name;
+    document.getElementById('p-price').textContent=rub(d.sum);
+    var ps=document.getElementById('p-stage');ps.textContent=d.stage;ps.style.background=d.color;
+    document.getElementById('p-src').textContent=d.srcN;
+    document.getElementById('p-resp').textContent=RESP[d.ava]||'—';
+    document.getElementById('p-phone').textContent=d.phone;
+    document.getElementById('p-days').textContent=d.days;
+    document.getElementById('p-budget').textContent=rub(d.sum);
+    document.getElementById('p-feed').innerHTML=d._new
+      ? '<div class="ev"><span class="t">сейчас</span><div class="d">сделка создана вручную</div></div>'
+      : feed(d);
     document.getElementById('panel').classList.add('on');
     document.getElementById('ov').classList.add('on');
   };
@@ -170,40 +216,98 @@
   document.getElementById('ov').onclick=closeDeal;
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDeal();});
 
-  var pi=0;
-  document.getElementById('pipe').innerHTML=STAGES.map(function(st){
-    var deals=st[2];
-    var total=deals.reduce(function(a,d){return a+(+d[1].replace(/\s/g,''));},0);
-    var cards=deals.map(function(d){
-      d._stage=st[0];d._color=st[1];d._phone=PHONE[pi%PHONE.length];pi++;
-      var key=STAGES.indexOf(st)+'_'+deals.indexOf(d);
-      return '<div class="deal" data-k="'+key+'"><div class="co">'+d[0]+'</div>'+
-        '<div class="price num">'+rub(d[1])+'</div>'+
-        '<div class="row"><span class="src '+d[2]+'">'+d[3]+'</span>'+
-        '<span class="ava" style="background:'+d[5]+'">'+d[4]+'</span></div>'+
-        '<div class="days">в этапе '+d[6]+'</div></div>';
+  // ── КАНБАН ──
+  document.getElementById('pipe').innerHTML=STAGES.map(function(st,si){
+    var ds=DEALS.filter(function(d){return d.si===si;});
+    var total=ds.reduce(function(a,d){return a+d.sum;},0);
+    var cards=ds.map(function(d){
+      var gi=DEALS.indexOf(d);
+      return '<div class="deal" data-k="'+gi+'" data-name="'+d.name+'"><div class="co">'+d.name+'</div>'+
+        '<div class="price num">'+rub(d.sum)+'</div>'+
+        '<div class="row"><span class="src '+d.src+'">'+d.srcN+'</span>'+
+        '<span class="ava" style="background:'+d.avaC+'">'+d.ava+'</span></div>'+
+        '<div class="days">в этапе '+d.days+'</div></div>';
     }).join('');
     return '<div class="col"><div class="head" style="background:'+st[1]+'">'+
-      '<div class="st"><span>'+st[0]+'</span><span>'+deals.length+'</span></div>'+
-      '<div class="sum num">'+rub(String(total))+'</div></div>'+
+      '<div class="st"><span>'+st[0]+'</span><span>'+ds.length+'</span></div>'+
+      '<div class="sum num">'+rub(total)+'</div></div>'+
       '<div class="body">'+cards+'</div></div>';
   }).join('');
 
-  // клик по карточке → открыть сделку
-  document.getElementById('pipe').addEventListener('click',function(e){
-    var el=e.target.closest('.deal');if(!el)return;
-    var k=el.getAttribute('data-k').split('_');
-    openDeal(STAGES[+k[0]][2][+k[1]]);
+  // ── СПИСОК ──
+  document.getElementById('list').innerHTML='<table class="ltable"><thead><tr>'+
+    '<th>Компания</th><th>Этап</th><th class="r">Сумма</th><th>Источник</th><th>Ответственный</th><th>В этапе</th>'+
+    '</tr></thead><tbody>'+DEALS.map(function(d){var gi=DEALS.indexOf(d);
+      return '<tr data-k="'+gi+'" data-name="'+d.name+'">'+
+        '<td class="co">'+d.name+'</td>'+
+        '<td><span class="stg" style="--_c:'+d.color+'">'+d.stage+'</span></td>'+
+        '<td class="r num">'+rub(d.sum)+'</td>'+
+        '<td>'+d.srcN+'</td>'+
+        '<td><span class="lava" style="background:'+d.avaC+'">'+d.ava+'</span>'+(RESP[d.ava]||'')+'</td>'+
+        '<td>'+d.days+'</td></tr>';
+    }).join('')+'</tbody></table>';
+
+  // ── АНАЛИТИКА ──
+  function kpi(v,k){return '<div class="kpi"><div class="kv num">'+v+'</div><div class="kk">'+k+'</div></div>';}
+  function bar(lab,v,max,c){var w=max?Math.round(v/max*100):0;
+    return '<div class="abar"><span class="lab">'+lab+'</span><span class="track"><span class="fill" style="width:'+w+'%;background:'+c+'"></span></span><span class="val num">'+rub(v)+'</span></div>';}
+  (function(){
+    var total=DEALS.reduce(function(a,d){return a+d.sum;},0), cnt=DEALS.length;
+    var won=DEALS.filter(function(d){return d.stage==='Успешно реализовано';}).reduce(function(a,d){return a+d.sum;},0);
+    var kp='<div class="kpis">'+kpi(cnt,'сделок в воронке')+kpi(rub(total),'сумма в воронке')+
+      kpi(rub(Math.round(total/cnt)),'средний чек')+kpi(rub(won),'выиграно')+'</div>';
+    var stg=STAGES.map(function(st,si){return {name:st[0],c:st[1],v:DEALS.filter(function(d){return d.si===si;}).reduce(function(a,d){return a+d.sum;},0)};});
+    var mx=Math.max.apply(null,stg.map(function(s){return s.v;}));
+    var b1=stg.map(function(s){return bar(s.name,s.v,mx,s.c);}).join('');
+    var sm={};DEALS.forEach(function(d){sm[d.src]=(sm[d.src]||0)+d.sum;});
+    var sa=Object.keys(sm).map(function(k){return {name:SRCLABEL[k],v:sm[k],c:SRCC[k]};}).sort(function(a,b){return b.v-a.v;});
+    var mx2=Math.max.apply(null,sa.map(function(s){return s.v;}));
+    var b2=sa.map(function(s){return bar(s.name,s.v,mx2,s.c);}).join('');
+    document.getElementById('ana').innerHTML=kp+'<div class="two">'+
+      '<div class="acard"><h3>Сумма по этапам</h3>'+b1+'</div>'+
+      '<div class="acard"><h3>Сумма по источникам</h3>'+b2+'</div></div>';
+  })();
+
+  // ── переключение видов ──
+  var VIEWS={'Канбан':'pipe','Список':'list','Аналитика':'ana'};
+  var tabs=[].slice.call(document.querySelectorAll('.tabs span'));
+  function showView(name){
+    tabs.forEach(function(t){t.classList.toggle('on',t.textContent===name);});
+    Object.keys(VIEWS).forEach(function(k){document.getElementById(VIEWS[k]).hidden=(k!==name);});
+  }
+  tabs.forEach(function(t){t.onclick=function(){showView(t.textContent);};});
+
+  // клики по сделкам (канбан + список)
+  document.body.addEventListener('click',function(e){
+    var el=e.target.closest('[data-k]');if(!el)return;
+    openDeal(DEALS[+el.getAttribute('data-k')]);
   });
-  // вкладки
-  var tabs=document.querySelectorAll('.tabs span');
-  tabs.forEach(function(t){t.onclick=function(){tabs.forEach(function(x){x.classList.remove('on');});t.classList.add('on');};});
-  // рейл
-  var links=document.querySelectorAll('.rail a');
-  links.forEach(function(a){a.onclick=function(){links.forEach(function(x){x.classList.remove('on');});a.classList.add('on');};});
-  // + Сделка / кнопки в панели — гасим переход, это демо
-  document.querySelector('.add').onclick=function(){alert('Форма новой сделки — в демо отключена.');};
-  document.querySelectorAll('.pacts button').forEach(function(b){b.onclick=function(){alert('Действие доступно в рабочей версии CRM.');};});
+
+  // поиск фильтрует и карточки, и строки
+  document.querySelector('.search').addEventListener('input',function(e){
+    var q=e.target.value.trim().toLowerCase();
+    document.querySelectorAll('.deal,.ltable tbody tr').forEach(function(el){
+      var nm=(el.getAttribute('data-name')||'').toLowerCase();
+      el.style.display=(!q||nm.indexOf(q)>-1)?'':'none';
+    });
+  });
+
+  // рейл: Сделки → канбан, Аналитика → аналитика
+  var links=[].slice.call(document.querySelectorAll('.rail a'));
+  links.forEach(function(a){a.onclick=function(){
+    links.forEach(function(x){x.classList.remove('on');});a.classList.add('on');
+    if(a.title==='Аналитика')showView('Аналитика');
+    else if(a.title==='Сделки')showView('Канбан');
+  };});
+
+  // + Сделка → карточка новой сделки
+  document.querySelector('.add').onclick=function(){
+    openDeal({name:'Новая сделка',sum:0,srcN:'—',ava:'',avaC:'#9aa5b8',phone:'—',days:'только что',stage:'Первичный контакт',color:'#2f8de4',_new:true});
+  };
+  // кнопки панели → мягкий фидбек, без alert
+  document.querySelectorAll('.pacts button').forEach(function(b){var t=b.textContent;
+    b.onclick=function(){b.textContent='✓ '+t;setTimeout(function(){b.textContent=t;},1200);};
+  });
 </script>
 </body>
 </html>
