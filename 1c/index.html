@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1С:Предприятие — обмен заказов с сайтом</title>
+<style>
+  :root{
+    --bg:#e9e7e2;--panel:#f4f3f0;--white:#fff;--line:#dcd9d2;--line2:#e6e4de;
+    --txt:#1c1c1c;--dim:#6d6a63;--sel:#cfe6fb;--selb:#9bcbf0;--hover:#eef6fd;
+    --amber:#f5c518;--org:#c8500a;--head:#efeee9;
+    --st-do:#e08a1e;--st-ok:#2f9e44;--st-no:#d64545;--st-cl:#8a8a8a;--st-ag:#2f80c8}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:12.5px/1.4 "Segoe UI",Tahoma,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .num{font-variant-numeric:tabular-nums}
+  .win{height:100vh;display:flex;flex-direction:column}
+
+  /* системная строка 1С */
+  .sys{display:flex;align-items:center;gap:8px;padding:4px 10px;background:linear-gradient(#fbf6e4,#f2ecd6);border-bottom:1px solid #d8d0b6;font-size:12px}
+  .sys .m{width:17px;height:17px;border-radius:3px;background:linear-gradient(135deg,#f5c518,#e5a90a);color:#7a3b00;font-weight:800;font-size:10px;display:flex;align-items:center;justify-content:center}
+  .sys b{font-weight:600}
+  .sys .cfg{color:var(--dim)}
+  .sys .r{margin-left:auto;display:flex;align-items:center;gap:14px;color:var(--dim)}
+  .sys .r .u{color:var(--txt)}
+  .sys .wbtn{display:flex;gap:6px;margin-left:10px}
+  .sys .wbtn span{width:13px;height:13px;border-radius:2px;background:#d9d4c4;display:inline-block}
+
+  /* панель разделов */
+  .sect{display:flex;gap:2px;padding:0 8px;background:var(--panel);border-bottom:1px solid var(--line)}
+  .sect a{padding:7px 11px 6px;color:#333;text-decoration:none;font-size:12.5px;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer}
+  .sect a:hover{background:#eceae5}
+  .sect a.on{border-bottom-color:var(--org);font-weight:600}
+
+  .body{flex:1;display:grid;grid-template-columns:210px 1fr;min-height:0}
+  /* навигация слева */
+  .nav{background:var(--panel);border-right:1px solid var(--line);padding:8px 0;overflow-y:auto}
+  .nav .grp{padding:6px 14px 3px;color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+  .nav a{display:block;padding:5px 14px 5px 24px;color:#22405e;text-decoration:none;cursor:pointer}
+  .nav a:hover{background:#e6e4df}
+  .nav a.on{background:var(--sel);color:#123;font-weight:600}
+
+  /* рабочая область */
+  .work{background:var(--white);display:flex;flex-direction:column;min-width:0}
+  .ftitle{display:flex;align-items:center;gap:8px;padding:8px 12px 6px}
+  .ftitle .st{color:var(--amber);font-size:15px}
+  .ftitle h1{font-size:15px;font-weight:600;margin:0}
+  .ftitle .arr{margin-left:auto;color:var(--dim);display:flex;gap:10px}
+
+  .cmd{display:flex;align-items:center;gap:2px;padding:4px 10px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);background:#fafaf8;flex-wrap:wrap}
+  .cmd button{border:1px solid transparent;background:none;font:inherit;color:var(--txt);padding:4px 9px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px}
+  .cmd button:hover{background:#eceae5;border-color:var(--line)}
+  .cmd .prim{color:#0a5b2e;font-weight:600}
+  .cmd .ic{width:14px;height:14px;border-radius:3px;display:inline-block}
+  .cmd .plus{background:#2f9e44;position:relative}
+  .cmd .plus::after{content:"+";color:#fff;font-size:12px;font-weight:800;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;line-height:1}
+  .cmd .sync{background:linear-gradient(135deg,#2f80c8,#1f5f9c)}
+  .cmd .sep{width:1px;height:20px;background:var(--line);margin:0 4px}
+  .cmd .find{margin-left:auto;display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:4px;padding:3px 8px;color:var(--dim);background:#fff;min-width:190px}
+
+  .grid{flex:1;overflow:auto}
+  table{border-collapse:collapse;width:100%;font-size:12.5px}
+  thead th{position:sticky;top:0;background:var(--head);text-align:left;font-weight:600;color:#3a3a3a;
+    padding:6px 10px;border-bottom:1px solid var(--line);border-right:1px solid var(--line2);white-space:nowrap}
+  thead th.r{text-align:right}
+  tbody td{padding:5px 10px;border-bottom:1px solid var(--line2);border-right:1px solid #f0eee9;white-space:nowrap}
+  tbody td.r{text-align:right}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:var(--hover)}
+  tbody tr.sel{background:var(--sel);box-shadow:inset 0 0 0 1px var(--selb)}
+  .doc{display:inline-flex;align-items:center;gap:7px}
+  .doc .pg{width:12px;height:14px;border-radius:1px;background:#f5c518;border:1px solid #d69e08;position:relative;flex:none}
+  .doc .pg::after{content:"";position:absolute;top:2px;left:2px;right:3px;height:1px;background:#b07d05;box-shadow:0 3px 0 #b07d05,0 6px 0 #b07d05}
+  .src{display:inline-flex;align-items:center;gap:5px}
+  .src .w{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--org)}
+  .src.tel .w{border-color:var(--dim);border-radius:2px}
+  .src.site{color:var(--org);font-weight:600}
+  .stt{display:inline-flex;align-items:center;gap:6px}
+  .stt::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--st-cl)}
+  .stt.do::before{background:var(--st-do)} .stt.ok::before{background:var(--st-ok)}
+  .stt.no::before{background:var(--st-no)} .stt.cl::before{background:var(--st-cl)} .stt.ag::before{background:var(--st-ag)}
+  .new{background:#fff9e6}
+
+  /* статусная строка обмена */
+  .status{display:flex;align-items:center;gap:10px;padding:6px 12px;background:var(--panel);border-top:1px solid var(--line);color:var(--dim);font-size:12px}
+  .status .live{width:8px;height:8px;border-radius:50%;background:#2f9e44;box-shadow:0 0 0 3px rgba(47,158,68,.18)}
+  .status b{color:var(--txt);font-weight:600}
+  .status .rr{margin-left:auto;color:#8a8a8a}
+
+  /* документ (модалка) */
+  .ov{position:fixed;inset:0;background:rgba(30,30,30,.28);opacity:0;pointer-events:none;transition:.15s;z-index:40}
+  .ov.on{opacity:1;pointer-events:auto}
+  .dlg{position:fixed;top:50%;left:50%;transform:translate(-50%,-48%) scale(.98);opacity:0;pointer-events:none;
+    width:760px;max-width:95vw;max-height:92vh;background:var(--white);border:1px solid #c9c6bf;border-radius:4px;
+    box-shadow:0 24px 60px -18px rgba(0,0,0,.45);z-index:50;display:flex;flex-direction:column;transition:.16s}
+  .dlg.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+  .dh{display:flex;align-items:center;gap:8px;padding:7px 12px;background:linear-gradient(#f7f6f2,#eeece6);border-bottom:1px solid var(--line)}
+  .dh .st{color:var(--amber);font-size:14px}
+  .dh b{font-weight:600;font-size:13px}
+  .dh .x{margin-left:auto;border:none;background:none;font-size:18px;color:var(--dim);cursor:pointer;line-height:1;padding:0 4px}
+  .dcmd{display:flex;gap:2px;padding:5px 12px;border-bottom:1px solid var(--line2);background:#fafaf8;flex-wrap:wrap}
+  .dcmd button{border:1px solid transparent;background:none;font:inherit;padding:4px 9px;border-radius:4px;cursor:pointer;color:var(--txt)}
+  .dcmd button:hover{background:#eceae5;border-color:var(--line)}
+  .dcmd .go{color:#0a5b2e;font-weight:600}
+  .dbody{padding:12px 14px;overflow:auto}
+  .fields{display:grid;grid-template-columns:130px 1fr;gap:7px 12px;margin-bottom:12px}
+  .fields .k{color:var(--dim);padding-top:3px}
+  .fields .v{border:1px solid var(--line);border-radius:3px;padding:4px 8px;background:#fff;display:flex;align-items:center;justify-content:space-between}
+  .fields .v .dd{color:#b5b0a6}
+  .fields .v.link{color:#1f5f9c}
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .tabs span{padding:6px 13px;cursor:pointer;border:1px solid transparent;border-bottom:none;color:#333}
+  .tabs span.on{background:#fff;border-color:var(--line);border-bottom:1px solid #fff;margin-bottom:-1px;font-weight:600;border-radius:4px 4px 0 0}
+  table.pt{width:100%;border-collapse:collapse;font-size:12.5px}
+  table.pt th{background:var(--head);text-align:left;font-weight:600;padding:5px 9px;border:1px solid var(--line)}
+  table.pt th.r,table.pt td.r{text-align:right}
+  table.pt td{padding:5px 9px;border:1px solid var(--line2)}
+  table.pt tbody tr:nth-child(even){background:#faf9f6}
+  .dfoot{display:flex;gap:24px;justify-content:flex-end;padding:10px 2px 0;font-size:13px}
+  .dfoot .lab{color:var(--dim)}
+  .dfoot b{font-size:14px}
+  .autonote{margin-top:10px;padding:8px 11px;background:#fff9e6;border:1px solid #f0e2a8;border-radius:4px;color:#6b5a12;display:flex;align-items:center;gap:8px}
+  .autonote .g{width:12px;height:12px;border-radius:50%;border:2px solid var(--org)}
+</style>
+</head>
+<body>
+<div class="win">
+  <div class="sys">
+    <span class="m">1С</span>
+    <b>1С:Предприятие</b>
+    <span class="cfg">— Управление торговлей, редакция 11.5 (ООО «Прораб»)</span>
+    <div class="r"><span>Продажи</span><span class="u">Смирнов И. В.</span>
+      <span class="wbtn"><span></span><span></span><span></span></span></div>
+  </div>
+  <div class="sect">
+    <a>Главное</a><a>CRM и маркетинг</a><a class="on">Продажи</a><a>Закупки</a>
+    <a>Склад и доставка</a><a>Казначейство</a><a>Финансовый результат</a><a>НСИ и администрирование</a>
+  </div>
+  <div class="body">
+    <div class="nav">
+      <div class="grp">Продажи</div>
+      <a class="on">Заказы клиентов</a>
+      <a>Реализация товаров и услуг</a>
+      <a>Счета на оплату</a>
+      <a>Коммерческие предложения</a>
+      <a>Возвраты от клиентов</a>
+      <div class="grp">Сервис</div>
+      <a>Обмен с сайтом</a>
+      <a>Загрузка заказов с сайта</a>
+      <a>Выгрузка остатков и цен</a>
+      <div class="grp">Отчёты</div>
+      <a>Воронка продаж</a>
+      <a>Валовая прибыль</a>
+    </div>
+    <div class="work">
+      <div class="ftitle">
+        <span class="st">★</span>
+        <h1>Заказы клиентов</h1>
+        <span class="arr">◄ ►</span>
+      </div>
+      <div class="cmd">
+        <button class="prim"><span class="ic plus"></span>Создать</button>
+        <button>Создать на основании ▾</button>
+        <span class="sep"></span>
+        <button id="btn-sync"><span class="ic sync"></span>Обмен с сайтом</button>
+        <button>Провести</button>
+        <button>Печать ▾</button>
+        <button>Ещё ▾</button>
+        <div class="find">🔍 <span>Найти (Ctrl+F)</span></div>
+      </div>
+      <div class="grid">
+        <table>
+          <thead><tr>
+            <th style="width:150px">Номер ▾</th><th style="width:96px">Дата</th>
+            <th>Клиент</th><th class="r" style="width:120px">Сумма</th>
+            <th style="width:150px">Состояние</th><th style="width:96px">Источник</th>
+            <th style="width:120px">Менеджер</th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="status">
+        <span class="live"></span>
+        <span>Обмен с сайтом: последний сеанс <b>04.09.2026 12:07</b> — загружено <b>6 заказов</b>, выгружено <b>340</b> остатков и цен</span>
+        <span class="rr">следующий сеанс через 4 мин · регламентное задание активно</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="ov"></div>
+<div class="dlg" id="dlg">
+  <div class="dh"><span class="st">★</span><b id="d-title">Заказ клиента</b><button class="x" id="d-close">×</button></div>
+  <div class="dcmd">
+    <button class="go">✓ Провести и закрыть</button>
+    <button>Записать</button><button>Провести</button>
+    <button>Создать на основании ▾</button><button>Печать ▾</button><button>Ещё ▾</button>
+  </div>
+  <div class="dbody">
+    <div class="fields">
+      <div class="k">Номер, дата:</div><div class="v"><span id="d-num">—</span><span class="dd">▾</span></div>
+      <div class="k">Клиент:</div><div class="v link"><span id="d-client">—</span><span class="dd">▾</span></div>
+      <div class="k">Соглашение:</div><div class="v"><span>Основное соглашение с покупателями</span><span class="dd">▾</span></div>
+      <div class="k">Организация:</div><div class="v"><span>ООО «Прораб»</span><span class="dd">▾</span></div>
+      <div class="k">Склад:</div><div class="v"><span>Основной склад (Сочи, Пластунская 25)</span><span class="dd">▾</span></div>
+    </div>
+    <div class="tabs"><span class="on">Товары</span><span>Доставка</span><span>Дополнительно</span></div>
+    <table class="pt">
+      <thead><tr><th style="width:34px">N</th><th>Номенклатура</th>
+        <th class="r" style="width:96px">Количество</th><th class="r" style="width:100px">Цена</th>
+        <th class="r" style="width:120px">Сумма</th></tr></thead>
+      <tbody id="d-items"></tbody>
+    </table>
+    <div class="dfoot">
+      <span><span class="lab">Всего наименований:</span> <b id="d-cnt">0</b></span>
+      <span><span class="lab">Итого:</span> <b class="num" id="d-total">0 ₽</b></span>
+    </div>
+    <div class="autonote"><span class="g"></span><span id="d-note">Заказ создан автоматически из заявки на сайте.</span></div>
+  </div>
+</div>
+
+<script>
+  // [номер, дата, клиент, сумма, состояние(класс,текст), источник(site/tel), менеджер, время обмена, [позиции: [ном,кол,ед,цена]]]
+  var ORD=[
+    ['ЗК-00417','04.09.2026','ООО «СтройБаза»',['do','К выполнению'],'site','Илья Р.','12:07',
+      [['Профлист С8 оцинкованный, 1150×2000','220','м²','340'],
+       ['Саморез кровельный 4.8×35, RAL 8017','12','уп','950'],
+       ['Доставка по г. Сочи','1','усл','5 800']]],
+    ['ЗК-00416','04.09.2026','ИП Ковалёв А. С.',['no','Не согласован'],'site','Анна К.','12:07',
+      [['Утеплитель ТехноНиколь Роклайт, 100мм','120','уп','410'],
+       ['Плёнка пароизоляционная, рулон 70 м²','9','рул','560']]],
+    ['ЗК-00415','04.09.2026','«Дом-Строй»',['ok','Отгружен'],'tel','Пётр С.','—',
+      [['Гипсокартон Knauf 12.5мм, 1200×2500','300','лист','389'],
+       ['Профиль ПН 28×27, 3 м','160','шт','142']]],
+    ['ЗК-00414','03.09.2026','ООО «РемонтПро»',['cl','Закрыт'],'site','Илья Р.','—',
+      [['Саморез по дереву 3.5×41','80','кор','215']]],
+    ['ЗК-00413','03.09.2026','«СервисМонтаж»',['do','К выполнению'],'site','Анна К.','—',
+      [['Кабель ВВГнг 3×2.5','2000','м','58'],
+       ['Гофра ПВХ 20мм','600','м','12'],
+       ['Автомат ABB 16А, 1P','40','шт','210']]],
+    ['ЗК-00412','03.09.2026','ООО «Логист-Юг»',['ag','Согласован'],'site','Пётр С.','—',
+      [['Поддон деревянный 1200×800','150','шт','380'],
+       ['Стрейч-плёнка 500мм, 2.5 кг','30','рул','250']]],
+    ['ЗК-00411','02.09.2026','«Гранд Отель»',['do','К выполнению'],'tel','Пётр С.','—',
+      [['Плитка керамогранит 600×600, матовый','280','м²','690'],
+       ['Клей плиточный усиленный, 25 кг','60','меш','280']]],
+    ['ЗК-00410','02.09.2026','Барбершоп «Бор»',['cl','Закрыт'],'site','Анна К.','—',
+      [['Ламинат 33 класс, 8мм','44','м²','620'],
+       ['Плинтус ПВХ с кабель-каналом','56','м','65']]]
+  ];
+  function fmt(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ');}
+  function sumOf(items){return items.reduce(function(a,it){return a+(+it[1].replace(/\s/g,''))*(+it[3].replace(/\s/g,''));},0);}
+
+  var rows=document.getElementById('rows');
+  rows.innerHTML=ORD.map(function(o,i){
+    var total=sumOf(o[7]);
+    var src=o[4]==='site'
+      ? '<span class="src site"><span class="w"></span>Сайт</span>'
+      : '<span class="src tel"><span class="w"></span>Телефон</span>';
+    return '<tr data-i="'+i+'"'+(i===0?' class="sel"':'')+'>'+
+      '<td><span class="doc"><span class="pg"></span>'+o[0]+'</span></td>'+
+      '<td>'+o[1]+' 12:0'+(i)+'</td>'+
+      '<td>'+o[2]+'</td>'+
+      '<td class="r num">'+fmt(total)+',00</td>'+
+      '<td><span class="stt '+o[3][0]+'">'+o[3][1]+'</span></td>'+
+      '<td>'+src+'</td>'+
+      '<td>'+o[5]+'</td></tr>';
+  }).join('');
+
+  function openDoc(i){
+    var o=ORD[i], total=sumOf(o[7]);
+    document.getElementById('d-title').textContent='Заказ клиента '+o[0]+' от '+o[1];
+    document.getElementById('d-num').textContent=o[0]+' от '+o[1]+' 12:03:41';
+    document.getElementById('d-client').textContent=o[2];
+    document.getElementById('d-items').innerHTML=o[7].map(function(it,n){
+      var s=(+it[1].replace(/\s/g,''))*(+it[3].replace(/\s/g,''));
+      return '<tr><td>'+(n+1)+'</td><td>'+it[0]+'</td>'+
+        '<td class="r num">'+it[1]+' '+it[2]+'</td>'+
+        '<td class="r num">'+it[3]+',00</td>'+
+        '<td class="r num">'+fmt(s)+',00</td></tr>';
+    }).join('');
+    document.getElementById('d-cnt').textContent=o[7].length;
+    document.getElementById('d-total').textContent=fmt(total)+',00 ₽';
+    document.getElementById('d-note').textContent = o[4]==='site'
+      ? 'Заказ создан автоматически из заявки на сайте (сеанс обмена '+o[6]+'). Клиент и позиции сопоставлены с номенклатурой 1С.'
+      : 'Заказ оформлен менеджером по телефонному обращению.';
+    document.getElementById('dlg').classList.add('on');
+    document.getElementById('ov').classList.add('on');
+    document.querySelectorAll('#rows tr').forEach(function(tr){tr.classList.remove('sel');});
+    document.querySelector('#rows tr[data-i="'+i+'"]').classList.add('sel');
+  }
+  function closeDoc(){document.getElementById('dlg').classList.remove('on');document.getElementById('ov').classList.remove('on');}
+
+  rows.addEventListener('click',function(e){
+    var tr=e.target.closest('tr');if(!tr)return;openDoc(+tr.getAttribute('data-i'));
+  });
+  document.getElementById('d-close').onclick=closeDoc;
+  document.getElementById('ov').onclick=closeDoc;
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDoc();});
+
+  // «Обмен с сайтом» — имитация сеанса
+  document.getElementById('btn-sync').onclick=function(){
+    var s=document.querySelector('.status span:nth-child(2)');
+    var old=s.innerHTML;
+    s.innerHTML='Идёт обмен с сайтом… чтение заявок, сопоставление номенклатуры';
+    setTimeout(function(){s.innerHTML=old;},1400);
+  };
+
+  // разделы / вкладки — кликабельность
+  document.querySelectorAll('.sect a').forEach(function(a){a.onclick=function(){
+    document.querySelectorAll('.sect a').forEach(function(x){x.classList.remove('on');});a.classList.add('on');};});
+  document.querySelectorAll('.dlg .tabs span').forEach(function(t){t.onclick=function(){
+    document.querySelectorAll('.dlg .tabs span').forEach(function(x){x.classList.remove('on');});t.classList.add('on');};});
+</script>
+</body>
+</html>
