@@ -6,303 +6,214 @@
 <title>Retensy — портфолио</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#07080c; --bg2:#0b0d14; --card:#0f1219;
-    --line:#1b2130; --line2:#28303f;
-    --txt:#eef2f8; --dim:#93a0b4; --faint:#5a6577;
-    --a1:#5eead4; --a2:#38bdf8; --a3:#a78bfa;
-    --grad:linear-gradient(100deg,var(--a1),var(--a2) 55%,var(--a3));
+    --bg:#0a192f; --bg2:#0b1424; --slate:#8892b0; --slate-l:#a8b2d1;
+    --white:#e6f1ff; --acc:#64ffda; --acc-dim:rgba(100,255,218,.1);
+    --nav:#5c6a8a;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{margin:0;background:var(--bg);color:var(--txt);
-    font:16px/1.6 Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--slate);
+    font:16px/1.5 Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   a{color:inherit;text-decoration:none}
-  .dsp{font-family:Syne,sans-serif;letter-spacing:-.02em}
-  .mono{font-family:ui-monospace,"JetBrains Mono",Consolas,monospace}
-  .wrap{max-width:1160px;margin:0 auto;padding:0 26px}
+  ::selection{background:rgba(100,255,218,.2)}
 
-  /* зерно + пятна */
-  .grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-  .blob{position:fixed;z-index:0;filter:blur(90px);opacity:.5;pointer-events:none;border-radius:50%}
-  .blob.a{width:520px;height:520px;background:radial-gradient(circle,rgba(94,234,212,.28),transparent 70%);top:-160px;left:-120px}
-  .blob.b{width:600px;height:600px;background:radial-gradient(circle,rgba(56,189,248,.2),transparent 70%);top:-220px;right:-160px}
-  .blob.c{width:480px;height:480px;background:radial-gradient(circle,rgba(167,139,250,.16),transparent 70%);top:900px;left:40%}
-  #spot{position:fixed;z-index:0;width:460px;height:460px;border-radius:50%;pointer-events:none;
-    background:radial-gradient(circle,rgba(94,234,212,.10),transparent 65%);transform:translate(-50%,-50%);left:-999px;transition:opacity .3s}
-  .page{position:relative;z-index:1}
+  /* подсветка за курсором — подпись стиля */
+  #spot{position:fixed;inset:0;z-index:0;pointer-events:none;transition:.2s;
+    background:radial-gradient(600px at var(--x,-999px) var(--y,-999px),rgba(100,255,218,.06),transparent 80%)}
 
-  /* шапка */
-  header{position:sticky;top:0;z-index:30;backdrop-filter:blur(10px);
-    background:rgba(7,8,12,.6);border-bottom:1px solid var(--line)}
-  .nav{display:flex;align-items:center;height:66px}
-  .brand{font-family:Syne;font-weight:800;font-size:20px;display:flex;align-items:center;gap:9px;letter-spacing:-.02em}
-  .brand i{width:11px;height:22px;background:var(--grad);border-radius:2px}
-  .nav .lnk{margin-left:auto;display:flex;gap:24px;color:var(--dim);font-size:14px;align-items:center}
-  .nav .lnk a:hover{color:var(--txt)}
-  .nav .cta{background:var(--txt);color:#07080c;font-weight:700;padding:9px 16px;border-radius:30px}
-  @media(max-width:720px){.nav .lnk a:not(.cta){display:none}}
+  .shell{max-width:1200px;margin:0 auto;padding:0 40px;position:relative;z-index:1}
+  @media(min-width:1024px){.shell{display:flex;gap:60px}}
+  @media(max-width:600px){.shell{padding:0 24px}}
 
-  /* герой */
-  .hero{padding:110px 0 70px;position:relative}
-  .kick{font-family:ui-monospace,monospace;color:var(--a1);font-size:13px;letter-spacing:.22em;margin-bottom:26px}
-  .hero h1{font-family:Syne;font-weight:800;font-size:clamp(44px,8.5vw,110px);line-height:.98;letter-spacing:-.03em;margin:0 0 26px}
-  .hero h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero h1 .out{color:transparent;-webkit-text-stroke:1.5px var(--faint)}
-  .hero .lead{font-size:clamp(17px,2.2vw,21px);color:var(--dim);max-width:600px;margin:0 0 36px}
-  .btns{display:flex;gap:14px;flex-wrap:wrap}
-  .b1{background:var(--grad);color:#04231e;font-weight:700;padding:15px 28px;border-radius:40px;font-size:16px;transition:.15s}
-  .b1:hover{transform:translateY(-2px)}
-  .b2{border:1px solid var(--line2);padding:15px 26px;border-radius:40px;font-size:16px;font-weight:600;transition:.15s}
-  .b2:hover{border-color:var(--a1);color:var(--a1)}
+  /* левая колонка — закреплена */
+  .left{padding:100px 0 40px}
+  @media(min-width:1024px){.left{width:44%;height:100vh;position:sticky;top:0;
+    display:flex;flex-direction:column;justify-content:space-between;padding:120px 0 60px}}
+  .name{font-size:clamp(38px,5vw,48px);font-weight:800;color:var(--white);letter-spacing:-.02em;margin:0}
+  .role{font-size:clamp(18px,2.4vw,21px);font-weight:600;color:var(--white);margin:12px 0 0}
+  .tagl{margin:18px 0 0;max-width:340px;font-size:16px;color:var(--slate)}
 
-  /* бегущая строка */
-  .marq{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0;overflow:hidden;white-space:nowrap;margin-top:20px}
-  .marq .track{display:inline-flex;gap:0;animation:scroll 26s linear infinite}
-  .marq span{font-family:Syne;font-weight:700;font-size:26px;color:var(--faint);padding:0 26px}
-  .marq b{color:var(--a1)}
-  @keyframes scroll{to{transform:translateX(-50%)}}
+  nav.side{display:none}
+  @media(min-width:1024px){nav.side{display:block;margin-top:56px}
+    nav.side a{display:flex;align-items:center;gap:16px;padding:12px 0;color:var(--nav);
+      font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;transition:.2s}
+    nav.side a .bar{width:32px;height:1px;background:var(--nav);transition:.2s}
+    nav.side a:hover,nav.side a.on{color:var(--white)}
+    nav.side a:hover .bar,nav.side a.on .bar{width:64px;background:var(--white)}}
 
-  /* секции */
-  section{padding:70px 0}
-  .sh{display:flex;align-items:baseline;gap:16px;margin-bottom:32px}
-  .sh .c{font-family:ui-monospace,monospace;color:var(--a1);font-size:14px}
-  .sh h2{font-family:Syne;font-weight:800;font-size:clamp(26px,4vw,40px);margin:0;letter-spacing:-.02em}
-  .sh .ln{flex:1;height:1px;background:var(--line)}
+  .socials{display:flex;gap:22px;margin-top:40px}
+  .socials a{color:var(--slate);font-size:13px;font-weight:600;transition:.2s}
+  .socials a:hover{color:var(--acc)}
 
-  /* bento */
-  .bento{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;
-    display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden;transition:.2s;min-height:200px}
-  .card:hover{border-color:var(--a1);transform:translateY(-4px)}
-  .card::after{content:"";position:absolute;inset:0;background:var(--grad);opacity:0;transition:.25s;mix-blend-mode:overlay;pointer-events:none}
-  .card:hover::after{opacity:.06}
-  .card.big{grid-column:span 3}
-  .card.med{grid-column:span 3}
-  .card.sm{grid-column:span 2}
-  @media(max-width:820px){.bento{grid-template-columns:1fr}.card,.card.big,.card.med,.card.sm{grid-column:auto}}
-  .card .top{display:flex;align-items:center;gap:10px}
-  .tag{font-family:ui-monospace,monospace;font-size:11px;color:var(--a1);border:1px solid var(--line2);padding:3px 10px;border-radius:20px}
-  .live{margin-left:auto;font-size:11px;font-weight:700;color:#04231e;background:var(--a1);padding:3px 10px;border-radius:20px}
-  .badge{margin-left:auto;font-size:11px;font-weight:700;color:var(--dim);border:1px solid var(--line2);padding:3px 10px;border-radius:20px}
-  .card h3{font-family:Syne;font-weight:700;font-size:clamp(22px,2.6vw,30px);margin:4px 0 0}
-  .card.big h3,.card.med h3{font-size:clamp(26px,3.2vw,38px)}
-  .card p{margin:0;color:var(--dim);font-size:15px;flex:1}
-  .card .go{color:var(--a1);font-weight:700;font-size:14px}
-  .card .go .ar{display:inline-block;transition:.2s}
-  .card:hover .go .ar{transform:translateX(5px)}
-  .card .off{color:var(--faint);font-size:13px}
+  /* правая колонка — скроллится */
+  .right{padding:80px 0 120px}
+  @media(min-width:1024px){.right{width:56%;padding:120px 0 160px}}
+  .block{margin-bottom:110px}
+  .block:last-child{margin-bottom:0}
+  .lbl{display:none}
+  @media(max-width:1023px){.lbl{display:block;position:sticky;top:0;background:rgba(10,25,47,.85);
+    backdrop-filter:blur(8px);padding:14px 0;margin:0 -24px 24px;text-indent:24px;
+    font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--white);z-index:5}}
 
-  /* stat-полоса */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:8px}
-  @media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
-  .stat{border:1px solid var(--line);border-radius:18px;padding:24px}
-  .stat b{font-family:Syne;font-weight:800;font-size:38px;display:block;line-height:1}
-  .stat b .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .stat small{color:var(--faint);font-size:13px}
+  .about p{margin:0 0 16px;font-size:16px;line-height:1.7}
+  .about b{color:var(--acc);font-weight:600}
+  .about .white{color:var(--slate-l);font-weight:500}
 
-  /* контакт */
-  .contact{text-align:center;padding:90px 0 50px}
-  .contact h2{font-family:Syne;font-weight:800;font-size:clamp(32px,6vw,64px);margin:14px 0 18px;letter-spacing:-.02em}
-  .contact p{color:var(--dim);font-size:18px;max-width:520px;margin:0 auto 32px}
-  footer{border-top:1px solid var(--line);padding:30px 0;color:var(--faint);font-size:13px}
-  footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
-  footer .r{margin-left:auto}
+  /* работы как строки с подсветкой */
+  .subh{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin:0 0 8px}
+  .item{display:block;position:relative;padding:24px;margin:0 -24px 6px;border-radius:10px;
+    border:1px solid transparent;transition:.2s}
+  .item:hover{background:rgba(20,40,72,.5);border-color:rgba(100,255,218,.12);transform:translateY(-2px)}
+  .item .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .item h3{margin:0;font-size:19px;font-weight:600;color:var(--white);display:flex;align-items:center;gap:7px}
+  .item:hover h3{color:var(--acc)}
+  .item h3 .ar{display:inline-block;transition:.2s;font-size:15px}
+  .item:hover h3 .ar{transform:translate(3px,-3px)}
+  .item .live{font-size:11px;font-weight:700;color:var(--acc);background:var(--acc-dim);padding:3px 9px;border-radius:20px}
+  .item .demo{font-size:11px;font-weight:700;color:var(--slate);border:1px solid #24324a;padding:3px 9px;border-radius:20px}
+  .item p{margin:10px 0 0;font-size:14.5px;line-height:1.6}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .tags span{font-size:12px;color:var(--acc);background:var(--acc-dim);padding:4px 11px;border-radius:20px;font-weight:500}
 
-  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  .fact{margin:26px 0 40px;padding:20px 24px;border-left:2px solid var(--acc);background:rgba(20,40,72,.35);border-radius:0 10px 10px 0}
+  .fact b{color:var(--white);font-size:26px;font-weight:800}
+
+  .foot{margin-top:70px;font-size:14px;color:var(--slate)}
+  .foot a{color:var(--acc);font-weight:600}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:.7s cubic-bezier(.2,.7,.2,1)}
   .reveal.in{opacity:1;transform:none}
-  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.marq .track{animation:none}.blob,#spot{display:none}}
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}#spot{display:none}}
 </style>
 </head>
 <body>
-<div class="grain"></div>
-<div class="blob a"></div><div class="blob b"></div><div class="blob c"></div>
 <div id="spot"></div>
-<div class="page">
 
-<header>
-  <div class="wrap nav">
-    <div class="brand"><i></i>Retensy</div>
-    <div class="lnk">
-      <a href="#works">Работы</a>
-      <a href="#stack">Что делаем</a>
-      <a href="#contact" class="cta">Написать</a>
+<div class="shell">
+
+  <header class="left">
+    <div>
+      <h1 class="name">Retensy</h1>
+      <p class="role">Сайты, боты и интеграции</p>
+      <p class="tagl">Связываем сайт с тем, что у вас уже работает: 1С, amoCRM, Битрикс24, ИИ-помощники.</p>
+      <nav class="side">
+        <a href="#about" data-s="about"><span class="bar"></span> О студии</a>
+        <a href="#works" data-s="works"><span class="bar"></span> Работы</a>
+        <a href="#stack" data-s="stack"><span class="bar"></span> Стек</a>
+      </nav>
     </div>
-  </div>
-</header>
-
-<div class="wrap">
-  <div class="hero">
-    <div class="kick reveal">ВЕБ-СТУДИЯ — САЙТЫ, БОТЫ, ИНТЕГРАЦИИ</div>
-    <h1 class="reveal">Связываем сайт<br>с тем, что у вас<br><span class="g">уже работает</span></h1>
-    <p class="lead reveal">1С, amoCRM, Битрикс24, ИИ-помощники. Не просто вёрстка страницы, а стыковка систем — там, где шаблонные проекты обычно ломаются.</p>
-    <div class="btns reveal">
-      <a class="b1" href="#works">Смотреть работы</a>
-      <a class="b2" href="#contact">Обсудить проект</a>
+    <div class="socials">
+      <a href="https://retensy.com" target="_blank" rel="noopener">retensy.com</a>
+      <a href="https://getatom.ru" target="_blank" rel="noopener">getatom.ru</a>
+      <a href="#works">работы ↓</a>
     </div>
-  </div>
-</div>
+  </header>
 
-<div class="marq">
-  <div class="track">
-    <span>1С&nbsp; <b>·</b> &nbsp;amoCRM&nbsp; <b>·</b> &nbsp;Битрикс24&nbsp; <b>·</b> &nbsp;Telegram&nbsp; <b>·</b> &nbsp;MAX&nbsp; <b>·</b> &nbsp;ИИ-помощники&nbsp; <b>·</b> &nbsp;интернет-магазины&nbsp; <b>·</b> &nbsp;личные кабинеты&nbsp; <b>·</b> &nbsp;</span>
-    <span>1С&nbsp; <b>·</b> &nbsp;amoCRM&nbsp; <b>·</b> &nbsp;Битрикс24&nbsp; <b>·</b> &nbsp;Telegram&nbsp; <b>·</b> &nbsp;MAX&nbsp; <b>·</b> &nbsp;ИИ-помощники&nbsp; <b>·</b> &nbsp;интернет-магазины&nbsp; <b>·</b> &nbsp;личные кабинеты&nbsp; <b>·</b> &nbsp;</span>
-  </div>
-</div>
+  <main class="right">
 
-<div class="wrap">
+    <section class="block about" id="about">
+      <div class="lbl">О студии</div>
+      <p class="reveal"><span class="white">Retensy — веб-студия.</span> Делаем сайты, онлайн-сервисы, ботов и ИИ-помощников. Но основная сила не в том, чтобы <span class="white">нарисовать страницу</span>, а в том, чтобы <b>связать её с тем, что у заказчика уже крутится</b> — 1С, amoCRM, Битрикс24, Яндекс.</p>
+      <p class="reveal">Это то место, где обычно ломаются проекты из шаблонов: сайт собран, а данные в него не едут. Забрать номенклатуру из 1С, положить заявку в CRM, свести оплаты — <b>у нас едет в обе стороны.</b></p>
+      <p class="reveal">И у нас есть <b>свои работающие продукты с платящими пользователями</b> — не концепты в портфолио, а то, за что люди платят каждый месяц.</p>
+      <div class="fact reveal"><b>~50</b> платящих подписчиков в нашем продукте ATOM. Это доказательство сильнее любого макета.</div>
+    </section>
 
-  <section id="works">
-    <div class="sh reveal"><span class="c">01</span><h2 class="dsp">Живые продукты</h2><span class="ln"></span></div>
-    <div class="bento">
-      <a class="card big reveal" href="https://getatom.ru" target="_blank" rel="noopener">
-        <div class="top"><span class="tag">SaaS · платформа</span><span class="live">платящие</span></div>
-        <h3 class="dsp">ATOM</h3>
-        <p>Платформа для бизнеса: ИИ-ассистент по своим материалам, генерация контента, деловая соцсеть, площадка объявлений, кошелёк, CRM. Веб и приложения iOS/Android. Живая подписка и аналитика: выручка, отток, когорты.</p>
-        <span class="go">getatom.ru <span class="ar">→</span></span>
+    <section class="block" id="works">
+      <div class="lbl">Работы</div>
+      <p class="subh reveal">Живые продукты</p>
+      <a class="item reveal" href="https://getatom.ru" target="_blank" rel="noopener">
+        <div class="top"><h3>ATOM <span class="ar">↗</span></h3><span class="live">платящие</span></div>
+        <p>Платформа для бизнеса: ИИ-ассистент по своим материалам, генерация контента, деловая соцсеть, площадка, кошелёк, CRM. Веб и приложения iOS/Android. Живая подписка и аналитика: выручка, отток, когорты.</p>
+        <div class="tags"><span>SaaS</span><span>ИИ</span><span>iOS/Android</span></div>
       </a>
-      <a class="card med reveal" href="https://zaytsv.com" target="_blank" rel="noopener">
-        <div class="top"><span class="tag">Боты · конструктор</span><span class="live">в проде</span></div>
-        <h3 class="dsp">Zaytsv</h3>
+      <a class="item reveal" href="https://zaytsv.com" target="_blank" rel="noopener">
+        <div class="top"><h3>Zaytsv <span class="ar">↗</span></h3><span class="live">в проде</span></div>
         <p>Визуальный конструктор ботов для Telegram, MAX, Instagram: 25 типов блоков, сборка воронки по описанию через ИИ. В проде: воронки до 96 блоков, 400+ версий графа.</p>
-        <span class="go">zaytsv.com <span class="ar">→</span></span>
+        <div class="tags"><span>Spring Boot</span><span>Next.js</span><span>боты</span></div>
       </a>
-      <a class="card sm reveal" href="https://forbiddenglass.com" target="_blank" rel="noopener">
-        <div class="top"><span class="tag">Сервис</span><span class="live">в проде</span></div>
-        <h3 class="dsp">ForbiddenGlass</h3>
-        <p>Расчёт автостёкол по VIN за ~10 сек. Full-stack, рынок Канады.</p>
-        <span class="go">forbiddenglass.com <span class="ar">→</span></span>
+      <a class="item reveal" href="https://forbiddenglass.com" target="_blank" rel="noopener">
+        <div class="top"><h3>ForbiddenGlass <span class="ar">↗</span></h3><span class="live">в проде</span></div>
+        <p>Расчёт стоимости автостёкол по VIN или скану штрихкода за ~10 секунд. Две валюты, партнёрская программа, личный кабинет. Full-stack, рынок Канады.</p>
+        <div class="tags"><span>full-stack</span><span>онлайн-сервис</span></div>
       </a>
-      <a class="card sm reveal" href="https://retensy.com" target="_blank" rel="noopener">
-        <div class="top"><span class="tag">ИИ-помощник</span><span class="live">потрогать</span></div>
-        <h3 class="dsp">Aiuto</h3>
-        <p>RAG-ассистент, отвечает по документам компании. Живой на сайте — задайте ему вопрос.</p>
-        <span class="go">retensy.com <span class="ar">→</span></span>
+      <a class="item reveal" href="https://retensy.com" target="_blank" rel="noopener">
+        <div class="top"><h3>Aiuto <span class="ar">↗</span></h3><span class="live">потрогать</span></div>
+        <p>RAG-ассистент, отвечает строго по документам компании. Веб и мессенджеры с общим контекстом, сложное передаёт оператору. Живой на нашем сайте — задайте ему вопрос.</p>
+        <div class="tags"><span>RAG</span><span>ИИ-помощник</span></div>
       </a>
-      <div class="card sm reveal">
-        <div class="top"><span class="tag">факт</span></div>
-        <b class="dsp" style="font-size:40px" data-count="50" data-suf="+">0</b>
-        <p style="flex:none">платящих подписчиков в ATOM — это продукт, а не концепт</p>
-      </div>
-    </div>
-  </section>
 
-  <section>
-    <div class="sh reveal"><span class="c">02</span><h2 class="dsp">Демо под задачи</h2><span class="ln"></span></div>
-    <div class="bento">
-      <a class="card med reveal" href="magazin-1c/">
-        <div class="top"><span class="tag">Магазин + 1С</span><span class="badge">демо</span></div>
-        <h3 class="dsp">Прораб</h3>
+      <p class="subh reveal" style="margin-top:40px">Демо под задачи</p>
+      <a class="item reveal" href="magazin-1c/">
+        <div class="top"><h3>Прораб <span class="ar">→</span></h3><span class="demo">демо</span></div>
         <p>Магазин инструмента: остатки и цены напрямую из 1С, обновление каждые 5 минут. Позиция без остатка не заказывается. Заказ падает обратно в учётку.</p>
-        <span class="go">Открыть <span class="ar">→</span></span>
+        <div class="tags"><span>магазин</span><span>1С</span></div>
       </a>
-      <a class="card med reveal" href="bot-crm/">
-        <div class="top"><span class="tag">Бот + CRM</span><span class="badge">демо</span></div>
-        <h3 class="dsp">Лоск</h3>
+      <a class="item reveal" href="bot-crm/">
+        <div class="top"><h3>Лоск <span class="ar">→</span></h3><span class="demo">демо</span></div>
         <p>Бот записи для услуг: принимает клиента в Telegram, подбирает время, напоминает, заявка сразу в CRM. Живой диалог и доска администратора.</p>
-        <span class="go">Открыть <span class="ar">→</span></span>
+        <div class="tags"><span>бот</span><span>CRM</span></div>
       </a>
-      <a class="card big reveal" href="dashboard/">
-        <div class="top"><span class="tag">Дашборд + интеграции</span><span class="badge">демо</span></div>
-        <h3 class="dsp">ОптПоток</h3>
-        <p>Панель заявок для опта: сайт, бот, WhatsApp, звонки плюс склад из 1С — в одном окне, в реальном времени. KPI, график по дням, разбивка по каналам, статусы заказов.</p>
-        <span class="go">Открыть <span class="ar">→</span></span>
+      <a class="item reveal" href="dashboard/">
+        <div class="top"><h3>ОптПоток <span class="ar">→</span></h3><span class="demo">демо</span></div>
+        <p>Панель заявок для опта: сайт, бот, WhatsApp, звонки плюс склад из 1С — в одном окне, в реальном времени. KPI, график, статусы заказов.</p>
+        <div class="tags"><span>дашборд</span><span>интеграции</span></div>
       </a>
-    </div>
-  </section>
+    </section>
 
-  <section id="stack">
-    <div class="sh reveal"><span class="c">03</span><h2 class="dsp">Интеграции и ИИ</h2><span class="ln"></span></div>
-    <div class="bento">
-      <div class="card med reveal">
-        <div class="top"><span class="tag">Интеграция 1С</span></div>
-        <h3 class="dsp">Мост сайт ↔ 1С 8.3</h3>
+    <section class="block" id="stack">
+      <div class="lbl">Стек</div>
+      <div class="item reveal">
+        <h3>Мост сайт ↔ 1С 8.3</h3>
         <p>Безопасный обмен с закрытой 1С: метаданные, запросы на языке 1С, проведение документов, номенклатура и остатки. Тест-проведение в откатываемой транзакции — ловим ошибку, ничего не записав в базу.</p>
-        <span class="off">то место, где ломаются шаблонные проекты</span>
+        <div class="tags"><span>1С:Предприятие</span><span>Node.js</span></div>
       </div>
-      <div class="card med reveal">
-        <div class="top"><span class="tag">CRM</span></div>
-        <h3 class="dsp">Битрикс24 и amoCRM</h3>
+      <div class="item reveal">
+        <h3>Битрикс24 и amoCRM</h3>
         <p>Внедрение и синхронизация: воронка под процесс, автозадачи, связь с сайтом, телефонией и 1С. Заявки со всех каналов автоматически в CRM, данные не расходятся с учётом.</p>
-        <span class="off">без ручного переноса и потерянных заявок</span>
+        <div class="tags"><span>Bitrix24</span><span>amoCRM</span></div>
       </div>
-      <div class="card sm reveal">
-        <div class="top"><span class="tag">ИИ</span></div>
-        <h3 class="dsp">CallFix</h3>
-        <p>ИИ разбирает звонки: расшифровка, тема, резюме, фильтры. Снимает ручное прослушивание.</p>
+      <div class="item reveal">
+        <h3>CallFix и ИИ-помощники</h3>
+        <p>ИИ разбирает звонки: расшифровка, тема, резюме, фильтры. RAG-ассистенты на базе знаний компании. Автоматизация того, что раньше делали руками.</p>
+        <div class="tags"><span>ИИ</span><span>RAG</span><span>расшифровка</span></div>
       </div>
-      <div class="card sm reveal">
-        <div class="top"><span class="tag">Сайты</span></div>
-        <h3 class="dsp">Сайты под ключ</h3>
-        <p>От лендинга до магазина с кабинетом. Домен и код — на вас.</p>
+      <div class="item reveal">
+        <h3>Сайты, боты, магазины</h3>
+        <p>От лендинга до магазина с каталогом и личным кабинетом. Боты в Telegram и MAX: приём заявок, оплаты, напоминания, выгрузка в CRM. Домен и код — на заказчике.</p>
+        <div class="tags"><span>сайты</span><span>Telegram</span><span>MAX</span></div>
       </div>
-      <div class="card sm reveal">
-        <div class="top"><span class="tag">Боты</span></div>
-        <h3 class="dsp">Telegram / MAX</h3>
-        <p>Приём заявок, оплаты, напоминания, выгрузка в CRM.</p>
+
+      <div class="foot reveal">
+        Свяжитесь: <a href="https://retensy.com" target="_blank" rel="noopener">retensy.com</a>. Аудит бесплатный, старт работ — в течение суток. ИП, договор и чек.
+        <br><br>Демо-проекты помечены; продукты по ссылкам — живые.
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section>
-    <div class="stats">
-      <div class="stat reveal"><b class="dsp"><span class="g">live</span></b><small>продукты с платящими</small></div>
-      <div class="stat reveal"><b class="dsp" data-count="24" data-suf=" ч">0</b><small>старт работ</small></div>
-      <div class="stat reveal"><b class="dsp" data-count="11" data-suf="">0</b><small>работ в портфолио</small></div>
-      <div class="stat reveal"><b class="dsp">ИП</b><small>договор и чек</small></div>
-    </div>
-  </section>
-
-  <div class="contact reveal" id="contact">
-    <div class="kick" style="letter-spacing:.22em">СВЯЖИТЕСЬ</div>
-    <h2 class="dsp">Расскажите, что нужно связать</h2>
-    <p>Посмотрим ваши системы и предложим, как их состыковать. Аудит бесплатный, старт — в течение суток.</p>
-    <div class="btns" style="justify-content:center">
-      <a class="b1" href="https://retensy.com" target="_blank" rel="noopener">Написать в студию</a>
-    </div>
-  </div>
-
-</div>
-
-<footer>
-  <div class="wrap">
-    <div>Retensy — сайты, боты, интеграции 1С и CRM, ИИ-помощники.</div>
-    <div class="r">Демо-проекты помечены; продукты по ссылкам — живые.</div>
-  </div>
-</footer>
-
+  </main>
 </div>
 
 <script>
-  // Ревилы на скролле, со сдвигом по индексу — эффект «выкатывания».
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  },{threshold:.12});
-  document.querySelectorAll('.reveal').forEach(function(el,i){
-    el.style.transitionDelay=(Math.min(i,6)*60)+'ms'; io.observe(el);
-  });
-
-  // Подсветка за курсором (только мышь).
+  // Подсветка за курсором — как у Brittany Chiang.
   var spot=document.getElementById('spot');
   if(matchMedia('(pointer:fine)').matches){
-    var tx=0,ty=0,cx=0,cy=0;
-    addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;});
-    (function loop(){ cx+=(tx-cx)*.12; cy+=(ty-cy)*.12; spot.style.left=cx+'px'; spot.style.top=cy+'px'; requestAnimationFrame(loop); })();
-  } else { spot.style.display='none'; }
-
-  // Счётчики цифр при появлении.
-  function runCount(el){
-    var to=+el.getAttribute('data-count'),suf=el.getAttribute('data-suf')||'',t0=null;
-    function tick(ts){ if(!t0)t0=ts; var p=Math.min((ts-t0)/900,1); el.textContent=Math.round(to*(1-Math.pow(1-p,3)))+suf; if(p<1)requestAnimationFrame(tick); }
-    requestAnimationFrame(tick);
+    addEventListener('mousemove',function(e){ spot.style.setProperty('--x',e.clientX+'px'); spot.style.setProperty('--y',e.clientY+'px'); });
   }
+  // Ревилы.
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(function(el,i){el.style.transitionDelay=(Math.min(i,5)*50)+'ms';io.observe(el);});
+  // Активная секция в левой навигации.
+  var links=document.querySelectorAll('nav.side a');
+  var secs=[].map.call(links,function(a){return document.getElementById(a.dataset.s);});
   var io2=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){ runCount(e.target); io2.unobserve(e.target); } });
-  },{threshold:.5});
-  document.querySelectorAll('[data-count]').forEach(function(el){io2.observe(el);});
+    es.forEach(function(e){ if(e.isIntersecting){
+      links.forEach(function(l){l.classList.toggle('on',l.dataset.s===e.target.id);});
+    }});
+  },{rootMargin:'-40% 0px -55% 0px'});
+  secs.forEach(function(s){if(s)io2.observe(s);});
 </script>
 </body>
 </html>
