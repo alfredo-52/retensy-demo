@@ -115,6 +115,23 @@
   .sw.on{background:var(--green)}
   .sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.15s}
   .sw.on::after{left:20px}
+  /* задачи Битрикс */
+  .btask{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13.5px}
+  .btask:last-child{border:none}
+  .btask .pr{width:9px;height:9px;border-radius:50%;flex:none}
+  .btask .bt{flex:1} .btask .bt b{display:block} .btask .bt span{color:var(--dim);font-size:12px}
+  .btask .bd{color:var(--dim);font-size:12.5px;width:104px;text-align:right;flex:none}
+  .btask .bs{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:20px;flex:none}
+  .bs-new{background:#eaf1ff;color:#2f8de4} .bs-work{background:#fdf1e3;color:#e08a1e} .bs-done{background:#e9f7ee;color:#27ae60}
+  .btask .ba{width:24px;height:24px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+  .tcard{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;max-width:840px}
+  /* этапы воронки */
+  .stagerow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .stagerow:last-child{border:none} .stagerow .sc{width:11px;height:11px;border-radius:3px;flex:none} .stagerow .sn{flex:1} .stagerow .snum{color:var(--dim);font-size:12.5px}
+  /* роботы */
+  .robot{display:flex;align-items:center;gap:13px;padding:13px 15px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:#f7fafd}
+  .robot:last-child{margin-bottom:0} .robot .ri{width:34px;height:34px;border-radius:9px;background:#eaf1ff;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+  .robot .rt{flex:1;font-size:13px} .robot .rt b{display:block;margin-bottom:2px} .robot .rt .st{color:#2f8de4;font-weight:600}
   /* Список */
   .listview{flex:1;overflow:auto;background:#fff}
   .ltable{width:100%;border-collapse:collapse;font-size:13px}
@@ -350,23 +367,23 @@
   });
 
   // ── ЗАДАЧИ ──
+  // [задача, привязка, срок, ответственный, цвет, статус, приоритет-цвет]
   var TASKS=[
-    ['Позвонить ООО СтройБаза по КП','сегодня 15:00','И','#2f8de4',false],
-    ['Отправить счёт Гранд Отелю','сегодня 17:00','П','#8b5cf6',false],
-    ['Перезвонить ИП Морозову','завтра 11:00','И','#2f8de4',false],
-    ['Согласовать смету с РемонтПро','завтра','И','#2f8de4',false],
-    ['Подготовить договор для Дом-Строй','ср, 10:00','П','#8b5cf6',true],
-    ['Собрать отзыв у Барбершоп «Бор»','закрыто','А','#27ae60',true]
+    ['Позвонить ООО СтройБаза по КП','Сделка · ООО СтройБаза','сегодня 15:00','И','#2f8de4','work','#eb5757'],
+    ['Отправить счёт Гранд Отелю','Сделка · Гранд Отель','сегодня 17:00','П','#8b5cf6','new','#eb5757'],
+    ['Перезвонить ИП Морозову','Лид · ИП Морозов','завтра 11:00','И','#2f8de4','new','#e08a1e'],
+    ['Согласовать смету с РемонтПро','Сделка · РемонтПро','завтра','И','#2f8de4','work','#e08a1e'],
+    ['Подготовить договор для Дом-Строй','Сделка · Дом-Строй','ср, 10:00','П','#8b5cf6','done','#9aa5b8'],
+    ['Собрать отзыв у Барбершоп «Бор»','Сделка · Барбершоп','закрыто','А','#27ae60','done','#9aa5b8']
   ];
-  document.getElementById('tasks').innerHTML=TASKS.map(function(t){
-    return '<label class="task"><input type="checkbox"'+(t[4]?' checked':'')+'>'+
-      '<span class="tt">'+t[0]+'</span><span class="tm">'+t[1]+'</span>'+
-      '<span class="ta" style="background:'+t[3]+'">'+t[2]+'</span></label>';
-  }).join('');
+  var STST={new:['Новая','bs-new'],work:['В работе','bs-work'],done:['Завершена','bs-done']};
+  function taskRow(t){var s=STST[t[5]];
+    return '<div class="btask"><span class="pr" style="background:'+t[6]+'"></span><div class="bt"><b>'+t[0]+'</b><span>'+t[1]+'</span></div>'+
+      '<span class="bd">'+t[2]+'</span><span class="bs '+s[1]+'">'+s[0]+'</span><span class="ba" style="background:'+t[4]+'">'+t[3]+'</span></div>';}
+  document.getElementById('tasks').innerHTML='<div class="tcard">'+TASKS.map(taskRow).join('')+'</div>';
   document.querySelector('#sec-tasks .add').onclick=function(){
-    var d=document.createElement('label');d.className='task';
-    d.innerHTML='<input type="checkbox"><span class="tt">Новая задача</span><span class="tm">без срока</span><span class="ta" style="background:#9aa5b8"></span>';
-    document.getElementById('tasks').prepend(d);
+    var box=document.querySelector('#tasks .tcard');
+    box.insertAdjacentHTML('afterbegin',taskRow(['Новая задача','не привязана','без срока','','#9aa5b8','new','#e08a1e']));
   };
 
   // ── ПОЧТА ──
@@ -384,24 +401,21 @@
   document.getElementById('mail').addEventListener('click',function(e){var r=e.target.closest('.mrow');if(r)r.classList.remove('un');});
 
   // ── НАСТРОЙКИ ──
-  var SET=[
-    ['Интеграции',[
-      ['🌐','Сайт retensy.com','заявки с форм падают в воронку',true],
-      ['🧮','1С:Предприятие 8.3','обмен номенклатурой и заказами',true],
-      ['📞','Телефония','запись и ИИ-разбор звонков',true],
-      ['💬','Telegram-бот','приём заявок и запись',false]
-    ]],
-    ['Уведомления',[
-      ['🔔','Новая сделка','пуш при заявке с любого канала',true],
-      ['📧','Дайджест на почту','сводка по воронке каждое утро',false]
-    ]]
-  ];
-  document.getElementById('settings').innerHTML=SET.map(function(g){
-    return '<div class="sgroup"><h3>'+g[0]+'</h3>'+g[1].map(function(s){
-      return '<div class="srow"><span class="si">'+s[0]+'</span><span class="sd"><b>'+s[1]+'</b><span>'+s[2]+'</span></span>'+
-        '<span class="sw'+(s[3]?' on':'')+'"></span></div>';
-    }).join('')+'</div>';
-  }).join('');
+  var stageHTML=STAGES.map(function(st,i){var ds=DEALS.filter(function(d){return d.si===i;});
+    return '<div class="stagerow"><span class="sc" style="background:'+st[1]+'"></span><span class="sn">'+st[0]+'</span><span class="snum">'+ds.length+' '+(ds.length===1?'сделка':(ds.length<5?'сделки':'сделок'))+'</span></div>';}).join('');
+  function robot(ic,stage,action,on){return '<div class="robot"><span class="ri">'+ic+'</span><div class="rt"><b>При переходе в «'+stage+'»</b><span class="st">→ '+action+'</span></div><span class="sw'+(on?' on':'')+'"></span></div>';}
+  document.getElementById('settings').innerHTML=
+    '<div class="sgroup"><h3>Этапы воронки</h3>'+stageHTML+'</div>'+
+    '<div class="sgroup"><h3>Роботы и триггеры</h3>'+
+      robot('📞','Первичный контакт','поставить менеджеру задачу «позвонить»',true)+
+      robot('📄','Согласование КП','отправить клиенту письмо с КП автоматически',true)+
+      robot('💰','Счёт на оплату','сформировать счёт в 1С и выслать клиенту',true)+
+      robot('⭐','Успешно реализовано','запросить отзыв через 2 дня после сделки',false)+
+    '</div>'+
+    '<div class="sgroup"><h3>Интеграции</h3>'+
+      '<div class="srow"><span class="si">🧮</span><span class="sd"><b>1С:Предприятие 8.3</b><span>обмен номенклатурой и заказами</span></span><span class="sw on"></span></div>'+
+      '<div class="srow"><span class="si">🌐</span><span class="sd"><b>Сайт retensy.com</b><span>заявки с форм падают в воронку</span></span><span class="sw on"></span></div>'+
+    '</div>';
   document.getElementById('settings').addEventListener('click',function(e){var w=e.target.closest('.sw');if(w)w.classList.toggle('on');});
 
   // ── рейл переключает разделы ──
