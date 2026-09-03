@@ -132,59 +132,10 @@
     <div class="r"><span>Продажи</span><span class="u">Смирнов И. В.</span>
       <span class="wbtn"><span></span><span></span><span></span></span></div>
   </div>
-  <div class="sect">
-    <a>Главное</a><a>CRM и маркетинг</a><a class="on">Продажи</a><a>Закупки</a>
-    <a>Склад и доставка</a><a>Казначейство</a><a>Финансовый результат</a><a>НСИ и администрирование</a>
-  </div>
+  <div class="sect" id="sect"></div>
   <div class="body">
-    <div class="nav">
-      <div class="grp">Продажи</div>
-      <a class="on">Заказы клиентов</a>
-      <a>Реализация товаров и услуг</a>
-      <a>Счета на оплату</a>
-      <a>Коммерческие предложения</a>
-      <a>Возвраты от клиентов</a>
-      <div class="grp">Сервис</div>
-      <a>Обмен с сайтом</a>
-      <a>Загрузка заказов с сайта</a>
-      <a>Выгрузка остатков и цен</a>
-      <div class="grp">Отчёты</div>
-      <a>Воронка продаж</a>
-      <a>Валовая прибыль</a>
-    </div>
-    <div class="work">
-      <div class="ftitle">
-        <span class="st">★</span>
-        <h1>Заказы клиентов</h1>
-        <span class="arr">◄ ►</span>
-      </div>
-      <div class="cmd">
-        <button class="prim"><span class="ic plus"></span>Создать</button>
-        <button>Создать на основании ▾</button>
-        <span class="sep"></span>
-        <button id="btn-sync"><span class="ic sync"></span>Обмен с сайтом</button>
-        <button>Провести</button>
-        <button>Печать ▾</button>
-        <button>Ещё ▾</button>
-        <div class="find">🔍 <span>Найти (Ctrl+F)</span></div>
-      </div>
-      <div class="grid">
-        <table>
-          <thead><tr>
-            <th style="width:150px">Номер ▾</th><th style="width:96px">Дата</th>
-            <th>Клиент</th><th class="r" style="width:120px">Сумма</th>
-            <th style="width:150px">Состояние</th><th style="width:96px">Источник</th>
-            <th style="width:120px">Менеджер</th>
-          </tr></thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </div>
-      <div class="status">
-        <span class="live"></span>
-        <span>Обмен с сайтом: последний сеанс <b>04.09.2026 12:07</b> — загружено <b>6 заказов</b>, выгружено <b>340</b> остатков и цен</span>
-        <span class="rr">следующий сеанс через 4 мин · регламентное задание активно</span>
-      </div>
-    </div>
+    <div class="nav" id="nav"></div>
+    <div class="work" id="work"></div>
   </div>
 </div>
 
@@ -250,23 +201,9 @@
   ];
   function fmt(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ');}
   function sumOf(items){return items.reduce(function(a,it){return a+(+it[1].replace(/\s/g,''))*(+it[3].replace(/\s/g,''));},0);}
+  function stt(c,t){return '<span class="stt '+c+'">'+t+'</span>';}
 
-  var rows=document.getElementById('rows');
-  rows.innerHTML=ORD.map(function(o,i){
-    var total=sumOf(o[7]);
-    var src=o[4]==='site'
-      ? '<span class="src site"><span class="w"></span>Сайт</span>'
-      : '<span class="src tel"><span class="w"></span>Телефон</span>';
-    return '<tr data-i="'+i+'"'+(i===0?' class="sel"':'')+'>'+
-      '<td><span class="doc"><span class="pg"></span>'+o[0]+'</span></td>'+
-      '<td>'+o[1]+' 12:0'+(i)+'</td>'+
-      '<td>'+o[2]+'</td>'+
-      '<td class="r num">'+fmt(total)+',00</td>'+
-      '<td><span class="stt '+o[3][0]+'">'+o[3][1]+'</span></td>'+
-      '<td>'+src+'</td>'+
-      '<td>'+o[5]+'</td></tr>';
-  }).join('');
-
+  // ── ДОКУМЕНТ ЗАКАЗА (модалка) ──
   function openDoc(i){
     var o=ORD[i], total=sumOf(o[7]);
     document.getElementById('d-title').textContent='Заказ клиента '+o[0]+' от '+o[1];
@@ -274,43 +211,155 @@
     document.getElementById('d-client').textContent=o[2];
     document.getElementById('d-items').innerHTML=o[7].map(function(it,n){
       var s=(+it[1].replace(/\s/g,''))*(+it[3].replace(/\s/g,''));
-      return '<tr><td>'+(n+1)+'</td><td>'+it[0]+'</td>'+
-        '<td class="r num">'+it[1]+' '+it[2]+'</td>'+
-        '<td class="r num">'+it[3]+',00</td>'+
-        '<td class="r num">'+fmt(s)+',00</td></tr>';
+      return '<tr><td>'+(n+1)+'</td><td>'+it[0]+'</td><td class="r num">'+it[1]+' '+it[2]+'</td><td class="r num">'+it[3]+',00</td><td class="r num">'+fmt(s)+',00</td></tr>';
     }).join('');
     document.getElementById('d-cnt').textContent=o[7].length;
     document.getElementById('d-total').textContent=fmt(total)+',00 ₽';
     document.getElementById('d-note').textContent = o[4]==='site'
       ? 'Заказ создан автоматически из заявки на сайте (сеанс обмена '+o[6]+'). Клиент и позиции сопоставлены с номенклатурой 1С.'
       : 'Заказ оформлен менеджером по телефонному обращению.';
-    document.getElementById('dlg').classList.add('on');
-    document.getElementById('ov').classList.add('on');
-    document.querySelectorAll('#rows tr').forEach(function(tr){tr.classList.remove('sel');});
-    document.querySelector('#rows tr[data-i="'+i+'"]').classList.add('sel');
+    document.getElementById('dlg').classList.add('on');document.getElementById('ov').classList.add('on');
+    var rr=document.querySelectorAll('#rows tr');rr.forEach(function(tr){tr.classList.remove('sel');});
+    var t=document.querySelector('#rows tr[data-i="'+i+'"]');if(t)t.classList.add('sel');
   }
   function closeDoc(){document.getElementById('dlg').classList.remove('on');document.getElementById('ov').classList.remove('on');}
-
-  rows.addEventListener('click',function(e){
-    var tr=e.target.closest('tr');if(!tr)return;openDoc(+tr.getAttribute('data-i'));
-  });
   document.getElementById('d-close').onclick=closeDoc;
   document.getElementById('ov').onclick=closeDoc;
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDoc();});
+  document.querySelectorAll('.dlg .tabs span').forEach(function(t){t.onclick=function(){document.querySelectorAll('.dlg .tabs span').forEach(function(x){x.classList.remove('on');});t.classList.add('on');};});
 
-  // «Обмен с сайтом» — имитация сеанса
-  document.getElementById('btn-sync').onclick=function(){
-    var s=document.querySelector('.status span:nth-child(2)');
-    var old=s.innerHTML;
-    s.innerHTML='Идёт обмен с сайтом… чтение заявок, сопоставление номенклатуры';
-    setTimeout(function(){s.innerHTML=old;},1400);
+  // ── ФОРМА: заказы клиентов (богатая) ──
+  function ordersHTML(){
+    return '<div class="ftitle"><span class="st">★</span><h1>Заказы клиентов</h1><span class="arr">◄ ►</span></div>'+
+      '<div class="cmd"><button class="prim"><span class="ic plus"></span>Создать</button><button>Создать на основании ▾</button><span class="sep"></span>'+
+      '<button id="btn-sync"><span class="ic sync"></span>Обмен с сайтом</button><button>Провести</button><button>Печать ▾</button><button>Ещё ▾</button>'+
+      '<div class="find">🔍 <span>Найти (Ctrl+F)</span></div></div>'+
+      '<div class="grid"><table><thead><tr><th style="width:150px">Номер ▾</th><th style="width:96px">Дата</th><th>Клиент</th>'+
+      '<th class="r" style="width:120px">Сумма</th><th style="width:150px">Состояние</th><th style="width:96px">Источник</th><th style="width:120px">Менеджер</th></tr></thead>'+
+      '<tbody id="rows"></tbody></table></div>'+
+      '<div class="status"><span class="live"></span><span>Обмен с сайтом: последний сеанс <b>04.09.2026 12:07</b>, загружено <b>6 заказов</b>, выгружено <b>340</b> остатков и цен</span>'+
+      '<span class="rr">следующий сеанс через 4 мин · регламентное задание активно</span></div>';
+  }
+  function wireOrders(){
+    document.getElementById('rows').innerHTML=ORD.map(function(o,i){
+      var src=o[4]==='site'?'<span class="src site"><span class="w"></span>Сайт</span>':'<span class="src tel"><span class="w"></span>Телефон</span>';
+      return '<tr data-i="'+i+'"'+(i===0?' class="sel"':'')+'><td><span class="doc"><span class="pg"></span>'+o[0]+'</span></td>'+
+        '<td>'+o[1]+' 12:0'+i+'</td><td>'+o[2]+'</td><td class="r num">'+fmt(sumOf(o[7]))+',00</td><td>'+stt(o[3][0],o[3][1])+'</td><td>'+src+'</td><td>'+o[5]+'</td></tr>';
+    }).join('');
+    document.getElementById('rows').addEventListener('click',function(e){var tr=e.target.closest('tr');if(tr)openDoc(+tr.getAttribute('data-i'));});
+    document.getElementById('btn-sync').onclick=function(){var s=document.querySelector('.status span:nth-child(2)');var old=s.innerHTML;s.innerHTML='Идёт обмен с сайтом… чтение заявок, сопоставление номенклатуры';setTimeout(function(){s.innerHTML=old;},1400);};
+  }
+
+  // ── ФОРМА: обмен с сайтом ──
+  var OBMENLOG=[['Сеанс #4207','04.09.2026 12:07','6','340','0',stt('ok','выполнен')],['Сеанс #4206','04.09.2026 12:02','2','340','0',stt('ok','выполнен')],['Сеанс #4205','04.09.2026 11:57','0','338','0',stt('ok','нет новых')],['Сеанс #4204','04.09.2026 11:52','3','338','1',stt('do','1 предупреждение')],['Сеанс #4203','04.09.2026 11:47','1','335','0',stt('ok','выполнен')]];
+  function obmenHTML(){
+    return '<div class="ftitle"><span class="st">★</span><h1>Обмен с сайтом</h1></div>'+
+      '<div class="cmd"><button class="prim" id="btn-sync2"><span class="ic sync"></span>Выполнить обмен сейчас</button><button>Настроить обмен</button><button>Ещё ▾</button></div>'+
+      '<div style="padding:12px 14px;overflow:auto">'+
+      '<div class="autonote" style="margin:0 0 12px"><span class="g"></span><span>Регламентное задание активно. Каждые 5 минут: заказы с сайта загружаются в 1С, остатки и цены выгружаются на сайт.</span></div>'+
+      '<div style="font-weight:600;margin-bottom:6px">Журнал сеансов обмена</div>'+
+      '<table class="pt"><thead><tr><th>Сеанс</th><th>Время</th><th class="r">Заказов</th><th class="r">Остатков</th><th class="r">Ошибок</th><th>Статус</th></tr></thead><tbody>'+
+      OBMENLOG.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td class="r num">'+r[2]+'</td><td class="r num">'+r[3]+'</td><td class="r num">'+r[4]+'</td><td>'+r[5]+'</td></tr>';}).join('')+
+      '</tbody></table></div>';
+  }
+  function wireObmen(){var b=document.getElementById('btn-sync2');if(b)b.onclick=function(){b.innerHTML='<span class="ic sync"></span>Идёт обмен…';setTimeout(function(){b.innerHTML='<span class="ic sync"></span>Выполнить обмен сейчас';},1400);};}
+
+  // ── ФОРМА: монитор ──
+  function tile(l,v,c){return '<div style="background:#fff;border:1px solid var(--line);border-radius:4px;padding:12px 14px"><div style="color:var(--dim);font-size:12px;margin-bottom:6px">'+l+'</div><div style="font-size:22px;font-weight:700;color:'+c+'">'+v+'</div></div>';}
+  function monitorHTML(){
+    return '<div class="ftitle"><span class="st">★</span><h1>Монитор руководителя</h1></div>'+
+      '<div style="padding:14px;overflow:auto"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">'+
+      tile('Заказов к выполнению','5','#e08a1e')+tile('К отгрузке','3','#2f80c8')+tile('Просрочено','1','#d64545')+tile('Обмен с сайтом','● активен','#2f9e44')+'</div>'+
+      '<div style="font-weight:600;margin:4px 0 8px">Последние заказы с сайта</div>'+
+      '<table class="pt"><thead><tr><th>Заказ</th><th>Клиент</th><th class="r">Сумма</th><th>Состояние</th></tr></thead><tbody>'+
+      ORD.slice(0,6).map(function(o){return '<tr><td>'+o[0]+'</td><td>'+o[2]+'</td><td class="r num">'+fmt(sumOf(o[7]))+',00</td><td>'+stt(o[3][0],o[3][1])+'</td></tr>';}).join('')+
+      '</tbody></table></div>';
+  }
+
+  // ── ОБЫЧНЫЙ ЖУРНАЛ ──
+  function journal(f){
+    var head=f.cols.map(function(c){return '<th'+(c.r?' class="r"':'')+(c.w?' style="width:'+c.w+'px"':'')+'>'+c.name+'</th>';}).join('');
+    var body=(f.rows||[]).map(function(r,i){return '<tr data-i="'+i+'"'+(i===0?' class="sel"':'')+'>'+r.map(function(cell,ci){return '<td'+((f.cols[ci]&&f.cols[ci].r)?' class="r num"':'')+'>'+cell+'</td>';}).join('')+'</tr>';}).join('');
+    return '<div class="ftitle"><span class="st">★</span><h1>'+f.title+'</h1><span class="arr">◄ ►</span></div>'+
+      '<div class="cmd"><button class="prim"><span class="ic plus"></span>Создать</button><button>Создать на основании ▾</button><span class="sep"></span><button>Провести</button><button>Печать ▾</button><button>Ещё ▾</button><div class="find">🔍 <span>Найти (Ctrl+F)</span></div></div>'+
+      '<div class="grid"><table><thead><tr>'+head+'</tr></thead><tbody id="jrows">'+body+'</tbody></table></div>'+
+      (f.foot?'<div class="status"><span>'+f.foot+'</span></div>':'');
+  }
+  function wireJournal(){var t=document.getElementById('jrows');if(t)t.addEventListener('click',function(e){var tr=e.target.closest('tr');if(!tr)return;t.querySelectorAll('tr').forEach(function(x){x.classList.remove('sel');});tr.classList.add('sel');});}
+
+  // ── РЕЕСТР ФОРМ ──
+  var FORMS={
+    monitor:{kind:'monitor'}, orders:{kind:'orders'}, obmen:{kind:'obmen'},
+    tasks:{title:'Мои задачи',cols:[{name:'Задача'},{name:'Срок',w:110},{name:'Ответственный',w:130},{name:'Статус',w:130}],rows:[['Согласовать КП «ТеплоДом»','сегодня','Ильина А. К.',stt('do','В работе')],['Отгрузить заказ ЗК-00415','сегодня','Кладовщиков Р.',stt('ag','Готово')],['Оплатить счёт СФ-00204','завтра','Смирнов И. В.',stt('do','Ожидает')]]},
+    fav:{title:'Избранное',cols:[{name:'Форма'},{name:'Раздел',w:200}],rows:[['Заказы клиентов','Продажи'],['Остатки на складах','Склад и доставка'],['Обмен с сайтом','Продажи']]},
+    realiz:{title:'Реализация товаров и услуг',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Клиент'},{name:'Сумма',r:1,w:120},{name:'Склад',w:170},{name:'Состояние',w:120}],rows:[['РН-00381','04.09.2026','ООО «СтройБаза»','92 000,00','Основной',stt('ok','Проведён')],['РН-00380','04.09.2026','«Дом-Строй»','139 420,00','Основной',stt('ok','Проведён')],['РН-00379','03.09.2026','ООО «РемонтПро»','17 200,00','Основной',stt('ok','Проведён')],['РН-00378','03.09.2026','«Гранд Отель»','210 000,00','Основной',stt('do','Не проведён')]]},
+    schet:{title:'Счета на оплату',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Плательщик'},{name:'Сумма',r:1,w:120},{name:'Оплата',w:150}],rows:[['СЧ-00212','04.09.2026','ООО «СтройБаза»','92 000,00',stt('ok','Оплачен')],['СЧ-00211','04.09.2026','ИП Ковалёв А. С.','54 240,00',stt('do','Ожидает оплаты')],['СЧ-00210','03.09.2026','«СервисМонтаж»','131 600,00',stt('do','Ожидает оплаты')],['СЧ-00209','03.09.2026','ООО «Логист-Юг»','64 500,00',stt('ok','Оплачен')]]},
+    kp:{title:'Коммерческие предложения',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Клиент'},{name:'Сумма',r:1,w:120},{name:'Статус',w:130}],rows:[['КП-00147','04.09.2026','«ТеплоДом»','93 600,00',stt('ag','Отправлено')],['КП-00146','03.09.2026','ИП Гаврилов','46 800,00',stt('do','Черновик')],['КП-00145','02.09.2026','«Гранд Отель»','210 000,00',stt('ok','Принято')]]},
+    vozvrat:{title:'Возвраты от клиентов',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Клиент'},{name:'Сумма',r:1,w:120},{name:'Причина'}],rows:[['ВЗ-00031','03.09.2026','ООО «РемонтПро»','3 200,00','Брак упаковки'],['ВЗ-00030','01.09.2026','«Дом-Строй»','7 800,00','Пересорт']]},
+    load:{title:'Загрузка заказов с сайта',cols:[{name:'Сеанс',w:150},{name:'Дата',w:150},{name:'Загружено заказов',r:1},{name:'Новых клиентов',r:1},{name:'Статус',w:120}],rows:[['Сеанс #4207','04.09.2026 12:07','6','2',stt('ok','успешно')],['Сеанс #4206','04.09.2026 12:02','2','0',stt('ok','успешно')],['Сеанс #4205','04.09.2026 11:57','0','0',stt('ok','нет новых')]]},
+    unload:{title:'Выгрузка остатков и цен',cols:[{name:'Сеанс',w:150},{name:'Дата',w:150},{name:'Выгружено остатков',r:1},{name:'Обновлено цен',r:1},{name:'Статус',w:120}],rows:[['Сеанс #4207','04.09.2026 12:07','340','58',stt('ok','успешно')],['Сеанс #4206','04.09.2026 12:02','340','12',stt('ok','успешно')]]},
+    voronka:{title:'Воронка продаж',foot:'Отчёт «Воронка продаж» · период: сентябрь 2026',cols:[{name:'Этап воронки'},{name:'Заказов',r:1,w:100},{name:'Сумма',r:1,w:130},{name:'Конверсия',r:1,w:110}],rows:[['Первичный контакт','12','624 000,00','100%'],['Переговоры','9','482 000,00','75%'],['Коммерческое предложение','6','311 000,00','50%'],['Счёт на оплату','4','198 000,00','33%'],['Отгружено','3','142 000,00','25%']]},
+    profit:{title:'Валовая прибыль',foot:'Отчёт «Валовая прибыль» · период: сентябрь 2026',cols:[{name:'Номенклатурная группа'},{name:'Выручка',r:1,w:120},{name:'Себестоимость',r:1,w:130},{name:'Прибыль',r:1,w:120},{name:'Рент.',r:1,w:80}],rows:[['Металлопрокат','412 000,00','318 000,00','94 000,00','23%'],['Крепёж','86 000,00','54 000,00','32 000,00','37%'],['Электрика','174 000,00','128 000,00','46 000,00','26%'],['Отделочные','298 000,00','214 000,00','84 000,00','28%']]},
+    'crm-clients':{title:'Контрагенты',cols:[{name:'Наименование'},{name:'ИНН',w:130},{name:'Город',w:130},{name:'Менеджер',w:120},{name:'Заказов',r:1,w:90}],rows:[['ООО «СтройБаза»','2320551234','Сочи','Ильина А. К.','14'],['ИП Ковалёв А. С.','232001887701','Адлер','Ильина А. К.','3'],['«Дом-Строй»','2320667812','Сочи','Петров П. С.','9'],['«Гранд Отель»','2317009945','Сочи','Петров П. С.','5'],['ООО «Логист-Юг»','6165102030','Ростов-на-Дону','Петров П. С.','7']]},
+    'crm-inter':{title:'Взаимодействия',cols:[{name:'Дата',w:150},{name:'Контрагент'},{name:'Тип',w:110},{name:'Тема'},{name:'Ответственный',w:130}],rows:[['04.09.2026 11:20','ООО «СтройБаза»','Звонок','Согласование КП','Ильина А. К.'],['04.09.2026 10:05','«Дом-Строй»','Письмо','Отгрузка гипсокартона','Петров П. С.'],['03.09.2026 16:40','«Гранд Отель»','Встреча','Обсуждение объёмов','Петров П. С.']]},
+    'crm-deals':{title:'Сделки',cols:[{name:'Сделка',w:150},{name:'Клиент'},{name:'Сумма',r:1,w:120},{name:'Этап',w:170}],rows:[['Сделка-0091','ООО «СтройБаза»','92 000,00',stt('do','Согласование КП')],['Сделка-0090','«ТеплоДом»','93 600,00',stt('ag','Переговоры')],['Сделка-0089','«Гранд Отель»','210 000,00',stt('ok','Счёт на оплату')]]},
+    'crm-events':{title:'Маркетинговые мероприятия',cols:[{name:'Мероприятие'},{name:'Период',w:150},{name:'Бюджет',r:1,w:120},{name:'Отклик',r:1,w:90}],rows:[['Рассылка «Сезон крыш»','01–07.09.2026','12 000,00','38'],['Акция «Опт −10%»','сентябрь','0,00','24']]},
+    porders:{title:'Заказы поставщикам',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Поставщик'},{name:'Сумма',r:1,w:120},{name:'Статус',w:130}],rows:[['ЗП-00512','04.09.2026','ООО «МеталлТорг»','214 000,00',stt('do','Ожидается')],['ЗП-00511','03.09.2026','«КрепёжСити»','48 000,00',stt('ok','Поступил')],['ЗП-00510','02.09.2026','ООО «Электрокомплект»','96 000,00',stt('ag','Подтверждён')]]},
+    postup:{title:'Поступления товаров и услуг',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Поставщик'},{name:'Сумма',r:1,w:120},{name:'Склад',w:170}],rows:[['ПТ-00388','03.09.2026','«КрепёжСити»','48 000,00','Основной'],['ПТ-00387','01.09.2026','ООО «МеталлТорг»','176 000,00','Основной']]},
+    pschet:{title:'Счета от поставщиков',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Поставщик'},{name:'Сумма',r:1,w:120},{name:'Оплата',w:130}],rows:[['СФ-00204','04.09.2026','ООО «МеталлТорг»','214 000,00',stt('do','К оплате')],['СФ-00203','03.09.2026','«КрепёжСити»','48 000,00',stt('ok','Оплачен')]]},
+    pvozvrat:{title:'Возвраты поставщикам',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Поставщик'},{name:'Сумма',r:1,w:120},{name:'Причина'}],rows:[['ВП-00017','02.09.2026','ООО «Электрокомплект»','5 400,00','Брак']]},
+    ostatki:{title:'Остатки на складах',cols:[{name:'Номенклатура'},{name:'Ед',w:70},{name:'Склад',w:120},{name:'Остаток',r:1,w:100},{name:'Резерв',r:1,w:90},{name:'Доступно',r:1,w:100}],rows:[['Профлист С8 оцинк., 1150×2000','м²','Основной','1 840','420','1 420'],['Гипсокартон Knauf 12.5мм','лист','Основной','60','60','0'],['Саморез кровельный 4.8×35','уп','Основной','22','12','10'],['Кабель ВВГнг 3×2.5','м','Основной','5 400','2 000','3 400'],['Плитка керамогранит 600×600','м²','Основной','760','280','480'],['Радиатор биметалл 500, 8 секц.','шт','Основной','9','0','9']]},
+    oprih:{title:'Оприходование товаров',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Склад',w:150},{name:'Позиций',r:1,w:90},{name:'Сумма',r:1,w:120}],rows:[['ОП-00121','03.09.2026','Основной','8','176 000,00'],['ОП-00120','01.09.2026','Основной','3','48 000,00']]},
+    peremesh:{title:'Перемещение товаров',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Откуда',w:150},{name:'Куда',w:180},{name:'Позиций',r:1,w:90}],rows:[['ПМ-00044','03.09.2026','Основной','Витрина (Пластунская)','4']]},
+    invent:{title:'Инвентаризация',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Склад',w:150},{name:'Расхождений',r:1,w:120},{name:'Статус',w:120}],rows:[['ИНВ-00009','31.08.2026','Основной','2',stt('ok','Завершена')]]},
+    otgruzka:{title:'Задания на отгрузку',cols:[{name:'Задание',w:150},{name:'Дата',w:96},{name:'Клиент'},{name:'Позиций',r:1,w:90},{name:'Статус',w:150}],rows:[['ЗО-00233','04.09.2026','ООО «СтройБаза»','3',stt('do','Сборка')],['ЗО-00232','04.09.2026','«Дом-Строй»','2',stt('ag','Готово к отгрузке')]]},
+    postnasch:{title:'Поступления на расчётный счёт',cols:[{name:'Дата',w:96},{name:'Плательщик'},{name:'Сумма',r:1,w:120},{name:'Назначение'}],rows:[['04.09.2026','ООО «СтройБаза»','92 000,00','Оплата по счёту СЧ-00212'],['03.09.2026','ООО «Логист-Юг»','64 500,00','Оплата по счёту СЧ-00209']]},
+    spisania:{title:'Списания с расчётного счёта',cols:[{name:'Дата',w:96},{name:'Получатель'},{name:'Сумма',r:1,w:120},{name:'Назначение'}],rows:[['03.09.2026','«КрепёжСити»','48 000,00','Оплата поставщику СФ-00203'],['02.09.2026','ООО «Гелиос»','85 000,00','Аренда склада, сентябрь']]},
+    platezhki:{title:'Платёжные поручения',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Контрагент'},{name:'Сумма',r:1,w:120},{name:'Статус',w:120}],rows:[['ПП-00341','04.09.2026','ООО «МеталлТорг»','214 000,00',stt('do','В банк')],['ПП-00340','03.09.2026','«КрепёжСити»','48 000,00',stt('ok','Исполнено')]]},
+    kassa:{title:'Кассовые ордера',cols:[{name:'Номер',w:150},{name:'Дата',w:96},{name:'Тип',w:170},{name:'Сумма',r:1,w:120}],rows:[['КО-00078','04.09.2026','Приходный (розница)','12 400,00'],['КО-00077','03.09.2026','Расходный (хознужды)','3 200,00']]},
+    osv:{title:'Оборотно-сальдовая ведомость',foot:'период: сентябрь 2026',cols:[{name:'Счёт',w:80},{name:'Наименование'},{name:'Оборот Дт',r:1,w:120},{name:'Оборот Кт',r:1,w:120},{name:'Сальдо',r:1,w:120}],rows:[['41','Товары','812 000,00','694 000,00','118 000,00'],['51','Расчётный счёт','624 000,00','518 000,00','106 000,00'],['62','Расчёты с покупателями','918 000,00','842 000,00','76 000,00'],['60','Расчёты с поставщиками','262 000,00','214 000,00','48 000,00']]},
+    dr:{title:'Доходы и расходы',foot:'период: сентябрь 2026',cols:[{name:'Статья'},{name:'Доход',r:1,w:130},{name:'Расход',r:1,w:130},{name:'Результат',r:1,w:130}],rows:[['Продажи','1 158 000,00','0,00','1 158 000,00'],['Себестоимость','0,00','852 000,00','−852 000,00'],['Аренда и хоз.','0,00','118 000,00','−118 000,00'],['Итого','1 158 000,00','970 000,00','188 000,00']]},
+    nomenklatura:{title:'Номенклатура',cols:[{name:'Артикул',w:120},{name:'Наименование'},{name:'Ед',w:70},{name:'Цена',r:1,w:100},{name:'Остаток',r:1,w:100}],rows:[['ПРФ-С8','Профлист С8 оцинк., 1150×2000','м²','340,00','1 840'],['ГКЛ-125','Гипсокартон Knauf 12.5мм','лист','389,00','60'],['СМР-4835','Саморез кровельный 4.8×35','уп','950,00','22'],['КБЛ-325','Кабель ВВГнг 3×2.5','м','58,00','5 400'],['ПЛТ-600','Плитка керамогранит 600×600','м²','690,00','760']]},
+    org:{title:'Организации',cols:[{name:'Организация'},{name:'ИНН / КПП',w:180},{name:'Расчётный счёт',w:200},{name:'Ответственный',w:130}],rows:[['ООО «Прораб»','2320123456 / 232001001','40702810100000012345','Смирнов И. В.']]},
+    users:{title:'Пользователи',cols:[{name:'Пользователь'},{name:'Роль',w:200},{name:'Последний вход',w:170}],rows:[['Смирнов И. В.','Полные права','04.09.2026 12:08'],['Ильина А. К.','Менеджер по продажам','04.09.2026 11:55'],['Петров П. С.','Менеджер по продажам','04.09.2026 10:40'],['Кладовщиков Р.','Кладовщик','04.09.2026 09:12']]},
+    'obmen-set':{title:'Настройки обмена с сайтом',cols:[{name:'Параметр',w:220},{name:'Значение'}],rows:[['Адрес сайта','https://prorab-sochi.ru'],['Периодичность','каждые 5 минут'],['Выгружать на сайт','остатки, цены, номенклатура'],['Загружать в 1С','заказы покупателей, новые контрагенты'],['Тип цен для выгрузки','Оптовая цена']]}
   };
 
-  // разделы / вкладки — кликабельность
-  document.querySelectorAll('.sect a').forEach(function(a){a.onclick=function(){
-    document.querySelectorAll('.sect a').forEach(function(x){x.classList.remove('on');});a.classList.add('on');};});
-  document.querySelectorAll('.dlg .tabs span').forEach(function(t){t.onclick=function(){
-    document.querySelectorAll('.dlg .tabs span').forEach(function(x){x.classList.remove('on');});t.classList.add('on');};});
+  // ── РАЗДЕЛЫ ──
+  var SECT_ORDER=['Главное','CRM и маркетинг','Продажи','Закупки','Склад и доставка','Казначейство','Финансовый результат','НСИ и администрирование'];
+  var SECTIONS={
+    'Главное':{def:'monitor',groups:[{g:'Рабочий стол',items:[['monitor','Монитор руководителя'],['tasks','Мои задачи'],['fav','Избранное']]}]},
+    'CRM и маркетинг':{def:'crm-clients',groups:[{g:'CRM',items:[['crm-clients','Клиенты'],['crm-deals','Сделки'],['crm-inter','Взаимодействия']]},{g:'Маркетинг',items:[['crm-events','Мероприятия']]}]},
+    'Продажи':{def:'orders',groups:[{g:'Продажи',items:[['orders','Заказы клиентов'],['realiz','Реализация товаров и услуг'],['schet','Счета на оплату'],['kp','Коммерческие предложения'],['vozvrat','Возвраты от клиентов']]},{g:'Сервис',items:[['obmen','Обмен с сайтом'],['load','Загрузка заказов с сайта'],['unload','Выгрузка остатков и цен']]},{g:'Отчёты',items:[['voronka','Воронка продаж'],['profit','Валовая прибыль']]}]},
+    'Закупки':{def:'porders',groups:[{g:'Закупки',items:[['porders','Заказы поставщикам'],['postup','Поступления товаров'],['pschet','Счета от поставщиков'],['pvozvrat','Возвраты поставщикам']]}]},
+    'Склад и доставка':{def:'ostatki',groups:[{g:'Склад',items:[['ostatki','Остатки на складах'],['oprih','Оприходование'],['peremesh','Перемещение'],['invent','Инвентаризация']]},{g:'Доставка',items:[['otgruzka','Задания на отгрузку']]}]},
+    'Казначейство':{def:'postnasch',groups:[{g:'Банк',items:[['postnasch','Поступления на счёт'],['spisania','Списания с счёта'],['platezhki','Платёжные поручения']]},{g:'Касса',items:[['kassa','Кассовые ордера']]}]},
+    'Финансовый результат':{def:'profit',groups:[{g:'Отчёты',items:[['profit','Валовая прибыль'],['osv','Оборотно-сальдовая'],['dr','Доходы и расходы']]}]},
+    'НСИ и администрирование':{def:'nomenklatura',groups:[{g:'Справочники',items:[['nomenklatura','Номенклатура'],['crm-clients','Контрагенты'],['org','Организации']]},{g:'Администрирование',items:[['users','Пользователи'],['obmen-set','Настройки обмена']]}]}
+  };
+
+  function openForm(id){
+    document.querySelectorAll('#nav a[data-f]').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-f')===id);});
+    var f=FORMS[id]||{title:id,cols:[{name:'Наименование'}],rows:[]}, w=document.getElementById('work');
+    if(f.kind==='orders'){w.innerHTML=ordersHTML();wireOrders();}
+    else if(f.kind==='obmen'){w.innerHTML=obmenHTML();wireObmen();}
+    else if(f.kind==='monitor'){w.innerHTML=monitorHTML();}
+    else{w.innerHTML=journal(f);wireJournal();}
+  }
+  function renderNav(sec){
+    document.getElementById('nav').innerHTML=SECTIONS[sec].groups.map(function(gr){
+      return '<div class="grp">'+gr.g+'</div>'+gr.items.map(function(it){return '<a data-f="'+it[0]+'">'+it[1]+'</a>';}).join('');
+    }).join('');
+  }
+  function openSection(sec){
+    document.querySelectorAll('#sect a').forEach(function(a){a.classList.toggle('on',a.getAttribute('data-sec')===sec);});
+    var cs=document.querySelector('.sys .r span');if(cs)cs.textContent=sec;
+    renderNav(sec);openForm(SECTIONS[sec].def);
+  }
+  document.getElementById('sect').innerHTML=SECT_ORDER.map(function(s){return '<a data-sec="'+s+'">'+s+'</a>';}).join('');
+  document.getElementById('sect').addEventListener('click',function(e){var a=e.target.closest('[data-sec]');if(a)openSection(a.getAttribute('data-sec'));});
+  document.getElementById('nav').addEventListener('click',function(e){var a=e.target.closest('[data-f]');if(a)openForm(a.getAttribute('data-f'));});
+  openSection('Продажи');
 </script>
 </body>
 </html>
