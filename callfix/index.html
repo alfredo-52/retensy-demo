@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CallFix — ИИ-аналитика звонков</title>
+<title>CallFix — рабочий стол звонков</title>
 <style>
   :root{
-    --bg:#f3f4f9; --panel:#fff; --line:#e7e9f2; --line2:#f0f1f7; --txt:#1a2130; --dim:#7b839a;
-    --rail:#151530; --acc:#6d5efc; --acc2:#8b7bff; --green:#16a34a; --amber:#e08a1e; --red:#e5484d; --blue:#2f6ff0;
+    --bg:#eceaf6; --panel:#fff; --line:#e6e4f2; --line2:#f1f0f8; --txt:#1a1730; --dim:#7b7896;
+    --rail:#17132e; --acc:#6d5efc; --acc2:#8b7bff; --green:#16a34a; --amber:#e08a1e; --red:#e5484d; --blue:#2f6ff0;
   }
   *{box-sizing:border-box}
   [hidden]{display:none!important}
@@ -15,62 +15,111 @@
   .num{font-variant-numeric:tabular-nums}
   a{color:inherit;text-decoration:none}
   .app{display:grid;grid-template-columns:220px 1fr;height:100vh}
-  @media(max-width:820px){.app{grid-template-columns:58px 1fr}.side .lbl,.side .brand span{display:none}}
+  @media(max-width:820px){.app{grid-template-columns:56px 1fr}.side .lbl,.side .brand span{display:none}}
 
-  .side{background:var(--rail);color:#b3b6d6;display:flex;flex-direction:column;padding:16px 12px}
+  .side{background:var(--rail);color:#b3b0d6;display:flex;flex-direction:column;padding:16px 12px}
   .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:18px;color:#fff;padding:6px 8px 20px}
   .brand i{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#6d5efc,#22d3ee);flex:none;display:flex;align-items:center;justify-content:center}
   .brand i svg{width:16px;height:16px;stroke:#fff;stroke-width:2;fill:none}
-  .nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;color:#b3b6d6;font-size:14px;cursor:pointer;margin-bottom:2px}
+  .nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;color:#b3b0d6;font-size:14px;cursor:pointer;margin-bottom:2px}
   .nav a .ic{width:18px;text-align:center;font-size:16px}
   .nav a:hover{background:rgba(255,255,255,.06);color:#fff}
-  .nav a.on{background:linear-gradient(90deg,rgba(109,94,252,.28),rgba(109,94,252,.05));color:#fff;box-shadow:inset 2px 0 0 var(--acc)}
-  .side .foot{margin-top:auto;font-size:12px;color:#8a8db0;padding:12px 8px;border-top:1px solid rgba(255,255,255,.08)}
+  .nav a.on{background:linear-gradient(90deg,rgba(109,94,252,.3),rgba(109,94,252,.05));color:#fff;box-shadow:inset 2px 0 0 var(--acc)}
+  .side .foot{margin-top:auto;font-size:12px;color:#8a87b0;padding:12px 8px;border-top:1px solid rgba(255,255,255,.08)}
   .side .foot b{color:#a78bfa}
 
   main{display:flex;flex-direction:column;overflow:hidden}
-  .top{display:flex;align-items:center;gap:14px;padding:14px 24px;background:#fff;border-bottom:1px solid var(--line)}
+  .top{display:flex;align-items:center;gap:14px;padding:13px 22px;background:#fff;border-bottom:1px solid var(--line)}
   .top h1{font-size:19px;margin:0;font-weight:700}
   .live{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--acc);background:rgba(109,94,252,.1);padding:5px 11px;border-radius:20px;font-weight:600}
   .live .d{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:bl 1.6s infinite}
   @keyframes bl{50%{opacity:.35}}
-  .top .search{margin-left:auto;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;background:#f6f7fb;min-width:210px;outline:none}
+  .top .search{margin-left:auto;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;background:#f6f5fb;min-width:210px;outline:none}
   .top .search:focus{border-color:var(--acc)}
 
-  .body{flex:1;overflow:auto;padding:20px 24px}
-  .sec{display:none} .sec.on{display:block}
+  .body{flex:1;overflow:hidden}
+  .sec{display:none;height:100%;overflow:auto;padding:20px 24px}
+  .sec.on{display:block}
+  #s-calls{padding:14px 18px}
+  #s-calls.on{display:flex;flex-direction:column;overflow:hidden}
 
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-  @media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
-  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
-  .kpi .l{color:var(--dim);font-size:12.5px;margin-bottom:7px}
-  .kpi .v{font-size:26px;font-weight:800}
-  .kpi .c{font-size:12px;margin-top:6px;font-weight:600}
-  .kpi .c.g{color:var(--green)} .kpi .c.r{color:var(--red)} .kpi .c.d{color:var(--dim)}
+  /* компактная сводка */
+  .strip{display:flex;gap:22px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 18px;margin-bottom:12px;flex:none}
+  .strip .s{font-size:13px;color:var(--dim)}
+  .strip .s b{font-size:17px;color:var(--txt);margin-right:5px;font-weight:800}
+  .strip .s.r b{color:var(--red)}
 
-  .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-  .tabs span{font-size:13px;color:var(--dim);padding:7px 13px;border-radius:8px;cursor:pointer;background:#fff;border:1px solid var(--line)}
-  .tabs span .n{color:#aeb2c6;margin-left:5px}
-  .tabs span.on{background:#efecff;color:#5b4bd8;border-color:#d6cfff;font-weight:600}
-  .tabs span.on .n{color:var(--acc)}
-
-  .card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  table{width:100%;border-collapse:collapse;font-size:13.5px}
-  thead th{text-align:left;color:var(--dim);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.03em;padding:11px 18px;border-bottom:1px solid var(--line);white-space:nowrap;background:#fafbfd}
-  thead th.r,tbody td.r{text-align:right}
-  tbody td{padding:12px 18px;border-bottom:1px solid var(--line2);white-space:nowrap}
-  tbody tr:last-child td{border-bottom:none}
-  tbody tr.clk{cursor:pointer} tbody tr.clk:hover{background:#f7f6ff}
-  .muted{color:var(--dim)}
-  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 11px;border-radius:20px}
-  .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+  /* двухпанельный стол */
+  .callwrap{flex:1;display:grid;grid-template-columns:372px 1fr;gap:14px;min-height:0}
+  @media(max-width:1000px){.callwrap{grid-template-columns:1fr}.calldetail{display:none}}
+  .calllist{background:#fff;border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+  .filters{display:flex;gap:6px;padding:12px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap;flex:none}
+  .filters span{font-size:12px;color:var(--dim);padding:6px 11px;border-radius:20px;cursor:pointer;border:1px solid var(--line)}
+  .filters span.on{background:#efecff;color:#5b4bd8;border-color:#d6cfff;font-weight:600}
+  .clist{overflow:auto;flex:1}
+  .ccard{display:flex;gap:12px;padding:14px 15px;border-bottom:1px solid var(--line2);cursor:pointer;transition:.12s}
+  .ccard:hover{background:#faf9ff}
+  .ccard.on{background:#f3f0ff;box-shadow:inset 3px 0 0 var(--acc)}
+  .cav{width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
+  .cinfo{flex:1;min-width:0}
+  .crow1{display:flex;align-items:center;gap:8px}
+  .crow1 b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .crow1 .ctime{margin-left:auto;color:var(--dim);font-size:12px;flex:none}
+  .cwave{display:flex;align-items:center;gap:1.5px;height:20px;margin:7px 0}
+  .cwave i{flex:1;background:#d7d5ea;border-radius:2px;min-width:1px}
+  .crow2{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim)}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:20px}
+  .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
   .p-target{background:#e9f7ee;color:var(--green)} .p-obj{background:#fdf1e3;color:var(--amber)}
   .p-miss{background:#fdecec;color:var(--red)} .p-cb{background:#eef0ff;color:var(--blue)}
-  .score{display:inline-flex;align-items:center;gap:8px}
-  .score .bar{width:52px;height:6px;border-radius:4px;background:#eceef4;overflow:hidden}
-  .score .bar i{display:block;height:100%;border-radius:4px}
-  .score b{font-weight:700;width:26px}
+  .csc{margin-left:auto;font-weight:800;font-size:13px;flex:none}
 
+  /* правая панель разбора */
+  .calldetail{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:auto;padding:22px 24px}
+  .dh{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .dh h2{margin:0;font-size:20px}
+  .dmeta{color:var(--dim);font-size:13px;margin-bottom:18px}
+  .player{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#f2effe,#f7f6fc);border:1px solid #e2ddfb;border-radius:12px;padding:11px 14px;margin-bottom:16px}
+  .player .play{width:40px;height:40px;border-radius:50%;border:none;background:var(--acc);color:#fff;font-size:13px;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px -3px rgba(109,94,252,.5)}
+  .player .play:hover{background:#5b4bd8}
+  .wave{flex:1;display:flex;align-items:center;gap:2px;height:38px;cursor:pointer}
+  .wave i{flex:1;background:#cecbe6;border-radius:2px;min-width:2px}
+  .wave i.p{background:var(--acc)}
+  .player .wt{font-size:12px;color:var(--dim);flex:none;font-variant-numeric:tabular-nums;width:78px;text-align:right}
+  .mc3{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .mc{background:#f7f6fc;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .mc .l{color:var(--dim);font-size:11.5px;margin-bottom:6px}
+  .mc .v{font-size:14px;font-weight:600}
+  .gaugecard{display:flex;align-items:center;gap:14px}
+  .gauge{position:relative;width:60px;height:60px;flex:none}
+  .gauge .gn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800}
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:2px}
+  .metric{background:#f7f6fc;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .metric .l{color:var(--dim);font-size:11.5px;margin-bottom:9px}
+  .talk{display:flex;height:22px;border-radius:6px;overflow:hidden;font-size:11px;font-weight:600;color:#fff}
+  .talk .m{background:var(--acc);display:flex;align-items:center;padding:0 8px;white-space:nowrap}
+  .talk .c{background:#c4c1dc;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;white-space:nowrap}
+  .sentl{display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px}
+  .sentl i{flex:1;border-radius:2px}
+  .sect{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:700;margin:20px 0 10px}
+  .kws{display:flex;flex-wrap:wrap;gap:7px}
+  .kw{background:#efecff;color:#5b4bd8;font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:20px}
+  .action{background:#efecff;border:1px solid #d6cfff;border-radius:10px;padding:12px 14px;font-size:13.5px;display:flex;gap:10px}
+  .action .ii{font-size:18px}
+  .sum{background:#f7f6fc;border:1px solid var(--line);border-radius:10px;padding:14px 16px;line-height:1.55;font-size:13.5px}
+  .msg{display:flex;gap:10px;margin-bottom:12px;max-width:88%}
+  .msg.op{margin-left:auto;flex-direction:row-reverse}
+  .av{width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+  .av.cl{background:#eceaf4;color:#5b6474} .av.op{background:#efecff;color:var(--acc)}
+  .bub{background:#f5f4fa;border-radius:12px;padding:9px 12px;font-size:13.5px}
+  .msg.op .bub{background:#efecff}
+  mark{background:#fff2c9;color:#8a6d0b;padding:0 3px;border-radius:3px}
+  .pact{display:flex;gap:10px;margin-top:18px}
+  .pact button{flex:1;border:none;border-radius:9px;padding:12px;font-weight:600;cursor:pointer;font-size:13.5px}
+  .pact .go{background:var(--acc);color:#fff} .pact .go:hover{background:#5b4bd8}
+  .pact .sec2{background:#eef0f5;color:var(--txt)}
+
+  /* аналитика/менеджеры/настройки */
   .grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
   @media(max-width:900px){.grid2{grid-template-columns:1fr}}
   .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
@@ -80,79 +129,26 @@
   .bars .b i{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#8b7bff,#6d5efc);transition:height .8s cubic-bezier(.2,.7,.2,1)}
   .bars .b small{color:var(--dim);font-size:11px}
   .abar{display:flex;align-items:center;gap:12px;margin-bottom:13px;font-size:13px}
-  .abar .lab{width:170px;flex:none} .abar .track{flex:1;height:20px;background:#eceef4;border-radius:5px;overflow:hidden}
+  .abar .lab{width:170px;flex:none} .abar .track{flex:1;height:20px;background:#ece9f6;border-radius:5px;overflow:hidden}
   .abar .fill{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#8b7bff,#6d5efc)}
   .abar .val{width:56px;text-align:right;flex:none;font-weight:600}
-
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  thead th{text-align:left;color:var(--dim);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.03em;padding:11px 18px;border-bottom:1px solid var(--line);background:#fafafd}
+  thead th.r,tbody td.r{text-align:right}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  tbody td{padding:12px 18px;border-bottom:1px solid var(--line2)} tbody tr:last-child td{border:none}
+  .scoremini{display:inline-block;width:52px;height:6px;border-radius:4px;background:#ece9f6;overflow:hidden;vertical-align:middle}
+  .scoremini i{display:block;height:100%;border-radius:4px}
   .set{max-width:640px}
   .sgroup{background:#fff;border:1px solid var(--line);border-radius:12px;padding:2px 18px;margin-bottom:14px}
   .sgroup h4{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 4px}
   .srow{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line)}
-  .srow:last-child{border:none}
-  .srow .si{font-size:19px;width:24px;text-align:center}
+  .srow:last-child{border:none} .srow .si{font-size:19px;width:24px;text-align:center}
   .srow .sd{flex:1} .srow .sd b{display:block} .srow .sd span{color:var(--dim);font-size:12.5px}
-  .sw{width:42px;height:24px;border-radius:20px;background:#cfd2e0;position:relative;cursor:pointer;flex:none;transition:.15s}
+  .sw{width:42px;height:24px;border-radius:20px;background:#cfccdf;position:relative;cursor:pointer;flex:none;transition:.15s}
   .sw.on{background:var(--acc)}
   .sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.15s}
   .sw.on::after{left:20px}
-
-  /* панель разбора звонка */
-  .ov{position:fixed;inset:0;background:rgba(20,20,40,.34);opacity:0;pointer-events:none;transition:.2s;z-index:40}
-  .ov.on{opacity:1;pointer-events:auto}
-  .panel{position:fixed;top:0;right:0;height:100%;width:520px;max-width:96vw;background:#fff;z-index:50;transform:translateX(100%);
-    transition:transform .24s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;box-shadow:-16px 0 44px -20px rgba(20,20,40,.4)}
-  .panel.on{transform:none}
-  .ph{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px}
-  .ph h2{margin:0;font-size:18px} .ph .sub{color:var(--dim);font-size:13px;margin-top:3px}
-  .ph .x{margin-left:auto;border:none;background:none;font-size:22px;color:var(--dim);cursor:pointer;line-height:1}
-  .pbody{flex:1;overflow:auto;padding:18px 22px}
-  .mc3{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-  .mc{background:#f7f7fc;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-  .mc .l{color:var(--dim);font-size:11.5px;margin-bottom:5px}
-  .mc .v{font-size:14px;font-weight:600}
-  .scorebig{grid-column:span 2;display:flex;align-items:center;gap:14px;background:linear-gradient(120deg,#efecff,#f7f7fc);border-color:#e0dbff}
-  .scorebig .n{font-size:30px;font-weight:800;color:var(--acc)}
-  .scorebig .bar{flex:1;height:8px;border-radius:5px;background:#e0e2ee;overflow:hidden}
-  .scorebig .bar i{display:block;height:100%;background:linear-gradient(90deg,#8b7bff,#6d5efc)}
-  .sect{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:700;margin:20px 0 10px}
-  .sum{background:#f7f7fc;border:1px solid var(--line);border-radius:10px;padding:14px 16px;line-height:1.55;font-size:13.5px}
-  .action{background:#efecff;border:1px solid #d6cfff;border-radius:10px;padding:12px 14px;font-size:13.5px;display:flex;gap:10px}
-  .action .ii{font-size:18px}
-  .msg{display:flex;gap:10px;margin-bottom:12px;max-width:86%}
-  .msg.op{margin-left:auto;flex-direction:row-reverse}
-  .av{width:30px;height:30px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
-  .av.cl{background:#eceef4;color:#5b6474} .av.op{background:#efecff;color:var(--acc)}
-  .bub{background:#f5f6fa;border-radius:12px;padding:9px 12px;font-size:13.5px}
-  .msg.op .bub{background:#efecff}
-  mark{background:#fff2c9;color:#8a6d0b;padding:0 3px;border-radius:3px}
-  /* плеер записи звонка */
-  .player{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#f3f0ff,#f7f7fc);border:1px solid #e2ddfb;border-radius:12px;padding:11px 14px;margin-bottom:16px}
-  .player .play{width:38px;height:38px;border-radius:50%;border:none;background:var(--acc);color:#fff;font-size:13px;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px -3px rgba(109,94,252,.5)}
-  .player .play:hover{background:#5b4bd8}
-  .wave{flex:1;display:flex;align-items:center;gap:2px;height:36px;cursor:pointer}
-  .wave i{flex:1;background:#cfd0e6;border-radius:2px;min-width:2px}
-  .wave i.p{background:var(--acc)}
-  .player .wt{font-size:12px;color:var(--dim);flex:none;font-variant-numeric:tabular-nums;width:76px;text-align:right}
-  /* круговая оценка */
-  .gaugecard{display:flex;align-items:center;gap:14px}
-  .gauge{position:relative;width:64px;height:64px;flex:none}
-  .gauge .gn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800}
-  /* кто говорил + настроение */
-  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:2px}
-  @media(max-width:560px){.metrics{grid-template-columns:1fr}}
-  .metric{background:#f7f7fc;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-  .metric .l{color:var(--dim);font-size:11.5px;margin-bottom:9px}
-  .talk{display:flex;height:22px;border-radius:6px;overflow:hidden;font-size:11px;font-weight:600;color:#fff}
-  .talk .m{background:var(--acc);display:flex;align-items:center;padding:0 8px;white-space:nowrap}
-  .talk .c{background:#c4c8dc;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;white-space:nowrap}
-  .sentl{display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px}
-  .sentl i{flex:1;border-radius:2px}
-  .kws{display:flex;flex-wrap:wrap;gap:7px}
-  .kw{background:#efecff;color:#5b4bd8;font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:20px}
-  .pact{display:flex;gap:10px;margin-top:18px}
-  .pact button{flex:1;border:none;border-radius:9px;padding:12px;font-weight:600;cursor:pointer;font-size:13.5px}
-  .pact .go{background:var(--acc);color:#fff} .pact .go:hover{background:#5b4bd8}
-  .pact .sec2{background:#eef0f5;color:var(--txt)}
 </style>
 </head>
 <body>
@@ -176,13 +172,13 @@
     </div>
     <div class="body">
       <section class="sec on" id="s-calls">
-        <div class="kpis" id="kpis"></div>
-        <div class="tabs" id="ctabs"></div>
-        <div class="card">
-          <table>
-            <thead><tr><th>Время</th><th>Клиент</th><th>Менеджер</th><th class="r">Длит.</th><th>Тип</th><th>Оценка ИИ</th><th>Тема</th></tr></thead>
-            <tbody id="crows"></tbody>
-          </table>
+        <div class="strip" id="strip"></div>
+        <div class="callwrap">
+          <div class="calllist">
+            <div class="filters" id="filters"></div>
+            <div class="clist" id="clist"></div>
+          </div>
+          <div class="calldetail" id="calldetail"></div>
         </div>
       </section>
 
@@ -195,10 +191,7 @@
       </section>
 
       <section class="sec" id="s-mgrs">
-        <div class="card">
-          <table><thead><tr><th>Менеджер</th><th class="r">Звонков</th><th class="r">Целевых</th><th class="r">Средняя оценка</th><th>Качество</th></tr></thead>
-          <tbody id="mrows"></tbody></table>
-        </div>
+        <div class="card"><table><thead><tr><th>Менеджер</th><th class="r">Звонков</th><th class="r">Целевых</th><th class="r">Оценка</th><th>Качество</th></tr></thead><tbody id="mrows"></tbody></table></div>
       </section>
 
       <section class="sec" id="s-settings"><div class="set" id="settings"></div></section>
@@ -206,17 +199,14 @@
   </main>
 </div>
 
-<div class="ov" id="ov"></div>
-<aside class="panel" id="panel">
-  <div class="ph"><div><h2 id="d-who">—</h2><div class="sub" id="d-meta">—</div></div><button class="x" id="d-close">×</button></div>
-  <div class="pbody" id="d-body"></div>
-</aside>
-
 <script>
   var TYPE={target:['Целевой','p-target'],objection:['Возражение','p-obj'],missed:['Пропущенный','p-miss'],callback:['Перезвонить','p-cb']};
   var TONE={pos:'#16a34a',neu:'#7b839a',neg:'#e5484d'};
+  var AVC=['#6d5efc','#0ea5a4','#e08a1e','#2f6ff0','#e5484d','#16a34a','#8b5cf6'];
   function scoreColor(s){return s>=8?'#16a34a':(s>=5?'#e08a1e':'#e5484d');}
-  // разбор звонков
+  function durSec(s){var p=String(s).split(':');return (+p[0])*60+(+p[1]||0);}
+  function fmt(sec){sec=Math.round(sec);var m=Math.floor(sec/60),s=sec%60;return m+':'+(s<10?'0':'')+s;}
+
   var CALLS=[
     {t:'09:12',who:'Смирнов А.',num:'+7 918 555‑34‑12',mgr:'Ирина',dur:'6:41',type:'target',score:9,theme:'Стоимость, сроки',tone:'pos',toneT:'заинтересован',action:'Отправить КП до 18:00, перезвонить завтра',
      dialog:[['cl','Здравствуйте, сколько будет стоить монтаж под ключ и за какой срок сделаете?'],['op','Добрый день! Зависит от объёма. По вашей площади ориентир 180-220 тысяч, срок 2-3 недели.'],['cl','А можно быстрее? У нас <mark>горит до конца месяца</mark>.'],['op','Если зайдём на этой неделе, успеем. Пришлю точную смету сегодня.'],['cl','Давайте, жду. Если по цене сойдёмся, берём.']]},
@@ -228,12 +218,11 @@
      dialog:[['cl','Всё устраивает, давайте оформлять. Как оплата?'],['op','Отлично! 50% предоплата по счёту, остаток по факту. Счёт пришлю в течение часа.'],['cl','Хорошо, жду счёт. Когда сможете начать?'],['op','На следующей неделе, как оплата пройдёт, ставим в график.']]},
     {t:'12:05',who:'Дом-Строй',num:'+7 862 555‑03‑88',mgr:'Павел',dur:'4:27',type:'objection',score:5,theme:'Сомнение в сроках',tone:'neg',toneT:'недоволен',action:'Показать кейсы, зафиксировать срок и штраф в договоре',
      dialog:[['cl','В прошлый раз подрядчик сорвал сроки. Где гарантии?'],['op','Прописываем срок в договоре, за просрочку штраф в вашу пользу.'],['cl','Ну хорошо, <mark>пришлите договор</mark>, посмотрю.']]},
-    {t:'13:14',who:'ИП Морозов',num:'+7 900 555‑60‑21',mgr:'—',dur:'0:14',type:'missed',score:1,theme:'Пропущенный входящий с рекламы',tone:'neu',toneT:'нет разговора',action:'СРОЧНО перезвонить, дорогой лид с рекламы',
+    {t:'13:14',who:'ИП Морозов',num:'+7 900 555‑60‑21',mgr:'—',dur:'0:14',type:'missed',score:1,theme:'Пропущенный с рекламы',tone:'neu',toneT:'нет разговора',action:'СРОЧНО перезвонить, дорогой лид с рекламы',
      dialog:[['op','(звонок не принят, 4 гудка)'],['cl','(абонент положил трубку через 14 секунд)']]},
     {t:'14:30',who:'СервисМонтаж',num:'+7 918 555‑10‑07',mgr:'Павел',dur:'5:19',type:'callback',score:7,theme:'Взял паузу на согласование',tone:'neu',toneT:'нейтральный',action:'Перезвонить в пятницу, дожать по цене',
      dialog:[['cl','Интересно, но надо согласовать с партнёром.'],['op','Конечно. Перезвоню в пятницу, к тому времени финализирую смету.'],['cl','Давайте в пятницу.']]}
   ];
-  // доп-разбор по индексу: ключевые слова, доля речи менеджера, настроение по ходу
   var EXTRA=[
     {kw:['цена','сроки','дедлайн','смета'],talk:52,sent:['neu','neu','pos','pos','pos']},
     {kw:['дорого','конкуренты','гарантия'],talk:61,sent:['neg','neu','neu','pos']},
@@ -243,66 +232,61 @@
     {kw:['пропущен','реклама'],talk:0,sent:['neg']},
     {kw:['пауза','партнёр','смета'],talk:58,sent:['neu','neu','neu']}
   ];
+  function waveBars(seed,count,cls){var s='';for(var k=0;k<count;k++){var h=24+Math.round((Math.abs(Math.sin(k*1.7+seed))+Math.abs(Math.cos(k*0.6+seed)))*36);s+='<i'+(cls?' class="'+cls+'"':'')+' style="height:'+Math.min(100,h)+'%"></i>';}return s;}
 
-  // ── KPI ──
+  // ── сводка ──
   (function(){
-    var total=CALLS.length, tgt=CALLS.filter(function(c){return c.type==='target';}).length;
-    var miss=CALLS.filter(function(c){return c.type==='missed';}).length;
-    var avg=(CALLS.reduce(function(a,c){return a+c.score;},0)/total).toFixed(1);
-    var kp=[['Звонков сегодня',total,'g','▲ 12 к вчера'],['Целевых',tgt,'g',Math.round(tgt/total*100)+'% от всех'],
-      ['Пропущено',miss,miss?'r':'g',miss?'нужен обзвон':'все приняты'],['Средняя оценка ИИ',avg+' / 10','d','по '+total+' звонкам']];
-    document.getElementById('kpis').innerHTML=kp.map(function(k){return '<div class="kpi"><div class="l">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="c '+k[2]+'">'+k[3]+'</div></div>';}).join('');
+    var tgt=CALLS.filter(function(c){return c.type==='target';}).length, miss=CALLS.filter(function(c){return c.type==='missed';}).length;
+    var avg=(CALLS.reduce(function(a,c){return a+c.score;},0)/CALLS.length).toFixed(1);
+    document.getElementById('strip').innerHTML=
+      '<span class="s"><b class="num">'+CALLS.length+'</b>звонков сегодня</span>'+
+      '<span class="s"><b class="num">'+tgt+'</b>целевых</span>'+
+      '<span class="s '+(miss?'r':'')+'"><b class="num">'+miss+'</b>пропущено</span>'+
+      '<span class="s"><b class="num">'+avg+'</b>средняя оценка ИИ</span>';
   })();
 
-  // ── фильтры + таблица ──
-  var FILTER='all', QUERY='';
+  // ── список звонков ──
+  var FILTER='all', QUERY='', CUR=0;
   var TABS=[['all','Все'],['target','Целевые'],['objection','Возражения'],['missed','Пропущенные'],['callback','Перезвон']];
-  function renderTabs(){
-    document.getElementById('ctabs').innerHTML=TABS.map(function(t){
-      var c=t[0]==='all'?CALLS.length:CALLS.filter(function(x){return x.type===t[0];}).length;
-      return '<span class="'+(FILTER===t[0]?'on':'')+'" data-f="'+t[0]+'">'+t[1]+'<span class="n">'+c+'</span></span>';
-    }).join('');
+  function renderFilters(){
+    document.getElementById('filters').innerHTML=TABS.map(function(t){
+      return '<span class="'+(FILTER===t[0]?'on':'')+'" data-f="'+t[0]+'">'+t[1]+'</span>';}).join('');
   }
-  function row(c,i){var ty=TYPE[c.type];
-    return '<tr class="clk" data-i="'+i+'">'+
-      '<td class="muted num">'+c.t+'</td><td><b>'+c.who+'</b><div class="muted" style="font-size:12px">'+c.num+'</div></td>'+
-      '<td>'+c.mgr+'</td><td class="r num muted">'+c.dur+'</td>'+
-      '<td><span class="pill '+ty[1]+'">'+ty[0]+'</span></td>'+
-      '<td><span class="score"><span class="bar"><i style="width:'+(c.score*10)+'%;background:'+scoreColor(c.score)+'"></i></span><b class="num" style="color:'+scoreColor(c.score)+'">'+c.score+'</b></span></td>'+
-      '<td class="muted">'+c.theme+'</td></tr>';
+  function ccard(c,i){var ty=TYPE[c.type], ini=c.who==='Неизвестный'?'?':c.who.replace(/[«"]/g,'').charAt(0);
+    return '<div class="ccard'+(i===CUR?' on':'')+'" data-i="'+i+'">'+
+      '<div class="cav" style="background:'+AVC[i%AVC.length]+'">'+ini+'</div>'+
+      '<div class="cinfo"><div class="crow1"><b>'+c.who+'</b><span class="ctime num">'+c.t+'</span></div>'+
+      '<div class="cwave">'+waveBars(i,22,'')+'</div>'+
+      '<div class="crow2"><span class="pill '+ty[1]+'">'+ty[0]+'</span><span>'+c.theme+'</span><span class="csc" style="color:'+scoreColor(c.score)+'">'+c.score+'</span></div></div></div>';
   }
-  function renderCalls(){
+  function renderList(){
     var rows=CALLS.map(function(c,i){return {c:c,i:i};}).filter(function(x){
       if(FILTER!=='all'&&x.c.type!==FILTER)return false;
       if(QUERY&&(x.c.who+' '+x.c.theme).toLowerCase().indexOf(QUERY)<0)return false;
-      return true;
-    });
-    document.getElementById('crows').innerHTML=rows.length?rows.map(function(x){return row(x.c,x.i);}).join(''):'<tr><td colspan="7" style="text-align:center;color:var(--dim);padding:40px">Ничего не найдено</td></tr>';
+      return true;});
+    document.getElementById('clist').innerHTML=rows.length?rows.map(function(x){return ccard(x.c,x.i);}).join(''):'<div style="padding:40px;text-align:center;color:var(--dim)">Ничего не найдено</div>';
   }
-  renderTabs(); renderCalls();
-  document.getElementById('ctabs').addEventListener('click',function(e){var t=e.target.closest('[data-f]');if(!t)return;FILTER=t.getAttribute('data-f');renderTabs();renderCalls();});
+  renderFilters(); renderList();
+  document.getElementById('filters').addEventListener('click',function(e){var t=e.target.closest('[data-f]');if(!t)return;FILTER=t.getAttribute('data-f');renderFilters();renderList();});
+  document.getElementById('clist').addEventListener('click',function(e){var el=e.target.closest('.ccard');if(!el)return;CUR=+el.getAttribute('data-i');renderList();renderDetail(CUR);});
 
-  // ── разбор звонка (панель) ──
-  function durSec(s){var p=String(s).split(':');return (+p[0])*60+(+p[1]||0);}
+  // ── разбор (правая панель) ──
   var playTimer=null;
-  function openCall(i){
+  function renderDetail(i){
     if(playTimer){clearInterval(playTimer);playTimer=null;}
     var c=CALLS[i], ty=TYPE[c.type], ex=EXTRA[i], col=scoreColor(c.score);
-    document.getElementById('d-who').textContent=c.who;
-    document.getElementById('d-meta').textContent=c.t+' · '+c.num+' · менеджер '+c.mgr+' · '+c.dur;
     var dialog=c.dialog.map(function(m){var w=m[0]==='op'?'op':'cl';
       return '<div class="msg '+w+'"><div class="av '+w+'">'+(w==='op'?'М':'К')+'</div><div class="bub">'+m[1]+'</div></div>';}).join('');
-    var WN=46, wave='';
-    for(var k=0;k<WN;k++){var h=26+Math.round((Math.abs(Math.sin(k*1.7+i))+Math.abs(Math.cos(k*0.6)))*36);wave+='<i style="height:'+Math.min(100,h)+'%"></i>';}
-    var circ=Math.round(2*Math.PI*26), dash=Math.round(c.score/10*circ);
-    var gauge='<div class="gauge"><svg width="64" height="64" viewBox="0 0 64 64"><g transform="rotate(-90 32 32)"><circle cx="32" cy="32" r="26" fill="none" stroke="#e6e2fb" stroke-width="6"/><circle cx="32" cy="32" r="26" fill="none" stroke="'+col+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+dash+' '+circ+'"/></g></svg><div class="gn" style="color:'+col+'">'+c.score+'</div></div>';
+    var circ=Math.round(2*Math.PI*25), dash=Math.round(c.score/10*circ);
+    var gauge='<div class="gauge"><svg width="60" height="60" viewBox="0 0 60 60"><g transform="rotate(-90 30 30)"><circle cx="30" cy="30" r="25" fill="none" stroke="#e6e2fb" stroke-width="6"/><circle cx="30" cy="30" r="25" fill="none" stroke="'+col+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+dash+' '+circ+'"/></g></svg><div class="gn" style="color:'+col+'">'+c.score+'</div></div>';
     var sent=ex.sent.map(function(s){return '<i style="background:'+TONE[s]+'"></i>';}).join('');
     var kws=ex.kw.map(function(w){return '<span class="kw">'+w+'</span>';}).join('');
-    document.getElementById('d-body').innerHTML=
-      '<div class="player"><button class="play" id="d-play">▶</button><div class="wave" id="d-wave">'+wave+'</div><span class="wt" id="d-wt">0:00 / '+c.dur+'</span></div>'+
+    document.getElementById('calldetail').innerHTML=
+      '<div class="dh"><h2>'+c.who+'</h2><span class="pill '+ty[1]+'">'+ty[0]+'</span></div>'+
+      '<div class="dmeta">'+c.t+' · '+c.num+' · менеджер '+c.mgr+' · '+c.dur+'</div>'+
+      '<div class="player"><button class="play" id="d-play">▶</button><div class="wave" id="d-wave">'+waveBars(i,46,'')+'</div><span class="wt" id="d-wt">0:00 / '+c.dur+'</span></div>'+
       '<div class="mc3">'+
         '<div class="mc gaugecard">'+gauge+'<div><div class="l">Оценка звонка ИИ</div><div class="v" style="font-size:12.5px;font-weight:500;color:var(--dim)">из 10 баллов</div></div></div>'+
-        '<div class="mc"><div class="l">Тип</div><div class="v"><span class="pill '+ty[1]+'">'+ty[0]+'</span></div></div>'+
         '<div class="mc"><div class="l">Тональность</div><div class="v" style="color:'+TONE[c.tone]+'">'+c.toneT+'</div></div>'+
       '</div>'+
       '<div class="metrics">'+
@@ -314,10 +298,8 @@
       '<div class="sect">Резюме</div><div class="sum">Тема: <b>'+c.theme+'</b>. '+c.dialog[0][1].replace(/<\/?mark>/g,'')+' '+(c.mgr==='—'?'Менеджер не принял звонок':'Менеджер '+c.mgr+' отработал запрос')+'; ИИ подсветил ключевые сигналы и следующий шаг.</div>'+
       '<div class="sect">Расшифровка · ключевое подсвечено</div>'+dialog+
       '<div class="pact"><button class="go" id="d-crm">Поставить задачу в CRM</button><button class="sec2" id="d-call2">Перезвонить</button></div>';
-    // плеер записи
     var bars=[].slice.call(document.querySelectorAll('#d-wave i')), total=durSec(c.dur)||60, prog=0, playing=false;
     var playBtn=document.getElementById('d-play'), wt=document.getElementById('d-wt'), waveEl=document.getElementById('d-wave');
-    function fmt(sec){sec=Math.round(sec);var m=Math.floor(sec/60),s=sec%60;return m+':'+(s<10?'0':'')+s;}
     function paint(){bars.forEach(function(b,idx){b.classList.toggle('p',(idx/bars.length)<=prog);});wt.textContent=fmt(prog*total)+' / '+c.dur;}
     function stop(){playing=false;playBtn.textContent='▶';if(playTimer){clearInterval(playTimer);playTimer=null;}}
     playBtn.onclick=function(){if(playing){stop();return;}if(prog>=1)prog=0;playing=true;playBtn.textContent='❚❚';
@@ -326,24 +308,18 @@
     paint();
     document.getElementById('d-crm').onclick=function(){this.textContent='✓ Задача создана';this.style.background='var(--green)';};
     document.getElementById('d-call2').onclick=function(){this.textContent='✓ Звонок инициирован';};
-    document.getElementById('panel').classList.add('on');document.getElementById('ov').classList.add('on');
   }
-  function closeCall(){if(playTimer){clearInterval(playTimer);playTimer=null;}document.getElementById('panel').classList.remove('on');document.getElementById('ov').classList.remove('on');}
-  document.getElementById('crows').addEventListener('click',function(e){var tr=e.target.closest('.clk');if(tr)openCall(+tr.getAttribute('data-i'));});
-  document.getElementById('d-close').onclick=closeCall;
-  document.getElementById('ov').onclick=closeCall;
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeCall();});
+  renderDetail(0);
 
   // ── аналитика ──
   var DAYS=[['Пн',41],['Вт',53],['Ср',47],['Чт',62],['Пт',58],['Сб',33],['Вс',12]];
   var mx=Math.max.apply(null,DAYS.map(function(d){return d[1];}));
   document.getElementById('bars').innerHTML=DAYS.map(function(d){return '<div class="b"><i data-h="'+Math.round(d[1]/mx*100)+'" style="height:0"></i><small>'+d[0]+'</small></div>';}).join('');
   function abar(lab,val,max,color){var w=Math.round(val/max*100);return '<div class="abar"><span class="lab">'+lab+'</span><span class="track"><span class="fill" style="width:'+w+'%'+(color?';background:'+color:'')+'"></span></span><span class="val num">'+val+'</span></div>';}
-  var toneCnt={pos:0,neu:0,neg:0}; CALLS.forEach(function(c){toneCnt[c.tone]++;});
-  document.getElementById('tone').innerHTML=abar('Позитивная',toneCnt.pos,CALLS.length,'#16a34a')+abar('Нейтральная',toneCnt.neu,CALLS.length,'#7b839a')+abar('Негативная',toneCnt.neg,CALLS.length,'#e5484d');
+  var tc={pos:0,neu:0,neg:0}; CALLS.forEach(function(c){tc[c.tone]++;});
+  document.getElementById('tone').innerHTML=abar('Позитивная',tc.pos,CALLS.length,'#16a34a')+abar('Нейтральная',tc.neu,CALLS.length,'#7b839a')+abar('Негативная',tc.neg,CALLS.length,'#e5484d');
   var THEMES=[['Цена и скидки',34],['Сроки и график',27],['Гарантия и качество',19],['Оплата и договор',12],['Прочее',8]];
-  var tmx=THEMES[0][1];
-  document.getElementById('themes').innerHTML=THEMES.map(function(t){return abar(t[0],t[1],tmx);}).join('');
+  document.getElementById('themes').innerHTML=THEMES.map(function(t){return abar(t[0],t[1],THEMES[0][1]);}).join('');
 
   // ── менеджеры ──
   var byM={}; CALLS.forEach(function(c){if(c.mgr==='—')return;var m=byM[c.mgr]=byM[c.mgr]||{n:0,tgt:0,sum:0};m.n++;m.sum+=c.score;if(c.type==='target')m.tgt++;});
@@ -351,7 +327,7 @@
   document.getElementById('mrows').innerHTML=mgrs.map(function(m){var avg=(m.d.sum/m.d.n).toFixed(1);
     return '<tr><td><b>'+m.name+'</b></td><td class="r num">'+m.d.n+'</td><td class="r num">'+m.d.tgt+'</td>'+
       '<td class="r num" style="color:'+scoreColor(avg)+'">'+avg+'</td>'+
-      '<td><span class="score"><span class="bar"><i style="width:'+(avg*10)+'%;background:'+scoreColor(avg)+'"></i></span></span></td></tr>';}).join('');
+      '<td><span class="scoremini"><i style="width:'+(avg*10)+'%;background:'+scoreColor(avg)+'"></i></span></td></tr>';}).join('');
 
   // ── настройки ──
   var SET=[['Интеграции',[['📞','Телефония (запись звонков)','источник звонков для разбора',true],['🤖','ИИ-модель разбора','расшифровка, теги, оценка, тональность',true],['🧩','CRM (Битрикс24/amoCRM)','задачи и статусы из разбора',true]]],
@@ -370,7 +346,7 @@
     if(s==='analytics')setTimeout(function(){document.querySelectorAll('.bars i').forEach(function(el){el.style.height=el.getAttribute('data-h')+'%';});},60);
   }
   document.getElementById('nav').addEventListener('click',function(e){var a=e.target.closest('[data-s]');if(a)showSec(a.getAttribute('data-s'));});
-  document.getElementById('search').addEventListener('input',function(e){QUERY=e.target.value.trim().toLowerCase();renderCalls();});
+  document.getElementById('search').addEventListener('input',function(e){QUERY=e.target.value.trim().toLowerCase();renderList();});
 </script>
 </body>
 </html>
