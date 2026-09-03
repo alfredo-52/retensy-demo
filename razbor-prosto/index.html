@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Разбор сайта PROSTO — Retensy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0c0f14;--card:#141922;--line:#222a37;--txt:#e8edf4;--dim:#8a97a8;--acc:#ff6a3d;--ok:#3fb98a;--red:#fb7185;--warn:#fbbf24}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .dsp{font-family:Manrope,sans-serif;letter-spacing:-.01em}
+  a{color:inherit}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  header{border-bottom:1px solid var(--line);padding:26px 0}
+  .top{display:flex;align-items:center;gap:12px}
+  .badge{font-family:Manrope;font-weight:800;font-size:15px;color:var(--acc);border:1px solid var(--acc);border-radius:6px;padding:3px 9px}
+  .top .who{margin-left:auto;color:var(--dim);font-size:14px}
+  h1{font-family:Manrope;font-weight:800;font-size:clamp(28px,5vw,42px);margin:34px 0 10px;line-height:1.1}
+  .sub{color:var(--dim);font-size:18px;margin:0 0 8px}
+  .meta{color:#5f6b7c;font-size:13px;margin-bottom:40px}
+  .n{display:flex;gap:16px;padding:24px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:16px}
+  .n .num{font-family:Manrope;font-weight:800;font-size:22px;color:var(--acc);flex:none;width:34px}
+  .n h3{font-family:Manrope;font-weight:700;font-size:19px;margin:0 0 8px}
+  .n p{margin:0 0 10px;color:#cdd6e2}
+  .n .lose{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--red);font-weight:600}
+  .n .lose::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red)}
+  code{background:#0a0d12;border:1px solid var(--line);border-radius:5px;padding:2px 7px;font-family:ui-monospace,monospace;font-size:14px;color:var(--warn)}
+  .ok{margin:30px 0;padding:20px 24px;border-left:3px solid var(--ok);background:rgba(63,185,138,.07);border-radius:0 12px 12px 0}
+  .ok b{color:var(--ok)}
+  .cta{margin:44px 0 20px;padding:30px;background:linear-gradient(120deg,rgba(255,106,61,.1),transparent);border:1px solid var(--line);border-radius:16px}
+  .cta h2{font-family:Manrope;font-weight:800;font-size:24px;margin:0 0 10px}
+  .cta p{color:var(--dim);margin:0 0 18px}
+  .btn{display:inline-block;background:var(--acc);color:#160a05;font-family:Manrope;font-weight:700;padding:13px 26px;border-radius:9px}
+  footer{border-top:1px solid var(--line);padding:26px 0 50px;color:#5f6b7c;font-size:13px}
+  footer a{color:var(--acc);font-weight:600}
+</style>
+</head>
+<body>
+<header><div class="wrap top">
+  <span class="badge">Retensy</span>
+  <span class="who">разбор сайта · для владельца PROSTO</span>
+</div></header>
+
+<div class="wrap">
+  <h1 class="dsp">Где сайт PROSTO теряет клиентов</h1>
+  <p class="sub">Четыре места, каждое стоит вам звонков и заявок. Все чинится за неделю.</p>
+  <p class="meta">Разобрано по prostosochi.com, сентябрь 2026. Веб-студия Retensy, Сочи.</p>
+
+  <div class="n"><div class="num">01</div><div>
+    <h3>В коде остался шаблонный номер</h3>
+    <p>Рядом с вашим настоящим телефоном на сайте лежит заготовка <code>+7 (000) 000-00-00</code> — её забыли убрать при сборке. Человек, который нажмёт или скопирует именно её, никуда не дозвонится.</p>
+    <span class="lose">Потерянный звонок и ощущение, что сайт заброшен</span>
+  </div></div>
+
+  <div class="n"><div class="num">02</div><div>
+    <h3>Телефон нельзя нажать с телефона</h3>
+    <p>Номер на сайте не кликабельный. С мобильного (а так заходит почти каждый) его нельзя тапнуть и позвонить — надо выделять и копировать вручную. На этом лишнем шаге часть людей просто уходит.</p>
+    <span class="lose">Каждый, кому лень копировать номер</span>
+  </div></div>
+
+  <div class="n"><div class="num">03</div><div>
+    <h3>Нет цен</h3>
+    <p>На сайте нет стоимости работ. Люди ищут «прозрачную цену», не находят её у вас и идут смотреть к соседу, у кого цены на виду. Даже вилка «от» снимает этот барьер.</p>
+    <span class="lose">Клиент, который выбирал по цене</span>
+  </div></div>
+
+  <div class="n"><div class="num">04</div><div>
+    <h3>У страницы нет заголовка H1</h3>
+    <p>Нет главного заголовка, по которому поисковик понимает, о чём сайт. Из-за этого вас хуже находят по запросу «автосервис Сочи» — а это люди с телефоном в руке, которым надо здесь и сейчас.</p>
+    <span class="lose">Тот, кто искал в Яндексе и не дошёл</span>
+  </div></div>
+
+  <div class="ok">
+    <b>Что у вас в порядке.</b> Аналитика Яндекса стоит, разметка превью для мессенджеров есть, форма заявки работает. Это трогать не нужно — сделано.
+  </div>
+
+  <div class="cta">
+    <h2 class="dsp">Собрать всё в порядок</h2>
+    <p>Кликабельный телефон везде, блок цен, заголовки под поиск, убрать заглушку, привести форму. 12 000 рублей, неделя. Домен и код остаются на вас.</p>
+    <a class="btn" href="https://retensy.com">Написать в студию</a>
+  </div>
+</div>
+
+<footer><div class="wrap">
+  Retensy — сайты, боты и интеграции 1С и CRM. Сочи. Кейсы — <a href="https://retensy.com/cases">retensy.com/cases</a>
+</div></footer>
+</body>
+</html>
