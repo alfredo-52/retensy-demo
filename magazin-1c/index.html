@@ -65,7 +65,10 @@
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:9px;transition:.15s}
   .card:hover{border-color:#33405a;transform:translateY(-2px)}
-  .thumb{height:120px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:44px}
+  .thumb{height:120px;border-radius:10px;background:linear-gradient(160deg,#1b2330,#141a24);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden}
+  .thumb svg{width:46px;height:46px;stroke:#5c6b82;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+  .thumb .brand{font-size:12px;font-weight:700;letter-spacing:.08em;color:#7f8fab;text-transform:uppercase}
+  .thumb .art-wm{position:absolute;top:8px;right:10px;font-size:10px;color:#3a4657;letter-spacing:.05em}
   .art{font-size:11px;color:var(--dim);font-family:Consolas,monospace}
   .pname{font-weight:600;font-size:15px;line-height:1.3;min-height:40px}
   .prow{display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto}
@@ -189,23 +192,31 @@
 <script>
   // Каталог. Данные вымышленные, но ведут себя как из 1С: у каждой позиции
   // свой остаток, и он влияет на кнопку - "нет в наличии" не купить.
+  var ICON={
+    tool:'<svg viewBox="0 0 48 48"><rect x="6" y="14" width="22" height="13" rx="2"/><path d="M28 17h9l4 3.5-4 3.5H28"/><path d="M13 27v7l-4 4"/></svg>',
+    grind:'<svg viewBox="0 0 48 48"><rect x="5" y="18" width="19" height="11" rx="3"/><circle cx="33" cy="23.5" r="9"/><path d="M33 12v-2M33 37v-1"/></svg>',
+    level:'<svg viewBox="0 0 48 48"><rect x="5" y="20" width="38" height="8" rx="2"/><circle cx="24" cy="24" r="3"/><path d="M14 24h.01M34 24h.01"/></svg>',
+    case:'<svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="26" rx="2"/><path d="M8 22h32M19 12v26M29 12v26"/></svg>',
+    comp:'<svg viewBox="0 0 48 48"><rect x="8" y="24" width="29" height="12" rx="6"/><circle cx="16" cy="17" r="6"/><path d="M22 17h11v5"/></svg>'
+  };
+  // [артикул, наименование, цена, остаток, тип иконки, бренд]
   var TOVAR = [
-    ['ПЕРФ-228','Перфоратор Bosch GBH 2-28',14900,7,'🔨'],
-    ['ШУР-485','Шуруповёрт Makita DDF485',11200,3,'🪛'],
-    ['УШМ-125','Болгарка DeWalt 125 мм',6490,0,'⚙️'],
-    ['ЛОБЗ-561','Лобзик Bosch GST 700',5300,12,'🪚'],
-    ['ДРЕЛЬ-13','Дрель-миксер Интерскол',4750,2,'🌀'],
-    ['БИТЫ-40','Набор бит, 40 шт',890,140,'🧰'],
-    ['УРОВ-60','Уровень лазерный ADA 60 м',8900,5,'📏'],
-    ['КОМПР-24','Компрессор Fubag 24 л',13400,0,'💨']
+    ['ПЕРФ-228','Перфоратор Bosch GBH 2-28',14900,7,'tool','Bosch'],
+    ['ШУР-485','Шуруповёрт Makita DDF485',11200,3,'tool','Makita'],
+    ['УШМ-125','Болгарка DeWalt 125 мм',6490,0,'grind','DeWalt'],
+    ['ЛОБЗ-561','Лобзик Bosch GST 700',5300,12,'tool','Bosch'],
+    ['ДРЕЛЬ-13','Дрель-миксер Интерскол',4750,2,'tool','Интерскол'],
+    ['БИТЫ-40','Набор бит, 40 шт',890,140,'case','Wera'],
+    ['УРОВ-60','Уровень лазерный ADA 60 м',8900,5,'level','ADA'],
+    ['КОМПР-24','Компрессор Fubag 24 л',13400,0,'comp','Fubag']
   ];
   function stockClass(n){ return n===0?'no':(n<=3?'low':'ok'); }
   function stockText(n){ return n===0?'нет в наличии':(n<=3?'осталось '+n+' шт':n+' шт на складе'); }
   var grid = document.getElementById('grid');
   grid.innerHTML = TOVAR.map(function(t){
-    var art=t[0],name=t[1],price=t[2],n=t[3],ic=t[4];
+    var art=t[0],name=t[1],price=t[2],n=t[3],ic=t[4],brand=t[5];
     return '<div class="card">'+
-      '<div class="thumb">'+ic+'</div>'+
+      '<div class="thumb"><span class="art-wm">'+art+'</span>'+(ICON[ic]||ICON.tool)+'<span class="brand">'+brand+'</span></div>'+
       '<div class="art">'+art+'</div>'+
       '<div class="pname">'+name+'</div>'+
       '<div class="prow"><div class="price num">'+price.toLocaleString('ru')+' <small>₽</small></div>'+
