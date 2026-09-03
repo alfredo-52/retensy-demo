@@ -109,6 +109,30 @@
   .cmp-nm{font-weight:600;margin-bottom:9px;font-size:13px;line-height:1.3}
   .cmp-buy{background:var(--org);color:#fff;border:none;border-radius:8px;padding:8px 13px;font-weight:600;cursor:pointer;font-size:12.5px;margin-right:8px}
   .cmp-rm{background:none;border:none;color:var(--dim);cursor:pointer;font-size:12px;text-decoration:underline}
+  /* инфо-страницы (доставка, гарантия и т.п.) */
+  .iov{position:fixed;inset:0;background:rgba(20,25,35,.4);opacity:0;pointer-events:none;transition:.18s;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px}
+  .iov.on{opacity:1;pointer-events:auto}
+  .ibox{background:#fff;border-radius:16px;max-width:660px;width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;transform:scale(.97);transition:.18s}
+  .iov.on .ibox{transform:none}
+  .ih{display:flex;align-items:center;padding:18px 24px;border-bottom:1px solid var(--line);font-size:19px;font-weight:800}
+  .ih .ix{margin-left:auto;border:none;background:none;font-size:24px;color:var(--dim);cursor:pointer;line-height:1}
+  .ibody{overflow:auto;padding:20px 24px}
+  .ibody h3{margin:18px 0 6px;font-size:15px}
+  .iblock{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .iblock:last-child{border-bottom:none}
+  .iblock .ii{font-size:23px;flex:none;width:30px;text-align:center}
+  .iblock b{display:block;margin-bottom:3px}
+  .iblock span{color:var(--dim);font-size:13.5px}
+  .pvt{width:100%;border-collapse:collapse;margin-top:6px}
+  .pvt td{padding:9px 12px;border-bottom:1px solid var(--line);font-size:13.5px}
+  .pvt td:last-child{text-align:right;font-weight:600}
+  .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .pcard{border:1px solid var(--line);border-radius:10px;padding:14px}
+  .pcard b{display:block}
+  .pcard span{color:var(--dim);font-size:13px;display:block;margin-top:3px}
+  .ibtn{margin-top:16px;background:var(--org);color:#fff;border:none;border-radius:9px;padding:12px 22px;font-weight:700;cursor:pointer}
+  .ibtn:disabled{background:var(--green)}
+  @media(max-width:560px){.pgrid{grid-template-columns:1fr}}
   .prod .im{height:170px;border-radius:8px;background:#f6f7f9 center/contain no-repeat;margin-bottom:10px}
   .prod .art{color:var(--dim);font-size:11.5px}
   .prod .nm{font-weight:600;font-size:14px;margin:3px 0 7px;min-height:38px;line-height:1.3}
@@ -330,6 +354,11 @@
 <div class="cmov" id="cmov"><div class="cmwrap">
   <div class="cmh"><b>Сравнение товаров</b><button class="cmx" id="cmx">×</button></div>
   <div class="cmbody" id="cmbody"></div>
+</div></div>
+
+<div class="iov" id="iov"><div class="ibox">
+  <div class="ih"><span id="iTitle"></span><button class="ix" id="iClose">×</button></div>
+  <div class="ibody" id="iBody"></div>
 </div></div>
 
 <div class="qov" id="qov"><div class="qm">
@@ -569,8 +598,48 @@
   document.addEventListener('click',function(e){if(!e.target.closest('.catwrap'))closeMenu();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
 
-  // верхняя строка — не мёртвая (иконки шапки открывают панели, привязаны выше)
-  document.querySelectorAll('.tbar a').forEach(function(a){a.onclick=function(){toEl(document.querySelector('.bwrap'));};});
+  // инфо-страницы верхней строки
+  var PAGES={
+    'Доставка и оплата':{title:'Доставка и оплата',html:
+      '<div class="iblock"><span class="ii">🚚</span><div><b>Курьер по Сочи</b><span>Сегодня, от 2 часов. 300 ₽, бесплатно при заказе от 5 000 ₽.</span></div></div>'+
+      '<div class="iblock"><span class="ii">🏬</span><div><b>Самовывоз</b><span>Бесплатно из 4 пунктов выдачи, собираем за 30 минут после заказа.</span></div></div>'+
+      '<div class="iblock"><span class="ii">📦</span><div><b>Доставка по краю</b><span>Транспортной компанией, 1-3 дня, по тарифу перевозчика.</span></div></div>'+
+      '<h3>Оплата</h3><table class="pvt">'+
+      '<tr><td>Картой онлайн</td><td>Visa, Mastercard, МИР</td></tr>'+
+      '<tr><td>При получении</td><td>карта или наличные</td></tr>'+
+      '<tr><td>Для юрлиц</td><td>по счёту, безнал с НДС</td></tr></table>'},
+    'Пункты выдачи':{title:'Пункты выдачи',html:
+      '<div class="pgrid">'+
+      '<div class="pcard"><b>Сочи, Пластунская 25</b><span>Главный склад</span><span>Ежедневно 8:00-20:00</span></div>'+
+      '<div class="pcard"><b>Сочи, Донская 12</b><span>Пн-Сб 9:00-19:00</span></div>'+
+      '<div class="pcard"><b>Адлер, Ленина 219</b><span>Ежедневно 9:00-20:00</span></div>'+
+      '<div class="pcard"><b>Хоста, Шоссейная 7</b><span>Пн-Пт 9:00-18:00</span></div></div>'},
+    'Оптом':{title:'Оптовым покупателям',html:
+      '<div class="iblock"><span class="ii">📉</span><div><b>Скидка от объёма заказа</b><span>Цены и остатки берутся из 1С в реальном времени.</span></div></div>'+
+      '<table class="pvt"><tr><td>от 50 000 ₽</td><td>-5%</td></tr><tr><td>от 150 000 ₽</td><td>-8%</td></tr><tr><td>от 300 000 ₽</td><td>-12%</td></tr></table>'+
+      '<div class="iblock" style="margin-top:12px"><span class="ii">🧾</span><div><b>Работаем с юрлицами</b><span>Договор, отсрочка платежа, безнал с НДС, персональный менеджер.</span></div></div>'+
+      '<button class="ibtn">Оставить заявку на опт</button>'},
+    'Гарантия':{title:'Гарантия и возврат',html:
+      '<div class="iblock"><span class="ii">🛡️</span><div><b>Гарантия производителя</b><span>От 1 до 3 лет в зависимости от бренда, срок указан в карточке товара.</span></div></div>'+
+      '<div class="iblock"><span class="ii">↩️</span><div><b>Возврат 14 дней</b><span>Вернём деньги за исправный товар в оригинальной упаковке.</span></div></div>'+
+      '<div class="iblock"><span class="ii">🔧</span><div><b>Сервисный центр</b><span>Гарантийный ремонт на Пластунской 25, приём ежедневно.</span></div></div>'},
+    'Личный кабинет':{title:'Личный кабинет',html:
+      '<div class="iblock"><span class="ii">👤</span><div><b>Войдите или зарегистрируйтесь</b><span>История заказов, избранное и статусы доставки в одном месте. В демо вход отключён.</span></div></div>'}
+  };
+  function openInfo(key){var p=PAGES[key];document.getElementById('iTitle').textContent=p.title;document.getElementById('iBody').innerHTML=p.html;document.getElementById('iov').classList.add('on');}
+  document.getElementById('iClose').onclick=function(){document.getElementById('iov').classList.remove('on');};
+  document.getElementById('iov').addEventListener('click',function(e){if(e.target.id==='iov')document.getElementById('iov').classList.remove('on');});
+  document.getElementById('iBody').addEventListener('click',function(e){var bt=e.target.closest('.ibtn');if(bt){bt.textContent='✓ Заявка отправлена, менеджер свяжется';bt.disabled=true;}});
+
+  // верхняя строка: инфо-страницы + Избранное/Сравнение открывают панели
+  document.querySelectorAll('.tbar a').forEach(function(a){var t=a.textContent.trim();
+    a.onclick=function(){
+      if(t==='Сравнение')return openCompare();
+      if(t==='Избранное')return openFav();
+      if(PAGES[t])return openInfo(t);
+      toEl(document.querySelector('.bwrap'));
+    };
+  });
 
   // быстрый просмотр товара
   function openQuick(i){
