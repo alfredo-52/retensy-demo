@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Прораб — инструмент с наличием из 1С</title>
+<style>
+  :root{
+    --bg:#0e1116; --card:#161b22; --card2:#1c2431; --line:#273143;
+    --txt:#e8eef5; --dim:#8896a8; --acc:#ff7a1a; --acc2:#3fb950; --blue:#4c9aff;
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:16px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* демо-плашка */
+  .demo{background:var(--acc);color:#140a02;text-align:center;font-weight:700;
+    font-size:13px;letter-spacing:.02em;padding:7px 12px}
+  .demo b{text-decoration:underline}
+
+  /* шапка */
+  header{position:sticky;top:0;z-index:30;background:rgba(14,17,22,.86);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;gap:22px;height:64px}
+  .logo{font-weight:800;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+  .logo i{width:11px;height:22px;background:var(--acc);border-radius:2px;transform:skewX(-12deg);display:inline-block}
+  nav{display:flex;gap:22px;margin-left:auto;font-size:14px;color:var(--dim)}
+  nav a:hover{color:var(--txt)}
+  .phone{font-weight:700;white-space:nowrap}
+  @media(max-width:820px){nav{display:none}}
+
+  /* синхро-строка 1С — главный акцент демо */
+  .sync{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#12261a,#0e1116);
+    border-bottom:1px solid var(--line);font-size:13px;color:var(--dim);padding:9px 0}
+  .sync .wrap{display:flex;align-items:center;gap:10px;width:100%}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--acc2);box-shadow:0 0 0 0 rgba(63,185,80,.6);
+    animation:pulse 2.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(63,185,80,.55)}70%{box-shadow:0 0 0 8px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
+  .sync b{color:var(--acc2)}
+  .sync .upd{margin-left:auto;color:var(--dim)}
+
+  /* герой */
+  .hero{padding:64px 0 40px}
+  .hero h1{font-size:clamp(34px,5.5vw,60px);line-height:1.03;margin:0 0 18px;letter-spacing:-.02em;font-weight:800}
+  .hero h1 span{color:var(--acc)}
+  .hero p{font-size:19px;color:var(--dim);max-width:620px;margin:0 0 28px}
+  .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:14px 24px;border-radius:11px;font-weight:700;font-size:16px;cursor:pointer;border:none}
+  .btn.p{background:var(--acc);color:#140a02}
+  .btn.p:hover{filter:brightness(1.08)}
+  .btn.s{background:var(--card2);color:var(--txt);border:1px solid var(--line)}
+  .btn.s:hover{border-color:var(--dim)}
+  .stats{display:flex;gap:34px;margin-top:38px;flex-wrap:wrap}
+  .stat b{display:block;font-size:30px;font-weight:800}
+  .stat small{color:var(--dim);font-size:13px}
+
+  /* каталог */
+  section{padding:30px 0}
+  .h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:700;margin:0 0 18px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:9px;transition:.15s}
+  .card:hover{border-color:#33405a;transform:translateY(-2px)}
+  .thumb{height:120px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:44px}
+  .art{font-size:11px;color:var(--dim);font-family:Consolas,monospace}
+  .pname{font-weight:600;font-size:15px;line-height:1.3;min-height:40px}
+  .prow{display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto}
+  .price{font-size:21px;font-weight:800}
+  .price small{font-size:12px;color:var(--dim);font-weight:400}
+  .stock{font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px}
+  .stock.ok{color:var(--acc2)} .stock.low{color:var(--acc)} .stock.no{color:var(--dim)}
+  .stock .d{width:7px;height:7px;border-radius:50%;background:currentColor}
+  .buy{margin-top:6px;background:var(--card2);border:1px solid var(--line);color:var(--txt);
+    padding:10px;border-radius:9px;font-weight:700;cursor:pointer;font-size:14px}
+  .buy:hover{background:var(--acc);color:#140a02;border-color:var(--acc)}
+  .buy:disabled{opacity:.4;cursor:not-allowed}
+
+  /* как это связано с 1С */
+  .flow{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px;margin-top:10px}
+  .flow h3{margin:0 0 22px;font-size:22px}
+  .chain{display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
+  .node{flex:1 1 150px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+  .node .ic{font-size:26px}
+  .node b{display:block;margin:6px 0 3px}
+  .node small{color:var(--dim);font-size:12.5px}
+  .arrow{display:flex;align-items:center;justify-content:center;color:var(--acc);font-size:22px;padding:0 6px}
+  @media(max-width:700px){.arrow{transform:rotate(90deg);padding:6px 0}.node{flex-basis:100%}}
+
+  /* кабинет */
+  .lk{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .lk-top{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);background:var(--card2)}
+  .ava{width:38px;height:38px;border-radius:50%;background:var(--acc);color:#140a02;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .ord{display:flex;align-items:center;gap:14px;padding:15px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .ord:last-child{border:none}
+  .badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+  .b-new{background:#12335a;color:var(--blue)} .b-way{background:#3a2a08;color:var(--acc)} .b-done{background:#12331e;color:var(--acc2)}
+  .ord .g{margin-left:auto;color:var(--dim);font-size:13px}
+
+  footer{border-top:1px solid var(--line);margin-top:50px;padding:34px 0;color:var(--dim);font-size:14px}
+  footer .wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+  .made{margin-left:auto;font-size:13px}
+  .made a{color:var(--acc);font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="demo">ДЕМО-ПРОЕКT. Компания и данные вымышлены, собрано как образец работы студии <b>Retensy</b>. Всё интерактивно — жми.</div>
+
+<header>
+  <div class="wrap bar">
+    <div class="logo"><i></i>Прораб</div>
+    <nav>
+      <a href="#catalog">Каталог</a>
+      <a href="#flow">Наличие из 1С</a>
+      <a href="#lk">Личный кабинет</a>
+    </nav>
+    <a class="phone" href="tel:+70000000000">8 800 000-00-00</a>
+  </div>
+</header>
+
+<div class="sync">
+  <div class="wrap">
+    <span class="dot"></span>
+    Наличие и цены — <b>напрямую из 1С</b>, обновление каждые 5 минут
+    <span class="upd num" id="upd">обновлено 12 сек назад</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>Инструмент с <span>реальным</span> наличием на складе</h1>
+    <p>Цену и остаток видно сразу, потому что они приходят из 1С, а не проставлены руками год назад. Заказал то, что есть — забрал сегодня.</p>
+    <div class="cta">
+      <button class="btn p" onclick="scrollTo({top:document.getElementById('catalog').offsetTop-80,behavior:'smooth'})">Смотреть каталог</button>
+      <button class="btn s" onclick="scrollTo({top:document.getElementById('flow').offsetTop-80,behavior:'smooth'})">Как работает связь с 1С</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><b class="num">3 400+</b><small>позиций из 1С</small></div>
+      <div class="stat"><b class="num">5 мин</b><small>цикл синхронизации</small></div>
+      <div class="stat"><b class="num" style="color:var(--acc2)">live</b><small>остатки в реальном времени</small></div>
+    </div>
+  </div>
+
+  <section id="catalog">
+    <p class="h2">Каталог · остатки из 1С</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="flow">
+    <div class="flow">
+      <h3>Почему наличие всегда правдивое</h3>
+      <div class="chain">
+        <div class="node"><div class="ic">🗄️</div><b>1С:Предприятие</b><small>склад, цены, номенклатура</small></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ic">🔗</div><b>Обмен</b><small>HTTP-сервис, каждые 5 минут</small></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ic">🛒</div><b>Сайт</b><small>остаток и цена как на складе</small></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ic">📦</div><b>Заказ</b><small>падает обратно в 1С</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lk">
+    <p class="h2">Личный кабинет · статусы из 1С</p>
+    <div class="lk">
+      <div class="lk-top">
+        <div class="ava">И</div>
+        <div><b>ИП Смирнов</b><br><small style="color:var(--dim)">Оптовый клиент · скидка 12%</small></div>
+      </div>
+      <div class="ord"><span class="badge b-new">Собирается</span> Перфоратор Bosch GBH 2-28 <span class="g num">№ 10428 · 14 900 ₽</span></div>
+      <div class="ord"><span class="badge b-way">В пути</span> Шуруповёрт Makita DDF485 <span class="g num">№ 10422 · 11 200 ₽</span></div>
+      <div class="ord"><span class="badge b-done">Выдан</span> Набор бит, 40 шт <span class="g num">№ 10415 · 890 ₽</span></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>«Прораб» — демо интернет-магазина с интеграцией 1С.</div>
+    <div class="made">Собрано студией <a href="https://retensy.com">Retensy</a> · сайты, боты, интеграции 1С и CRM</div>
+  </div>
+</footer>
+
+<script>
+  // Каталог. Данные вымышленные, но ведут себя как из 1С: у каждой позиции
+  // свой остаток, и он влияет на кнопку - "нет в наличии" не купить.
+  var TOVAR = [
+    ['ПЕРФ-228','Перфоратор Bosch GBH 2-28',14900,7,'🔨'],
+    ['ШУР-485','Шуруповёрт Makita DDF485',11200,3,'🪛'],
+    ['УШМ-125','Болгарка DeWalt 125 мм',6490,0,'⚙️'],
+    ['ЛОБЗ-561','Лобзик Bosch GST 700',5300,12,'🪚'],
+    ['ДРЕЛЬ-13','Дрель-миксер Интерскол',4750,2,'🌀'],
+    ['БИТЫ-40','Набор бит, 40 шт',890,140,'🧰'],
+    ['УРОВ-60','Уровень лазерный ADA 60 м',8900,5,'📏'],
+    ['КОМПР-24','Компрессор Fubag 24 л',13400,0,'💨']
+  ];
+  function stockClass(n){ return n===0?'no':(n<=3?'low':'ok'); }
+  function stockText(n){ return n===0?'нет в наличии':(n<=3?'осталось '+n+' шт':n+' шт на складе'); }
+  var grid = document.getElementById('grid');
+  grid.innerHTML = TOVAR.map(function(t){
+    var art=t[0],name=t[1],price=t[2],n=t[3],ic=t[4];
+    return '<div class="card">'+
+      '<div class="thumb">'+ic+'</div>'+
+      '<div class="art">'+art+'</div>'+
+      '<div class="pname">'+name+'</div>'+
+      '<div class="prow"><div class="price num">'+price.toLocaleString('ru')+' <small>₽</small></div>'+
+        '<div class="stock '+stockClass(n)+'"><span class="d"></span>'+stockText(n)+'</div></div>'+
+      '<button class="buy" '+(n===0?'disabled':'')+' onclick="this.textContent=\'✓ в корзине\';this.style.background=\'var(--acc2)\';this.style.color=\'#0a1f10\';this.style.borderColor=\'var(--acc2)\'">'+
+        (n===0?'Нет в наличии':'В корзину')+'</button>'+
+      '</div>';
+  }).join('');
+
+  // Живой счётчик "обновлено N сек назад" - создаёт ощущение синхронизации.
+  var sec=12, upd=document.getElementById('upd');
+  setInterval(function(){ sec+=1; if(sec>=300){sec=0;} upd.textContent='обновлено '+sec+' сек назад'; },1000);
+</script>
+</body>
+</html>
