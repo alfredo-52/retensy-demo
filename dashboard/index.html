@@ -98,6 +98,27 @@
   .abar .track{flex:1;height:20px;background:#eef1f6;border-radius:5px;overflow:hidden}
   .abar .fill{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#22c55e,#0ea5a4)}
   .abar .val{width:100px;text-align:right;flex:none;font-weight:600}
+  /* донат */
+  .dring{display:flex;align-items:center;gap:20px}
+  .donut{position:relative;width:120px;height:120px;flex:none}
+  .donut .dc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .donut .dc b{font-size:20px} .donut .dc span{font-size:11px;color:var(--dim)}
+  .leg{display:flex;flex-direction:column;gap:8px;font-size:13px}
+  .leg div{display:flex;align-items:center;gap:8px} .leg .sw2{width:11px;height:11px;border-radius:3px}
+  .toprow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line2);font-size:13.5px}
+  .toprow:last-child{border:none} .toprow .tn{flex:1} .toprow .tb{width:120px;height:8px;background:#eef1f6;border-radius:4px;overflow:hidden;flex:none}
+  .toprow .tb i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#0ea5a4);border-radius:4px} .toprow .tv{width:82px;text-align:right;font-weight:600;flex:none}
+  /* конфиг настроек */
+  .cfgrow{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line2)}
+  .cfgrow:last-child{border:none} .cfgrow .cd{flex:1} .cfgrow .cd b{display:block} .cfgrow .cd span{color:var(--dim);font-size:12.5px}
+  .cfgrow .inp{width:96px;border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:13px;text-align:right;outline:none}
+  .cfgrow .inp:focus{border-color:var(--green)}
+  .cfgrow .selc{border:1px solid var(--line);border-radius:7px;padding:7px 10px;font-size:13px;background:#fff;cursor:pointer;outline:none}
+  .prtable{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  .prtable td{padding:8px 12px;border-bottom:1px solid var(--line2)} .prtable td:last-child{text-align:right;font-weight:600;color:var(--green)}
+  .rule{display:flex;align-items:center;gap:13px;padding:13px 15px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:#fafbfd}
+  .rule:last-child{margin-bottom:0} .rule .ri{width:34px;height:34px;border-radius:9px;background:#eaf6ee;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+  .rule .rt{flex:1;font-size:13.5px} .rule .rt b{display:block;margin-bottom:2px} .rule .rt .arr{color:var(--green);font-weight:600}
 
   /* настройки */
   .set{max-width:640px}
@@ -172,7 +193,7 @@
 <body>
 <div class="app">
   <aside class="side">
-    <div class="brand"><i><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></i><span>ОптПоток</span></div>
+    <div class="brand"><i title="собрано в Retensy"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round"><path d="M12 12c-1.6-2.6-3.1-3.6-5.2-3.6a3.6 3.6 0 1 0 0 7.2c2.1 0 3.6-1 5.2-3.6zm0 0c1.6 2.6 3.1 3.6 5.2 3.6a3.6 3.6 0 1 0 0-7.2c-2.1 0-3.6 1-5.2 3.6z"/></svg></i><span>ОптПоток</span></div>
     <div class="nav" id="nav">
       <a class="on" data-s="orders"><span class="ic">🧾</span><span class="lbl">Заказы</span></a>
       <a data-s="ship"><span class="ic">🚚</span><span class="lbl">Отгрузки</span></a>
@@ -236,14 +257,22 @@
       <!-- ОТЧЁТЫ -->
       <section class="sec" id="s-reports">
         <div class="grid2">
-          <div class="box"><h3>Отгрузки по дням</h3><div class="sub">за последнюю неделю, шт</div><div class="bars" id="bars"></div></div>
-          <div class="box"><h3>Топ клиентов</h3><div class="sub">по обороту за месяц</div><div id="topcl"></div></div>
+          <div class="box"><h3>Отгрузки по дням</h3><div class="sub">за неделю, заказов</div><div class="bars" id="bars"></div></div>
+          <div class="box"><h3>Заказы по статусам</h3><div class="sub">текущая загрузка</div><div class="dring" id="statuses"></div></div>
+        </div>
+        <div class="grid2">
+          <div class="box"><h3>Топ товаров</h3><div class="sub">по обороту за месяц</div><div id="toppr"></div></div>
+          <div class="box"><h3>Источники заказов</h3><div class="sub">откуда пришли за неделю</div><div class="dring" id="sources"></div></div>
         </div>
       </section>
 
       <!-- НАСТРОЙКИ -->
       <section class="sec" id="s-settings">
-        <div class="set" id="settings"></div>
+        <div style="max-width:720px">
+          <div class="box"><h3>Склад и отгрузка</h3><div class="sub">правила работы с остатками из 1С</div><div id="cfg-sklad"></div></div>
+          <div class="box"><h3>Цены для опта</h3><div class="sub">скидка от суммы заказа</div><div id="cfg-price"></div></div>
+          <div class="box"><h3>Автоправила</h3><div class="sub">что система делает без оператора</div><div id="cfg-rules"></div></div>
+        </div>
       </section>
     </div>
   </main>
@@ -391,18 +420,44 @@
   var mx=Math.max.apply(null,DAYS.map(function(d){return d[1];}));
   document.getElementById('bars').innerHTML=DAYS.map(function(d){
     return '<div class="b"><i data-h="'+Math.round(d[1]/mx*100)+'" style="height:0"></i><small>'+d[0]+'</small></div>';}).join('');
-  var topc=clients.slice(0,5), tmx=topc[0]?topc[0].d.sum:1;
-  document.getElementById('topcl').innerHTML=topc.map(function(c){var w=Math.round(c.d.sum/tmx*100);
-    return '<div class="abar"><span class="lab">'+c.name+'</span><span class="track"><span class="fill" style="width:'+w+'%"></span></span><span class="val num">'+rub(c.d.sum)+'</span></div>';}).join('');
+  function donut(segs,center,sub){var tot=segs.reduce(function(a,s){return a+s[0];},0)||1,off=25,parts='';
+    segs.forEach(function(s){var pct=Math.round(s[0]/tot*100);parts+='<circle cx="21" cy="21" r="15.9" fill="none" stroke="'+s[1]+'" stroke-width="5" stroke-dasharray="'+pct+' '+(100-pct)+'" stroke-dashoffset="'+off+'" transform="rotate(-90 21 21)"></circle>';off-=pct;});
+    return '<div class="donut"><svg width="120" height="120" viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#eef1f6" stroke-width="5"></circle>'+parts+'</svg><div class="dc"><b>'+center+'</b><span>'+sub+'</span></div></div>';}
+  function leg(items){return '<div class="leg">'+items.map(function(it){return '<div><span class="sw2" style="background:'+it[2]+'"></span>'+it[0]+' · '+it[1]+'</div>';}).join('')+'</div>';}
+  // заказы по статусам
+  var STA2={new:['Новые','#2f6ff0'],pack:['Сборка','#e08a1e'],ship:['Отгрузка','#0ea5a4'],done:['Отгружено','#16a34a']};
+  var stc={}; ORDERS.forEach(function(o){stc[o[4]]=(stc[o[4]]||0)+1;});
+  var stArr=Object.keys(STA2).map(function(k){return [stc[k]||0,STA2[k][1],STA2[k][0]];});
+  document.getElementById('statuses').innerHTML=donut(stArr.map(function(s){return [s[0],s[1]];}),ORDERS.length,'заказов')+leg(stArr.map(function(s){return [s[2],s[0],s[1]];}));
+  // топ товаров
+  var prod={}; ORDERS.forEach(function(o){o[2].forEach(function(p){var nm=p[0].split(',')[0];prod[nm]=(prod[nm]||0)+n(p[1])*p[3];});});
+  var topA=Object.keys(prod).map(function(k){return {n:k,v:prod[k]};}).sort(function(a,b){return b.v-a.v;}).slice(0,5), pmx=topA[0]?topA[0].v:1;
+  document.getElementById('toppr').innerHTML=topA.map(function(x){return '<div class="toprow"><span class="tn">'+x.n+'</span><span class="tb"><i style="width:'+Math.round(x.v/pmx*100)+'%"></i></span><span class="tv num">'+rub(x.v)+'</span></div>';}).join('');
+  // источники
+  var SRCC={'Сайт':'#2f6ff0','Telegram-бот':'#16a34a','WhatsApp':'#0ea5a4','Звонок':'#e08a1e'};
+  var srcc={}; ORDERS.forEach(function(o){srcc[o[6]]=(srcc[o[6]]||0)+1;});
+  var srcArr=Object.keys(srcc).map(function(k){return [srcc[k],SRCC[k]||'#9aa5b8',k];}).sort(function(a,b){return b[0]-a[0];});
+  document.getElementById('sources').innerHTML=donut(srcArr.map(function(s){return [s[0],s[1]];}),ORDERS.length,'заказов')+leg(srcArr.map(function(s){return [s[2],s[0],s[1]];}));
 
-  // ── НАСТРОЙКИ ──
-  var SET=[['Интеграции',[['🧮','1С:Предприятие 8.3','обмен остатками, ценами, заказами',true],['🌐','Сайт-каталог','заказы с сайта падают сюда',true],['📞','Телефония','звонки и запись заявок',true],['💬','Telegram / WhatsApp боты','приём заказов в мессенджерах',true]]],
-    ['Уведомления',[['🔔','Новый заказ','пуш ответственному менеджеру',true],['⏰','Просрочка отгрузки','напоминание за 2 часа до срока',true],['📧','Дайджест утром','сводка по заказам и остаткам',false]]]];
-  document.getElementById('settings').innerHTML=SET.map(function(g){
-    return '<div class="sgroup"><h4>'+g[0]+'</h4>'+g[1].map(function(s){
-      return '<div class="srow"><span class="si">'+s[0]+'</span><span class="sd"><b>'+s[1]+'</b><span>'+s[2]+'</span></span><span class="sw'+(s[3]?' on':'')+'"></span></div>';
-    }).join('')+'</div>';}).join('');
-  document.getElementById('settings').addEventListener('click',function(e){var w=e.target.closest('.sw');if(w)w.classList.toggle('on');});
+  // ── НАСТРОЙКИ (складской конфиг) ──
+  function cfgTgl(t,s,on){return '<div class="cfgrow"><span class="cd"><b>'+t+'</b><span>'+s+'</span></span><span class="sw'+(on?' on':'')+'"></span></div>';}
+  function cfgInp(t,s,val,unit){return '<div class="cfgrow"><span class="cd"><b>'+t+'</b><span>'+s+'</span></span><input class="inp" value="'+val+'"><span style="color:var(--dim);font-size:12.5px">'+unit+'</span></div>';}
+  function cfgSel(t,s,opts){return '<div class="cfgrow"><span class="cd"><b>'+t+'</b><span>'+s+'</span></span><select class="selc">'+opts.map(function(o){return '<option>'+o+'</option>';}).join('')+'</select></div>';}
+  function rule(ic,when,then,on){return '<div class="rule"><span class="ri">'+ic+'</span><div class="rt"><b>Если: '+when+'</b><span class="arr">→ '+then+'</span></div><span class="sw'+(on?' on':'')+'"></span></div>';}
+  document.getElementById('cfg-sklad').innerHTML=
+    cfgTgl('Резервировать товар при заказе','позиция уходит в резерв, пока заказ не отгружен',true)+
+    cfgTgl('Не отгружать при недостатке','блокировать отгрузку, если доступного меньше',true)+
+    cfgTgl('Списывать со склада при отгрузке','автосписание в 1С по факту отгрузки',true)+
+    cfgInp('Минимальный остаток','ниже порога — предлагать заказ поставщику','30','шт');
+  document.getElementById('cfg-price').innerHTML=
+    cfgSel('Тип цен по умолчанию','какая цена подставляется в новый заказ',['Оптовая','Розничная','Дилерская'])+
+    '<table class="prtable"><tr><td>Заказ от 50 000 ₽</td><td>−5%</td></tr><tr><td>Заказ от 150 000 ₽</td><td>−8%</td></tr><tr><td>Заказ от 300 000 ₽</td><td>−12%</td></tr></table>';
+  document.getElementById('cfg-rules').innerHTML=
+    rule('⏰','просрочка отгрузки','напомнить менеджеру и РОПу за 2 часа',true)+
+    rule('📦','остаток ниже минимума','создать заказ поставщику автоматически',true)+
+    rule('💳','заказ без оплаты 3 дня','снять резерв и уведомить менеджера',false)+
+    rule('🔔','новый заказ с любого канала','пуш ответственному менеджеру',true);
+  document.getElementById('s-settings').addEventListener('click',function(e){var w=e.target.closest('.sw');if(w)w.classList.toggle('on');});
 
   // ── навигация по разделам ──
   var TITLES={orders:'Заказы',ship:'Отгрузки',stock:'Склад · 1С',clients:'Клиенты',reports:'Отчёты',settings:'Настройки'};

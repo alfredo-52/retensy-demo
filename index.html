@@ -86,6 +86,22 @@
   .item .live{font-size:11px;font-weight:700;color:var(--acc);background:var(--acc-dim);padding:3px 9px;border-radius:20px}
   .item .demo{font-size:11px;font-weight:700;color:var(--slate);border:1px solid #24324a;padding:3px 9px;border-radius:20px}
   .item p{margin:10px 0 0;font-size:14.5px;line-height:1.6}
+  /* компактная сетка демо */
+  .demogrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+  @media(max-width:640px){.demogrid{grid-template-columns:1fr}}
+  .dcard{display:block;border:1px solid var(--line2);border-radius:11px;overflow:hidden;background:var(--bg2);text-decoration:none;transition:.2s}
+  .dcard:hover{border-color:rgba(100,255,218,.25);transform:translateY(-3px)}
+  .dcard .dt{height:118px;overflow:hidden;border-bottom:1px solid var(--line2);position:relative}
+  .dcard .dt img{width:100%;height:100%;object-fit:cover;object-position:top left;opacity:.85;transition:.25s}
+  .dcard:hover .dt img{opacity:1;transform:scale(1.03)}
+  .dcard .badge{position:absolute;top:9px;right:9px;font-size:10px;font-weight:700;color:var(--slate);background:rgba(10,15,25,.72);backdrop-filter:blur(4px);padding:3px 8px;border-radius:20px}
+  .dcard .db{padding:12px 14px 14px}
+  .dcard h3{margin:0 0 5px;font-size:15.5px;font-weight:600;color:var(--white);display:flex;align-items:center;gap:6px}
+  .dcard:hover h3{color:var(--acc)}
+  .dcard h3 .ar{font-size:13px;transition:.2s}
+  .dcard:hover h3 .ar{transform:translate(3px,-3px)}
+  .dcard p{margin:0;font-size:12.5px;line-height:1.5;color:var(--slate)}
+  .dcard .tags{margin-top:9px}
   .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
   .tags span{font-size:12px;color:var(--acc);background:var(--acc-dim);padding:4px 11px;border-radius:20px;font-weight:500}
 
@@ -178,60 +194,20 @@
       </a>
 
       <p class="subh reveal" style="margin-top:40px">Демо под задачи</p>
-      <a class="item reveal" href="dashboard/">
-        <div class="thumb"><img src="preview/prevyu-dashboard.png" alt="ОптПоток" loading="lazy"></div>
-        <div>
-          <div class="date">демо · кликается</div>
-          <div class="top"><h3>ОптПоток <span class="ar">→</span></h3><span class="demo">демо</span></div>
-          <p>Операционная панель опта: заказы, отгрузки, склад из 1С в одном окне. Фильтры, карточка заказа со статусами и позициями, накладная, аналитика.</p>
-          <div class="tags"><span>дашборд</span><span>1С</span></div>
-        </div>
-      </a>
-      <a class="item reveal" href="crm/">
-        <div class="thumb"><img src="preview/prevyu-crm.png" alt="CRM" loading="lazy"></div>
-        <div>
-          <div class="date">демо · кликается</div>
-          <div class="top"><h3>Битрикс24 / amoCRM <span class="ar">→</span></h3><span class="demo">демо</span></div>
-          <p>Воронка продаж как в amoCRM: сделки по этапам, карточка сделки, список и аналитика. Заявки с сайта, бота, телефонии и 1С автоматически.</p>
-          <div class="tags"><span>CRM</span><span>воронка</span></div>
-        </div>
-      </a>
-      <a class="item reveal" href="1c/">
-        <div class="thumb"><img src="preview/prevyu-1c.png" alt="1С:Предприятие" loading="lazy"></div>
-        <div>
-          <div class="date">демо · кликается</div>
-          <div class="top"><h3>1С:Предприятие <span class="ar">→</span></h3><span class="demo">демо</span></div>
-          <p>Настоящий интерфейс 1С 8.3: обмен сайт ↔ 1С, заказы с сайта падают в учётку, остатки и цены выгружаются. Разделы, журналы, документы — всё живое.</p>
-          <div class="tags"><span>1С 8.3</span><span>обмен</span></div>
-        </div>
-      </a>
-      <a class="item reveal" href="magazin-1c/">
-        <div class="thumb"><img src="preview/prevyu-magazin.png" alt="Прораб" loading="lazy"></div>
-        <div>
-          <div class="date">демо · кликается</div>
-          <div class="top"><h3>Прораб <span class="ar">→</span></h3><span class="demo">демо</span></div>
-          <p>Магазин инструмента: наличие и цены напрямую из 1С, фильтры, сравнение, быстрый просмотр, корзина. Позиция без остатка не заказывается.</p>
-          <div class="tags"><span>магазин</span><span>1С</span></div>
-        </div>
-      </a>
-      <a class="item reveal" href="callfix/">
-        <div class="thumb"><img src="preview/prevyu-callfix.png" alt="CallFix" loading="lazy"></div>
-        <div>
-          <div class="date">демо · кликается</div>
-          <div class="top"><h3>CallFix <span class="ar">→</span></h3><span class="demo">демо</span></div>
-          <p>ИИ-разбор звонков: запись с волной, оценка звонка, тональность, кто говорил, ключевые слова и рекомендация. Аналитика и оценка менеджеров.</p>
-          <div class="tags"><span>ИИ</span><span>звонки</span></div>
-        </div>
-      </a>
-      <a class="item reveal" href="bot-crm/">
-        <div class="thumb"><img src="preview/prevyu-losk.png" alt="Лоск" loading="lazy"></div>
-        <div>
-          <div class="date">демо · кликается</div>
-          <div class="top"><h3>Лоск <span class="ar">→</span></h3><span class="demo">демо</span></div>
-          <p>Бот записи для услуг: клиент пишет в Telegram, бот подбирает окно и записывает. Расписание мастеров как в YCLIENTS, диалоги бота, записи и услуги.</p>
-          <div class="tags"><span>бот</span><span>запись</span></div>
-        </div>
-      </a>
+      <div class="demogrid reveal">
+        <a class="dcard" href="dashboard/"><div class="dt"><img src="preview/prevyu-dashboard.png" alt="ОптПоток" loading="lazy"><span class="badge">демо</span></div>
+          <div class="db"><h3>ОптПоток <span class="ar">→</span></h3><p>Операционная панель опта: заказы, склад из 1С, накладная, аналитика.</p><div class="tags"><span>дашборд</span><span>1С</span></div></div></a>
+        <a class="dcard" href="crm/"><div class="dt"><img src="preview/prevyu-crm.png" alt="CRM" loading="lazy"><span class="badge">демо</span></div>
+          <div class="db"><h3>Битрикс24 / amoCRM <span class="ar">→</span></h3><p>Воронка как в amoCRM: сделки по этапам, карточка, аналитика.</p><div class="tags"><span>CRM</span><span>воронка</span></div></div></a>
+        <a class="dcard" href="1c/"><div class="dt"><img src="preview/prevyu-1c.png" alt="1С:Предприятие" loading="lazy"><span class="badge">демо</span></div>
+          <div class="db"><h3>1С:Предприятие <span class="ar">→</span></h3><p>Настоящий интерфейс 1С 8.3, обмен сайт ↔ 1С, документы.</p><div class="tags"><span>1С 8.3</span><span>обмен</span></div></div></a>
+        <a class="dcard" href="magazin-1c/"><div class="dt"><img src="preview/prevyu-magazin.png" alt="Прораб" loading="lazy"><span class="badge">демо</span></div>
+          <div class="db"><h3>Прораб <span class="ar">→</span></h3><p>Магазин инструмента: наличие и цены из 1С, фильтры, корзина.</p><div class="tags"><span>магазин</span><span>1С</span></div></div></a>
+        <a class="dcard" href="callfix/"><div class="dt"><img src="preview/prevyu-callfix.png" alt="CallFix" loading="lazy"><span class="badge">демо</span></div>
+          <div class="db"><h3>CallFix <span class="ar">→</span></h3><p>ИИ-разбор звонков: запись с волной, оценка, тональность.</p><div class="tags"><span>ИИ</span><span>звонки</span></div></div></a>
+        <a class="dcard" href="bot-crm/"><div class="dt"><img src="preview/prevyu-losk.png" alt="Лоск" loading="lazy"><span class="badge">демо</span></div>
+          <div class="db"><h3>Лоск <span class="ar">→</span></h3><p>Бот записи: расписание мастеров как в YCLIENTS, диалоги бота.</p><div class="tags"><span>бот</span><span>запись</span></div></div></a>
+      </div>
     </section>
 
     <section class="block" id="stack">
