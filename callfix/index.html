@@ -125,6 +125,30 @@
   .bub{background:#f5f6fa;border-radius:12px;padding:9px 12px;font-size:13.5px}
   .msg.op .bub{background:#efecff}
   mark{background:#fff2c9;color:#8a6d0b;padding:0 3px;border-radius:3px}
+  /* плеер записи звонка */
+  .player{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#f3f0ff,#f7f7fc);border:1px solid #e2ddfb;border-radius:12px;padding:11px 14px;margin-bottom:16px}
+  .player .play{width:38px;height:38px;border-radius:50%;border:none;background:var(--acc);color:#fff;font-size:13px;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px -3px rgba(109,94,252,.5)}
+  .player .play:hover{background:#5b4bd8}
+  .wave{flex:1;display:flex;align-items:center;gap:2px;height:36px;cursor:pointer}
+  .wave i{flex:1;background:#cfd0e6;border-radius:2px;min-width:2px}
+  .wave i.p{background:var(--acc)}
+  .player .wt{font-size:12px;color:var(--dim);flex:none;font-variant-numeric:tabular-nums;width:76px;text-align:right}
+  /* круговая оценка */
+  .gaugecard{display:flex;align-items:center;gap:14px}
+  .gauge{position:relative;width:64px;height:64px;flex:none}
+  .gauge .gn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800}
+  /* кто говорил + настроение */
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:2px}
+  @media(max-width:560px){.metrics{grid-template-columns:1fr}}
+  .metric{background:#f7f7fc;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .metric .l{color:var(--dim);font-size:11.5px;margin-bottom:9px}
+  .talk{display:flex;height:22px;border-radius:6px;overflow:hidden;font-size:11px;font-weight:600;color:#fff}
+  .talk .m{background:var(--acc);display:flex;align-items:center;padding:0 8px;white-space:nowrap}
+  .talk .c{background:#c4c8dc;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;white-space:nowrap}
+  .sentl{display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px}
+  .sentl i{flex:1;border-radius:2px}
+  .kws{display:flex;flex-wrap:wrap;gap:7px}
+  .kw{background:#efecff;color:#5b4bd8;font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:20px}
   .pact{display:flex;gap:10px;margin-top:18px}
   .pact button{flex:1;border:none;border-radius:9px;padding:12px;font-weight:600;cursor:pointer;font-size:13.5px}
   .pact .go{background:var(--acc);color:#fff} .pact .go:hover{background:#5b4bd8}
@@ -209,6 +233,16 @@
     {t:'14:30',who:'СервисМонтаж',num:'+7 918 555‑10‑07',mgr:'Павел',dur:'5:19',type:'callback',score:7,theme:'Взял паузу на согласование',tone:'neu',toneT:'нейтральный',action:'Перезвонить в пятницу, дожать по цене',
      dialog:[['cl','Интересно, но надо согласовать с партнёром.'],['op','Конечно. Перезвоню в пятницу, к тому времени финализирую смету.'],['cl','Давайте в пятницу.']]}
   ];
+  // доп-разбор по индексу: ключевые слова, доля речи менеджера, настроение по ходу
+  var EXTRA=[
+    {kw:['цена','сроки','дедлайн','смета'],talk:52,sent:['neu','neu','pos','pos','pos']},
+    {kw:['дорого','конкуренты','гарантия'],talk:61,sent:['neg','neu','neu','pos']},
+    {kw:['объявление','за рулём'],talk:68,sent:['neu','neu','neg']},
+    {kw:['оформление','оплата','счёт','старт'],talk:47,sent:['pos','pos','pos','pos']},
+    {kw:['сроки','срыв','гарантия','договор'],talk:56,sent:['neg','neg','neu','neu']},
+    {kw:['пропущен','реклама'],talk:0,sent:['neg']},
+    {kw:['пауза','партнёр','смета'],talk:58,sent:['neu','neu','neu']}
+  ];
 
   // ── KPI ──
   (function(){
@@ -249,29 +283,52 @@
   document.getElementById('ctabs').addEventListener('click',function(e){var t=e.target.closest('[data-f]');if(!t)return;FILTER=t.getAttribute('data-f');renderTabs();renderCalls();});
 
   // ── разбор звонка (панель) ──
+  function durSec(s){var p=String(s).split(':');return (+p[0])*60+(+p[1]||0);}
+  var playTimer=null;
   function openCall(i){
-    var c=CALLS[i], ty=TYPE[c.type];
+    if(playTimer){clearInterval(playTimer);playTimer=null;}
+    var c=CALLS[i], ty=TYPE[c.type], ex=EXTRA[i], col=scoreColor(c.score);
     document.getElementById('d-who').textContent=c.who;
     document.getElementById('d-meta').textContent=c.t+' · '+c.num+' · менеджер '+c.mgr+' · '+c.dur;
     var dialog=c.dialog.map(function(m){var w=m[0]==='op'?'op':'cl';
       return '<div class="msg '+w+'"><div class="av '+w+'">'+(w==='op'?'М':'К')+'</div><div class="bub">'+m[1]+'</div></div>';}).join('');
+    var WN=46, wave='';
+    for(var k=0;k<WN;k++){var h=26+Math.round((Math.abs(Math.sin(k*1.7+i))+Math.abs(Math.cos(k*0.6)))*36);wave+='<i style="height:'+Math.min(100,h)+'%"></i>';}
+    var circ=Math.round(2*Math.PI*26), dash=Math.round(c.score/10*circ);
+    var gauge='<div class="gauge"><svg width="64" height="64" viewBox="0 0 64 64"><g transform="rotate(-90 32 32)"><circle cx="32" cy="32" r="26" fill="none" stroke="#e6e2fb" stroke-width="6"/><circle cx="32" cy="32" r="26" fill="none" stroke="'+col+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+dash+' '+circ+'"/></g></svg><div class="gn" style="color:'+col+'">'+c.score+'</div></div>';
+    var sent=ex.sent.map(function(s){return '<i style="background:'+TONE[s]+'"></i>';}).join('');
+    var kws=ex.kw.map(function(w){return '<span class="kw">'+w+'</span>';}).join('');
     document.getElementById('d-body').innerHTML=
+      '<div class="player"><button class="play" id="d-play">▶</button><div class="wave" id="d-wave">'+wave+'</div><span class="wt" id="d-wt">0:00 / '+c.dur+'</span></div>'+
       '<div class="mc3">'+
-        '<div class="mc scorebig"><div class="n num">'+c.score+'</div><div style="flex:1"><div class="l">Оценка звонка ИИ</div><div class="bar"><i style="width:'+(c.score*10)+'%"></i></div></div></div>'+
+        '<div class="mc gaugecard">'+gauge+'<div><div class="l">Оценка звонка ИИ</div><div class="v" style="font-size:12.5px;font-weight:500;color:var(--dim)">из 10 баллов</div></div></div>'+
         '<div class="mc"><div class="l">Тип</div><div class="v"><span class="pill '+ty[1]+'">'+ty[0]+'</span></div></div>'+
         '<div class="mc"><div class="l">Тональность</div><div class="v" style="color:'+TONE[c.tone]+'">'+c.toneT+'</div></div>'+
       '</div>'+
-      '<div class="sect">Что делать (рекомендация ИИ)</div>'+
-      '<div class="action"><span class="ii">🎯</span><div>'+c.action+'</div></div>'+
-      '<div class="sect">Резюме</div>'+
-      '<div class="sum">Тема: <b>'+c.theme+'</b>. '+c.dialog[0][1].replace(/<\/?mark>/g,'')+' Менеджер '+(c.mgr==='—'?'не принял звонок':c.mgr+' отработал запрос')+'; ИИ подсветил ключевые сигналы и следующий шаг.</div>'+
+      '<div class="metrics">'+
+        '<div class="metric"><div class="l">Кто говорил</div><div class="talk"><span class="m" style="width:'+ex.talk+'%">Менеджер '+ex.talk+'%</span><span class="c" style="width:'+(100-ex.talk)+'%">Клиент '+(100-ex.talk)+'%</span></div></div>'+
+        '<div class="metric"><div class="l">Настроение по ходу</div><div class="sentl">'+sent+'</div></div>'+
+      '</div>'+
+      '<div class="sect">Ключевые слова (ИИ)</div><div class="kws">'+kws+'</div>'+
+      '<div class="sect">Что делать (рекомендация ИИ)</div><div class="action"><span class="ii">🎯</span><div>'+c.action+'</div></div>'+
+      '<div class="sect">Резюме</div><div class="sum">Тема: <b>'+c.theme+'</b>. '+c.dialog[0][1].replace(/<\/?mark>/g,'')+' '+(c.mgr==='—'?'Менеджер не принял звонок':'Менеджер '+c.mgr+' отработал запрос')+'; ИИ подсветил ключевые сигналы и следующий шаг.</div>'+
       '<div class="sect">Расшифровка · ключевое подсвечено</div>'+dialog+
       '<div class="pact"><button class="go" id="d-crm">Поставить задачу в CRM</button><button class="sec2" id="d-call2">Перезвонить</button></div>';
+    // плеер записи
+    var bars=[].slice.call(document.querySelectorAll('#d-wave i')), total=durSec(c.dur)||60, prog=0, playing=false;
+    var playBtn=document.getElementById('d-play'), wt=document.getElementById('d-wt'), waveEl=document.getElementById('d-wave');
+    function fmt(sec){sec=Math.round(sec);var m=Math.floor(sec/60),s=sec%60;return m+':'+(s<10?'0':'')+s;}
+    function paint(){bars.forEach(function(b,idx){b.classList.toggle('p',(idx/bars.length)<=prog);});wt.textContent=fmt(prog*total)+' / '+c.dur;}
+    function stop(){playing=false;playBtn.textContent='▶';if(playTimer){clearInterval(playTimer);playTimer=null;}}
+    playBtn.onclick=function(){if(playing){stop();return;}if(prog>=1)prog=0;playing=true;playBtn.textContent='❚❚';
+      playTimer=setInterval(function(){prog+=0.02;if(prog>=1){prog=1;paint();stop();return;}paint();},70);};
+    waveEl.onclick=function(e){var r=this.getBoundingClientRect();prog=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));paint();};
+    paint();
     document.getElementById('d-crm').onclick=function(){this.textContent='✓ Задача создана';this.style.background='var(--green)';};
     document.getElementById('d-call2').onclick=function(){this.textContent='✓ Звонок инициирован';};
     document.getElementById('panel').classList.add('on');document.getElementById('ov').classList.add('on');
   }
-  function closeCall(){document.getElementById('panel').classList.remove('on');document.getElementById('ov').classList.remove('on');}
+  function closeCall(){if(playTimer){clearInterval(playTimer);playTimer=null;}document.getElementById('panel').classList.remove('on');document.getElementById('ov').classList.remove('on');}
   document.getElementById('crows').addEventListener('click',function(e){var tr=e.target.closest('.clk');if(tr)openCall(+tr.getAttribute('data-i'));});
   document.getElementById('d-close').onclick=closeCall;
   document.getElementById('ov').onclick=closeCall;
