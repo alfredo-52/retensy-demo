@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retensy — работы</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0d1117;color:#e6edf3;
+    font:16px/1.6 "Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:60px 24px}
+  h1{font-size:clamp(30px,5vw,46px);margin:0 0 10px;letter-spacing:-.02em}
+  .sub{color:#8b98a5;font-size:18px;margin:0 0 44px;max-width:560px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+  a.card{display:block;background:#161b22;border:1px solid #273143;border-radius:16px;padding:22px;transition:.15s;color:inherit;text-decoration:none}
+  a.card:hover{border-color:#3d4d68;transform:translateY(-3px)}
+  .tag{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#58a6ff}
+  .card h2{font-size:21px;margin:10px 0 6px}
+  .card p{color:#8b98a5;font-size:14.5px;margin:0}
+  .go{margin-top:16px;font-weight:700;color:#58a6ff;font-size:14px}
+  footer{margin-top:46px;color:#8b98a5;font-size:14px}
+  footer a{color:#58a6ff;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Наши работы</h1>
+  <p class="sub">Сайты, боты и интеграции с 1С и CRM. Три примера в разных нишах и стилях — открой и потыкай, всё живое.</p>
+  <div class="grid">
+    <a class="card" href="magazin-1c/">
+      <div class="tag">Магазин + 1С</div>
+      <h2>Прораб</h2>
+      <p>Интернет-магазин инструмента с наличием и ценами напрямую из 1С. Заказ падает обратно в учётку.</p>
+      <div class="go">Открыть →</div>
+    </a>
+    <a class="card" href="bot-crm/">
+      <div class="tag">Бот + CRM</div>
+      <h2>Лоск</h2>
+      <p>Бот записи для бьюти-студии: принимает клиента в Telegram и складывает заявку в CRM. Ни одной потерянной.</p>
+      <div class="go">Открыть →</div>
+    </a>
+    <a class="card" href="dashboard/">
+      <div class="tag">Дашборд + интеграции</div>
+      <h2>ОптПоток</h2>
+      <p>Панель заявок для опта: все каналы и склад из 1С в одном окне, в реальном времени.</p>
+      <div class="go">Открыть →</div>
+    </a>
+  </div>
+  <footer>Демо-проекты студии <a href="https://retensy.com">Retensy</a>. Данные вымышлены, всё интерактивно.</footer>
+</div>
+</body>
+</html>
