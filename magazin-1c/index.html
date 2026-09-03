@@ -7,7 +7,7 @@
 <style>
   :root{
     --bg:#eef0f3; --card:#fff; --line:#e4e7ec; --txt:#1b1f27; --dim:#7b828d;
-    --org:#ff5a1f; --org2:#e94810; --red:#e11900; --green:#1a9d4b; --star:#ffb400; --blue:#1f6fd6;
+    --org:#ff5a1f; --org2:#e94810; --red:#e11900; --green:#1a9d4b; --star:#ffb400; --blue:#1f6fd6; --line2:#eef0f3;
   }
   *{box-sizing:border-box}
   [hidden]{display:none!important}
@@ -84,8 +84,31 @@
   .prod{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;transition:.15s;position:relative}
   .prod:hover{border-color:#d4d8df;box-shadow:0 10px 26px -14px rgba(20,25,35,.3);transform:translateY(-2px)}
   .prod .tag{position:absolute;top:12px;left:12px;background:var(--org);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;z-index:2}
-  .prod .fav{position:absolute;top:12px;right:12px;color:#c8cdd4;font-size:18px;cursor:pointer;z-index:2}
-  .prod .fav:hover{color:var(--org)}
+  .prod .picons{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;z-index:2}
+  .prod .picons span{width:30px;height:30px;border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(20,25,35,.14);display:flex;align-items:center;justify-content:center;font-size:15px;color:#c0c4cb;cursor:pointer;transition:.15s}
+  .prod .picons span:hover{color:var(--org)}
+  .prod .picons .fav.on{color:var(--org)}
+  .prod .picons .cmp.on{color:var(--blue)}
+  /* панель избранного (как корзина) */
+  .fav-buy{margin-top:7px;background:#fff2ec;color:var(--org);border:none;border-radius:7px;padding:7px 12px;font-weight:600;font-size:12.5px;cursor:pointer;display:inline-block}
+  /* модалка сравнения */
+  .cmov{position:fixed;inset:0;background:rgba(20,25,35,.4);opacity:0;pointer-events:none;transition:.18s;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px}
+  .cmov.on{opacity:1;pointer-events:auto}
+  .cmwrap{background:#fff;border-radius:16px;max-width:1000px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;transform:scale(.97);transition:.18s}
+  .cmov.on .cmwrap{transform:none}
+  .cmh{display:flex;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line);font-size:18px}
+  .cmh .cmx{margin-left:auto;border:none;background:none;font-size:24px;color:var(--dim);cursor:pointer;line-height:1}
+  .cmbody{overflow:auto}
+  .cmempty{padding:60px 20px;text-align:center;color:var(--dim)}
+  .cmtable{border-collapse:collapse;width:100%;min-width:560px}
+  .cmtable th,.cmtable td{border-bottom:1px solid var(--line);padding:12px 16px;text-align:left;vertical-align:top;font-size:13.5px}
+  .cmtable thead th{border-right:1px solid var(--line);width:230px;border-bottom:2px solid var(--line)}
+  .cmtable td{border-right:1px solid var(--line2)}
+  .cmtable .cml{color:var(--dim)}
+  .cmp-im{height:110px;background:#f6f7f9 center/contain no-repeat;border-radius:8px;margin-bottom:9px}
+  .cmp-nm{font-weight:600;margin-bottom:9px;font-size:13px;line-height:1.3}
+  .cmp-buy{background:var(--org);color:#fff;border:none;border-radius:8px;padding:8px 13px;font-weight:600;cursor:pointer;font-size:12.5px;margin-right:8px}
+  .cmp-rm{background:none;border:none;color:var(--dim);cursor:pointer;font-size:12px;text-decoration:underline}
   .prod .im{height:170px;border-radius:8px;background:#f6f7f9 center/contain no-repeat;margin-bottom:10px}
   .prod .art{color:var(--dim);font-size:11.5px}
   .prod .nm{font-weight:600;font-size:14px;margin:3px 0 7px;min-height:38px;line-height:1.3}
@@ -216,7 +239,7 @@
   <div class="search"><input placeholder="Поиск по 3 400+ товарам: перфоратор, саморезы, кабель…"><button>Найти</button></div>
   <div class="hicons">
     <div class="hicon"><span class="ic">❤</span><span class="badge" id="favN" hidden>0</span>Избранное</div>
-    <div class="hicon"><span class="ic">⚖</span>Сравнить</div>
+    <div class="hicon"><span class="ic">⚖</span><span class="badge" id="cmpN" hidden>0</span>Сравнить</div>
     <div class="hicon"><span class="ic">🛒</span><span class="badge">3</span>Корзина</div>
   </div>
   <div class="phone"><div class="n">8 862 555-12-34</div><div class="s">ежедневно 8:00-20:00</div></div>
@@ -299,6 +322,16 @@
   <div class="cfoot"><div class="ctot"><span>Итого</span><b id="ctot">0 ₽</b></div><button class="cbtn">Оформить заказ</button></div>
 </aside>
 
+<aside class="cart" id="favd">
+  <div class="ch"><b>Избранное</b><button class="cx" id="favx">×</button></div>
+  <div class="cbody" id="favbody"></div>
+</aside>
+
+<div class="cmov" id="cmov"><div class="cmwrap">
+  <div class="cmh"><b>Сравнение товаров</b><button class="cmx" id="cmx">×</button></div>
+  <div class="cmbody" id="cmbody"></div>
+</div></div>
+
 <div class="qov" id="qov"><div class="qm">
   <button class="qx" id="qx">×</button>
   <div class="qim" id="q-im"></div>
@@ -330,12 +363,24 @@
     ['img/t13.jpg','DRL-13','Дрель ударная Интерскол ДУ-780',4.4,27,4750,2,'','Интерскол'],
     ['img/t11.jpg','UGL-230','УШМ Dnipro-M 230 мм, 2600 Вт',4.6,61,7900,0,'','Dnipro-M']
   ];
+  // характеристики для сравнения, по индексу товара
+  var SPECS=[
+    [['Тип','Дрель-шуруповёрт'],['Напряжение','18 В'],['Крутящий момент','65 Нм'],['Вес','1.2 кг'],['Гарантия','3 года']],
+    [['Тип','Шуруповёрт'],['Напряжение','12 В'],['Крутящий момент','30 Нм'],['Вес','1.1 кг'],['Гарантия','1 год']],
+    [['Тип','УШМ (болгарка)'],['Мощность','1400 Вт'],['Диск','125 мм'],['Вес','2.1 кг'],['Гарантия','1 год']],
+    [['Тип','Шуруповёрт'],['Напряжение','18 В'],['Крутящий момент','50 Нм'],['Вес','1.3 кг'],['Гарантия','3 года']],
+    [['Тип','Перфоратор'],['Мощность','780 Вт'],['Энергия удара','2.7 Дж'],['Вес','2.8 кг'],['Гарантия','1 год']],
+    [['Тип','Лобзик'],['Мощность','500 Вт'],['Пропил дерево','65 мм'],['Вес','1.9 кг'],['Гарантия','1 год']],
+    [['Тип','Дрель ударная'],['Мощность','780 Вт'],['Патрон','13 мм'],['Вес','2.0 кг'],['Гарантия','1 год']],
+    [['Тип','УШМ (болгарка)'],['Мощность','2600 Вт'],['Диск','230 мм'],['Вес','5.5 кг'],['Гарантия','1 год']]
+  ];
   function rub(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽';}
   function stars(r){var s='';for(var i=1;i<=5;i++)s+=i<=Math.round(r)?'★':'<span class="e">★</span>';return s;}
   function stk(n){return n===0?['no','нет в наличии']:(n<=3?['low','осталось '+n+' шт']:['ok',n+' шт на складе']);}
   function plural(n,a,b,c){var m=n%100;if(m>=11&&m<=14)return c;var d=n%10;return d===1?a:(d>=2&&d<=4?b:c);}
   function toEl(el){if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
-  var FAV={};
+  var FAV={}, CMP={};
+  function cmpBadge(){var n=Object.keys(CMP).filter(function(k){return CMP[k];}).length;var bd=document.getElementById('cmpN');if(bd){bd.textContent=n;bd.hidden=n===0;}}
 
   // фильтр по брендам
   var BR=[];TOVAR.forEach(function(t){if(BR.indexOf(t[8])<0)BR.push(t[8]);});
@@ -345,7 +390,9 @@
 
   function card(t,i){
     var s=stk(t[6]);
-    return '<div class="prod" data-i="'+i+'">'+(t[7]?'<span class="tag">'+t[7]+'</span>':'')+'<span class="fav"'+(FAV[i]?' style="color:var(--org)"':'')+'>'+(FAV[i]?'♥':'♡')+'</span>'+
+    return '<div class="prod" data-i="'+i+'">'+(t[7]?'<span class="tag">'+t[7]+'</span>':'')+
+      '<div class="picons"><span class="fav'+(FAV[i]?' on':'')+'" title="В избранное">'+(FAV[i]?'♥':'♡')+'</span>'+
+      '<span class="cmp'+(CMP[i]?' on':'')+'" title="Добавить к сравнению">⇄</span></div>'+
       '<div class="im" style="background-image:url('+t[0]+')"></div>'+
       '<div class="art">Арт. '+t[1]+'</div><div class="nm">'+t[2]+'</div>'+
       '<div class="rate"><span class="stars">'+stars(t[3])+'</span>'+t[3].toFixed(1)+' · '+t[4]+' отзывов</div>'+
@@ -401,11 +448,66 @@
     document.getElementById('ctot').textContent=rub(tot);badge();
   }
   document.getElementById('cbody').addEventListener('click',function(e){var r=e.target.closest('.crm');if(r){CART.splice(+r.getAttribute('data-pos'),1);renderCart();}});
-  function openCart(){renderCart();document.getElementById('cart').classList.add('on');document.getElementById('cov').classList.add('on');}
-  function closeCart(){document.getElementById('cart').classList.remove('on');document.getElementById('cov').classList.remove('on');}
-  document.getElementById('cx').onclick=closeCart;
-  document.getElementById('cov').onclick=closeCart;
-  document.querySelectorAll('.hicon').forEach(function(h){if(h.textContent.indexOf('Корзина')>-1)h.onclick=openCart;});
+  // корзина и избранное делят оверлей
+  function closeDrawers(){['cart','favd'].forEach(function(id){document.getElementById(id).classList.remove('on');});document.getElementById('cov').classList.remove('on');}
+  function openCart(){renderCart();closeDrawers();document.getElementById('cart').classList.add('on');document.getElementById('cov').classList.add('on');}
+  function openFav(){renderFav();closeDrawers();document.getElementById('favd').classList.add('on');document.getElementById('cov').classList.add('on');}
+  document.getElementById('cx').onclick=closeDrawers;
+  document.getElementById('favx').onclick=closeDrawers;
+  document.getElementById('cov').onclick=closeDrawers;
+
+  // избранное: список товаров
+  function renderFav(){
+    var ids=Object.keys(FAV).filter(function(k){return FAV[k];}).map(Number);
+    var body=document.getElementById('favbody');
+    if(!ids.length){body.innerHTML='<div class="cempty">В избранном пока пусто. Жмите ♡ на товаре.</div>';return;}
+    body.innerHTML=ids.map(function(i){var t=TOVAR[i];
+      return '<div class="citem"><div class="cim" style="background-image:url('+t[0]+')"></div>'+
+        '<div class="cn">'+t[2]+'<div class="cp num">'+rub(t[5])+'</div>'+
+        '<button class="fav-buy" data-i="'+i+'">В корзину</button></div>'+
+        '<button class="crm fav-rm" data-i="'+i+'">×</button></div>';
+    }).join('');
+  }
+  document.getElementById('favbody').addEventListener('click',function(e){
+    var buy=e.target.closest('.fav-buy'); if(buy){CART.push(+buy.getAttribute('data-i'));badge();buy.textContent='✓ В корзине';return;}
+    var rm=e.target.closest('.fav-rm'); if(rm){FAV[+rm.getAttribute('data-i')]=false;favBadge();renderFav();apply();}
+  });
+
+  // сравнение: таблица характеристик
+  function openCompare(){
+    var ids=Object.keys(CMP).filter(function(k){return CMP[k];}).map(Number);
+    var body=document.getElementById('cmbody');
+    if(!ids.length){body.innerHTML='<div class="cmempty">Пока нечего сравнивать. Нажмите ⇄ на карточке товара, чтобы добавить его сюда.</div>';}
+    else{
+      var labels=[]; ids.forEach(function(i){SPECS[i].forEach(function(s){if(labels.indexOf(s[0])<0)labels.push(s[0]);});});
+      function specVal(i,lab){var f=SPECS[i].filter(function(s){return s[0]===lab;});return f.length?f[0][1]:'—';}
+      var head='<tr><th></th>'+ids.map(function(i){var t=TOVAR[i];
+        return '<th><div class="cmp-im" style="background-image:url('+t[0]+')"></div><div class="cmp-nm">'+t[2]+'</div>'+
+          '<button class="cmp-buy" data-i="'+i+'">В корзину</button><button class="cmp-rm" data-i="'+i+'">убрать</button></th>';}).join('')+'</tr>';
+      function row(lab,fn){return '<tr><td class="cml">'+lab+'</td>'+ids.map(function(i){return '<td>'+fn(i)+'</td>';}).join('')+'</tr>';}
+      var rows=row('Цена',function(i){return '<b>'+rub(TOVAR[i][5])+'</b>';})+
+        row('Наличие',function(i){return stk(TOVAR[i][6])[1];})+
+        row('Рейтинг',function(i){return TOVAR[i][3].toFixed(1)+' · '+TOVAR[i][4]+' отзывов';})+
+        row('Бренд',function(i){return TOVAR[i][8];})+
+        labels.map(function(lab){return row(lab,function(i){return specVal(i,lab);});}).join('');
+      body.innerHTML='<table class="cmtable"><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>';
+    }
+    document.getElementById('cmov').classList.add('on');
+  }
+  document.getElementById('cmx').onclick=function(){document.getElementById('cmov').classList.remove('on');};
+  document.getElementById('cmov').addEventListener('click',function(e){if(e.target.id==='cmov')document.getElementById('cmov').classList.remove('on');});
+  document.getElementById('cmbody').addEventListener('click',function(e){
+    var buy=e.target.closest('.cmp-buy'); if(buy){CART.push(+buy.getAttribute('data-i'));badge();buy.textContent='✓ В корзине';return;}
+    var rm=e.target.closest('.cmp-rm'); if(rm){CMP[+rm.getAttribute('data-i')]=false;cmpBadge();apply();openCompare();}
+  });
+
+  // иконки шапки открывают панели, а не скроллят
+  document.querySelectorAll('.hicon').forEach(function(h){var t=h.textContent;
+    if(t.indexOf('Корзина')>-1)h.onclick=openCart;
+    else if(t.indexOf('Избранное')>-1)h.onclick=openFav;
+    else if(t.indexOf('Сравн')>-1)h.onclick=openCompare;
+  });
+
   document.querySelector('.cbtn').onclick=function(){
     if(!CART.length)return;
     document.getElementById('cbody').innerHTML='<div class="cok"><div class="cokic">✓</div><b>Заказ оформлен</b><span>Менеджер перезвонит для подтверждения. Это демо-витрина.</span></div>';
@@ -418,9 +520,11 @@
     if(b&&!b.disabled){var i=+b.closest('.prod').getAttribute('data-i');CART.push(i);badge();
       b.textContent='✓ В корзине';b.style.background='var(--green)';setTimeout(function(){b.textContent='В корзину';b.style.background='';},1100);return;}
     var f=e.target.closest('.fav');
-    if(f){var fi=+f.closest('.prod').getAttribute('data-i');FAV[fi]=!FAV[fi];f.textContent=FAV[fi]?'♥':'♡';f.style.color=FAV[fi]?'var(--org)':'';favBadge();return;}
+    if(f){var fi=+f.closest('.prod').getAttribute('data-i');FAV[fi]=!FAV[fi];f.classList.toggle('on',FAV[fi]);f.textContent=FAV[fi]?'♥':'♡';favBadge();return;}
+    var c=e.target.closest('.cmp');
+    if(c){var ci=+c.closest('.prod').getAttribute('data-i');CMP[ci]=!CMP[ci];c.classList.toggle('on',CMP[ci]);cmpBadge();return;}
     var p=e.target.closest('.prod');
-    if(p&&!e.target.closest('button'))openQuick(+p.getAttribute('data-i'));
+    if(p&&!e.target.closest('button')&&!e.target.closest('.picons'))openQuick(+p.getAttribute('data-i'));
   });
   badge();
 
@@ -465,9 +569,8 @@
   document.addEventListener('click',function(e){if(!e.target.closest('.catwrap'))closeMenu();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
 
-  // верхняя строка и иконки шапки — не мёртвые
+  // верхняя строка — не мёртвая (иконки шапки открывают панели, привязаны выше)
   document.querySelectorAll('.tbar a').forEach(function(a){a.onclick=function(){toEl(document.querySelector('.bwrap'));};});
-  document.querySelectorAll('.hicon').forEach(function(h){if(h.textContent.indexOf('Корзина')<0)h.onclick=function(){toEl(document.querySelector('.listing'));};});
 
   // быстрый просмотр товара
   function openQuick(i){
