@@ -3,50 +3,220 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Retensy — работы</title>
+<title>Retensy — портфолио</title>
 <style>
+  :root{
+    --bg:#0a0e15; --bg2:#0e131d; --card:#121826; --line:#1f2937; --line2:#28323f;
+    --txt:#e8eef6; --dim:#8896a8; --faint:#5b6675;
+    --acc:#5eead4; --acc2:#38bdf8;
+  }
   *{box-sizing:border-box}
-  body{margin:0;background:#0d1117;color:#e6edf3;
-    font:16px/1.6 "Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1000px;margin:0 auto;padding:60px 24px}
-  h1{font-size:clamp(30px,5vw,46px);margin:0 0 10px;letter-spacing:-.02em}
-  .sub{color:#8b98a5;font-size:18px;margin:0 0 44px;max-width:560px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
-  a.card{display:block;background:#161b22;border:1px solid #273143;border-radius:16px;padding:22px;transition:.15s;color:inherit;text-decoration:none}
-  a.card:hover{border-color:#3d4d68;transform:translateY(-3px)}
-  .tag{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#58a6ff}
-  .card h2{font-size:21px;margin:10px 0 6px}
-  .card p{color:#8b98a5;font-size:14.5px;margin:0}
-  .go{margin-top:16px;font-weight:700;color:#58a6ff;font-size:14px}
-  footer{margin-top:46px;color:#8b98a5;font-size:14px}
-  footer a{color:#58a6ff;font-weight:600}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:16px/1.6 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:"JetBrains Mono",Consolas,ui-monospace,monospace}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* фон-градиент сверху */
+  .glow{position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(600px 400px at 12% -5%,rgba(94,234,212,.09),transparent 60%),
+               radial-gradient(700px 500px at 100% 0%,rgba(56,189,248,.07),transparent 55%)}
+  .page{position:relative;z-index:1}
+
+  /* шапка */
+  header{position:sticky;top:0;z-index:20;backdrop-filter:blur(9px);
+    background:rgba(10,14,21,.72);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;gap:24px;height:64px}
+  .brand{font-weight:800;font-size:19px;letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+  .brand i{width:10px;height:20px;background:var(--acc);border-radius:2px;display:inline-block}
+  .nav .lnk{margin-left:auto;display:flex;gap:22px;color:var(--dim);font-size:14px}
+  .nav .lnk a:hover{color:var(--txt)}
+  .nav .cta{background:var(--acc);color:#04231e;font-weight:700;padding:9px 16px;border-radius:9px;font-size:14px}
+  @media(max-width:720px){.nav .lnk{display:none}}
+
+  /* герой */
+  .hero{padding:96px 0 60px}
+  .kick{color:var(--acc);font-weight:700;font-size:14px;letter-spacing:.03em;margin-bottom:18px;font-family:"JetBrains Mono",monospace}
+  .hero h1{font-size:clamp(38px,6.5vw,74px);line-height:1.02;letter-spacing:-.03em;margin:0 0 22px;font-weight:800;max-width:14ch}
+  .hero h1 em{font-style:normal;color:var(--acc)}
+  .hero .lead{font-size:20px;color:var(--dim);max-width:600px;margin:0 0 34px}
+  .hero .btns{display:flex;gap:14px;flex-wrap:wrap}
+  .b1{background:var(--acc);color:#04231e;font-weight:700;padding:14px 26px;border-radius:11px;font-size:16px}
+  .b1:hover{filter:brightness(1.08)}
+  .b2{border:1px solid var(--line2);color:var(--txt);padding:14px 24px;border-radius:11px;font-size:16px;font-weight:600}
+  .b2:hover{border-color:var(--acc);color:var(--acc)}
+
+  .facts{display:flex;gap:40px;flex-wrap:wrap;margin-top:52px;padding-top:34px;border-top:1px solid var(--line)}
+  .fact b{display:block;font-size:28px;font-weight:800}
+  .fact b em{font-style:normal;color:var(--acc)}
+  .fact small{color:var(--faint);font-size:13px}
+
+  /* секции */
+  section{padding:46px 0}
+  .sh{display:flex;align-items:baseline;gap:14px;margin-bottom:26px}
+  .sh h2{font-size:24px;margin:0;font-weight:800;letter-spacing:-.01em}
+  .sh .c{font-family:"JetBrains Mono",monospace;color:var(--acc);font-size:14px}
+  .sh .ln{flex:1;height:1px;background:var(--line)}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}}
+  .w{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:10px;transition:.16s;position:relative;overflow:hidden}
+  .w:hover{border-color:var(--acc);transform:translateY(-3px)}
+  .w .top{display:flex;align-items:center;gap:10px}
+  .w .tag{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--acc);border:1px solid var(--line2);padding:3px 9px;border-radius:20px}
+  .w .live{margin-left:auto;font-size:11px;font-weight:700;color:#04231e;background:var(--acc);padding:3px 9px;border-radius:20px}
+  .w .demo{margin-left:auto;font-size:11px;font-weight:700;color:var(--dim);border:1px solid var(--line2);padding:3px 9px;border-radius:20px}
+  .w h3{margin:2px 0 0;font-size:19px;font-weight:700}
+  .w p{margin:0;color:var(--dim);font-size:14.5px;flex:1}
+  .w .go{color:var(--acc);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px}
+  .w .off{color:var(--faint);font-size:13px}
+
+  /* контакт */
+  .contact{text-align:center;padding:80px 0 40px}
+  .contact .kick{justify-content:center;text-align:center}
+  .contact h2{font-size:clamp(30px,5vw,48px);margin:0 0 16px;font-weight:800;letter-spacing:-.02em}
+  .contact p{color:var(--dim);font-size:18px;max-width:520px;margin:0 auto 30px}
+  footer{border-top:1px solid var(--line);padding:30px 0;color:var(--faint);font-size:13.5px}
+  footer .wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  footer .r{margin-left:auto}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Наши работы</h1>
-  <p class="sub">Сайты, боты и интеграции с 1С и CRM. Три примера в разных нишах и стилях — открой и потыкай, всё живое.</p>
-  <div class="grid">
-    <a class="card" href="magazin-1c/">
-      <div class="tag">Магазин + 1С</div>
-      <h2>Прораб</h2>
-      <p>Интернет-магазин инструмента с наличием и ценами напрямую из 1С. Заказ падает обратно в учётку.</p>
-      <div class="go">Открыть →</div>
-    </a>
-    <a class="card" href="bot-crm/">
-      <div class="tag">Бот + CRM</div>
-      <h2>Лоск</h2>
-      <p>Бот записи для бьюти-студии: принимает клиента в Telegram и складывает заявку в CRM. Ни одной потерянной.</p>
-      <div class="go">Открыть →</div>
-    </a>
-    <a class="card" href="dashboard/">
-      <div class="tag">Дашборд + интеграции</div>
-      <h2>ОптПоток</h2>
-      <p>Панель заявок для опта: все каналы и склад из 1С в одном окне, в реальном времени.</p>
-      <div class="go">Открыть →</div>
-    </a>
+<div class="glow"></div>
+<div class="page">
+
+<header>
+  <div class="wrap nav">
+    <div class="brand"><i></i>Retensy</div>
+    <div class="lnk">
+      <a href="#works">Работы</a>
+      <a href="#stack">Что делаем</a>
+      <a href="#contact" class="cta">Написать</a>
+    </div>
   </div>
-  <footer>Демо-проекты студии <a href="https://retensy.com">Retensy</a>. Данные вымышлены, всё интерактивно.</footer>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="kick">ВЕБ-СТУДИЯ · САЙТЫ · БОТЫ · ИНТЕГРАЦИИ</div>
+    <h1>Связываем сайт с тем, что у вас <em>уже работает</em></h1>
+    <p class="lead">1С, amoCRM, Битрикс24, ИИ-помощники. Не просто вёрстка страницы, а стыковка систем — там, где шаблонные проекты обычно ломаются.</p>
+    <div class="btns">
+      <a class="b1" href="#works">Смотреть работы</a>
+      <a class="b2" href="#contact">Обсудить проект</a>
+    </div>
+    <div class="facts">
+      <div class="fact"><b><em>live</em></b><small>продукты с платящими</small></div>
+      <div class="fact"><b>1С · CRM</b><small>интеграции, а не только сайты</small></div>
+      <div class="fact"><b>24 ч</b><small>старт работ</small></div>
+      <div class="fact"><b>ИП</b><small>договор и чек</small></div>
+    </div>
+  </div>
+
+  <section id="works">
+    <div class="sh"><span class="c">01</span><h2>Живые продукты</h2><span class="ln"></span></div>
+    <div class="grid">
+      <a class="w" href="https://getatom.ru" target="_blank" rel="noopener">
+        <div class="top"><span class="tag">SaaS · платформа</span><span class="live">платящие</span></div>
+        <h3>ATOM</h3>
+        <p>Платформа для бизнеса: ИИ-ассистент по своим материалам, контент, деловая соцсеть, площадка, кошелёк, CRM. Веб и приложения iOS/Android. Живая подписка и аналитика (выручка, отток, когорты).</p>
+        <span class="go">getatom.ru →</span>
+      </a>
+      <a class="w" href="https://zaytsv.com" target="_blank" rel="noopener">
+        <div class="top"><span class="tag">Боты · конструктор</span><span class="live">в проде</span></div>
+        <h3>Zaytsv</h3>
+        <p>Визуальный конструктор ботов для Telegram, MAX, Instagram: 25 типов блоков, сборка воронки по описанию через ИИ. В проде: воронки до 96 блоков, 400+ версий графа. Spring Boot, Next.js.</p>
+        <span class="go">zaytsv.com →</span>
+      </a>
+      <a class="w" href="https://forbiddenglass.com" target="_blank" rel="noopener">
+        <div class="top"><span class="tag">Онлайн-сервис</span><span class="live">в проде</span></div>
+        <h3>ForbiddenGlass</h3>
+        <p>Расчёт стоимости автостёкол по VIN или скану штрихкода за ~10 секунд. Две валюты, партнёрская программа, личный кабинет. Full-stack, работает на рынке Канады.</p>
+        <span class="go">forbiddenglass.com →</span>
+      </a>
+      <a class="w" href="https://retensy.com" target="_blank" rel="noopener">
+        <div class="top"><span class="tag">ИИ-помощник</span><span class="live">потрогать</span></div>
+        <h3>Aiuto</h3>
+        <p>RAG-ассистент, отвечает строго по документам компании, а не выдумывает. Веб и мессенджеры с общим контекстом, сложное передаёт оператору с историей. Живой на нашем сайте — задайте ему вопрос.</p>
+        <span class="go">retensy.com →</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sh"><span class="c">02</span><h2>Демо под задачи</h2><span class="ln"></span></div>
+    <div class="grid">
+      <a class="w" href="magazin-1c/">
+        <div class="top"><span class="tag">Магазин + 1С</span><span class="demo">демо</span></div>
+        <h3>Прораб</h3>
+        <p>Интернет-магазин: остатки и цены напрямую из 1С, обновление каждые 5 минут. Позиция без остатка не заказывается. Заказ падает обратно в учётку. Личный кабинет со статусами.</p>
+        <span class="go">Открыть →</span>
+      </a>
+      <a class="w" href="bot-crm/">
+        <div class="top"><span class="tag">Бот + CRM</span><span class="demo">демо</span></div>
+        <h3>Лоск</h3>
+        <p>Бот записи для сферы услуг: принимает клиента в Telegram, подбирает время, напоминает о визите, заявка сразу в CRM. Ни одной потерянной. Живой диалог и доска администратора.</p>
+        <span class="go">Открыть →</span>
+      </a>
+      <a class="w" href="dashboard/">
+        <div class="top"><span class="tag">Дашборд + интеграции</span><span class="demo">демо</span></div>
+        <h3>ОптПоток</h3>
+        <p>Панель заявок для опта: сайт, бот, WhatsApp, звонки плюс склад из 1С — в одном окне, в реальном времени. KPI, график по дням, разбивка по каналам.</p>
+        <span class="go">Открыть →</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="sh"><span class="c">03</span><h2>Интеграции и ИИ</h2><span class="ln"></span></div>
+    <div class="grid">
+      <div class="w">
+        <div class="top"><span class="tag">Интеграция 1С</span></div>
+        <h3>Мост сайт ↔ 1С 8.3</h3>
+        <p>Безопасный обмен с закрытой 1С: метаданные, запросы на языке 1С, проведение документов, номенклатура и остатки. Тест-проведение в откатываемой транзакции — ловим ошибку, ничего не записав в базу.</p>
+        <span class="off">то место, где ломаются шаблонные проекты</span>
+      </div>
+      <div class="w">
+        <div class="top"><span class="tag">CRM</span></div>
+        <h3>Битрикс24 и amoCRM</h3>
+        <p>Внедрение и синхронизация: воронка под реальный процесс, автозадачи, связь с сайтом, телефонией и 1С. Заявки со всех каналов падают в CRM автоматически, данные не расходятся с учётом.</p>
+        <span class="off">без ручного переноса и потерянных заявок</span>
+      </div>
+      <div class="w">
+        <div class="top"><span class="tag">ИИ</span></div>
+        <h3>CallFix — разбор звонков</h3>
+        <p>ИИ расшифровывает звонки, определяет тему, делает резюме, даёт фильтры по менеджерам и темам, учится на правках. Снимает ручное прослушивание звонков штатом людей.</p>
+        <span class="off">автоматизация того, что раньше делали руками</span>
+      </div>
+      <div class="w">
+        <div class="top"><span class="tag">Сайты</span></div>
+        <h3>Сайты и лендинги под ключ</h3>
+        <p>От одностраничника до магазина с каталогом и личным кабинетом. Домен, код и хостинг оформляем на вас. Формы с загрузкой файлов, кнопки мессенджеров, адаптив, тёмная тема.</p>
+        <span class="off">всё оформляется на заказчика</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="contact" id="contact">
+    <div class="kick" style="text-align:center">СВЯЖИТЕСЬ</div>
+    <h2>Расскажите, что нужно связать</h2>
+    <p>Посмотрим ваши системы и предложим, как их состыковать. Аудит бесплатный, старт работ — в течение суток.</p>
+    <div class="btns" style="justify-content:center">
+      <a class="b1" href="https://retensy.com" target="_blank" rel="noopener">Написать в студию</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>Retensy — сайты, боты, интеграции 1С и CRM, ИИ-помощники.</div>
+    <div class="r">Демо-проекты помечены; продукты по ссылкам — живые.</div>
+  </div>
+</footer>
+
 </div>
 </body>
 </html>
