@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Индустрия — барбершоп в Сочи</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#141517;--bg2:#1b1d20;--card:#202327;--line:#2c3035;--txt:#eceded;--dim:#9a9ea3;--acc:#ff5a1f;--steel:#d7dbe0}
+  *{margin:0;padding:0;box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Arial,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3,.anton{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacing:.01em;text-transform:uppercase;line-height:.98}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  .btn{display:inline-flex;align-items:center;gap:9px;background:var(--acc);color:#fff;font-weight:700;padding:15px 26px;border:none;border-radius:2px;cursor:pointer;font-size:15px;letter-spacing:.02em;text-transform:uppercase;transition:.15s}
+  .btn:hover{background:#ff6f3c;transform:translateY(-1px)}
+  .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--txt)}
+  .btn.ghost:hover{border-color:var(--acc);color:var(--acc);background:transparent}
+  /* header */
+  header{position:sticky;top:0;z-index:40;background:rgba(20,21,23,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .hd{display:flex;align-items:center;gap:26px;height:72px}
+  .logo{font-family:Anton,sans-serif;font-size:26px;letter-spacing:.06em;display:flex;align-items:center;gap:11px}
+  .logo .sq{width:34px;height:34px;background:var(--acc);display:flex;align-items:center;justify-content:center;transform:skewX(-8deg)}
+  .logo .sq b{transform:skewX(8deg);font-family:Anton,sans-serif;font-size:22px;color:#111}
+  nav.top{display:flex;gap:24px;margin-left:auto;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+  nav.top a:hover{color:var(--txt)}
+  .hd .btn{margin-left:8px;padding:11px 20px}
+  @media(max-width:860px){nav.top{display:none}}
+  /* hero */
+  .hero{position:relative;min-height:640px;display:flex;align-items:center;overflow:hidden}
+  .hero .bg{position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,21,23,.96) 0%,rgba(20,21,23,.72) 42%,rgba(20,21,23,.35) 100%),var(--heroimg,#000);background-size:cover;background-position:center right;filter:grayscale(.25) contrast(1.05)}
+  .hero .wrap{position:relative}
+  .kick{display:inline-flex;align-items:center;gap:12px;color:var(--acc);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:22px}
+  .kick::before{content:"";width:42px;height:2px;background:var(--acc)}
+  .hero h1{font-size:clamp(46px,7.4vw,104px);max-width:12ch}
+  .hero h1 em{color:var(--acc);font-style:normal}
+  .hero p.sub{margin:24px 0 34px;font-size:19px;color:var(--dim);max-width:46ch}
+  .hero .cta{display:flex;gap:14px;flex-wrap:wrap}
+  .stats{display:flex;gap:40px;margin-top:46px;flex-wrap:wrap}
+  .stats .s .n{font-family:Anton,sans-serif;font-size:38px;color:var(--txt)}
+  .stats .s .n small{color:var(--acc);font-size:26px}
+  .stats .s .l{font-size:12.5px;color:var(--dim);letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+  /* sections */
+  section{padding:88px 0}
+  .lbl{color:var(--acc);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px}
+  .h2{font-size:clamp(32px,4.4vw,54px);margin-bottom:8px}
+  .lead{color:var(--dim);max-width:56ch;margin-bottom:44px;font-size:16.5px}
+  /* услуги */
+  .prices{display:grid;grid-template-columns:1fr 1fr;gap:0 56px}
+  .prow{display:flex;align-items:baseline;gap:14px;padding:17px 0;border-bottom:1px solid var(--line)}
+  .prow .nm{font-weight:600;font-size:17px;white-space:nowrap}
+  .prow .ds{color:var(--dim);font-size:13.5px}
+  .prow .dots{flex:1;border-bottom:1.5px dotted #3a3f45;transform:translateY(-4px)}
+  .prow .pr{font-family:Anton,sans-serif;font-size:22px;white-space:nowrap}
+  .prow .pr small{color:var(--dim);font-size:13px;font-family:Inter}
+  @media(max-width:760px){.prices{grid-template-columns:1fr;gap:0}}
+  .pnote{margin-top:22px;color:var(--dim);font-size:13.5px}
+  /* работы */
+  .gal{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .gal .g{aspect-ratio:3/4;background-size:cover;background-position:center;border-radius:3px;filter:grayscale(.3);transition:.25s}
+  .gal .g:hover{filter:grayscale(0)}
+  @media(max-width:760px){.gal{grid-template-columns:1fr 1fr}}
+  /* почему */
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:28px 24px}
+  .feat .ic{width:46px;height:46px;border-radius:3px;background:#26120a;color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
+  .feat h3{font-size:19px;letter-spacing:.02em;margin-bottom:9px}
+  .feat p{color:var(--dim);font-size:14.5px}
+  @media(max-width:760px){.grid3{grid-template-columns:1fr}}
+  .masters{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:10px}
+  .m{background:var(--card);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .m .ph{height:210px;background-size:cover;background-position:center top;filter:grayscale(.35)}
+  .m .b{padding:16px 18px}.m .b .nm{font-weight:700;font-size:16px}.m .b .role{color:var(--acc);font-size:13px;margin-top:2px}
+  @media(max-width:760px){.masters{grid-template-columns:1fr}}
+  /* контакты */
+  .contact{display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--card);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+  .contact .info{padding:44px}
+  .contact .info .row{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--line)}
+  .contact .info .row:last-child{border:0}
+  .contact .info .row .k{color:var(--dim);font-size:13px;width:120px;flex:none;text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+  .contact .info .row .v{font-weight:600}
+  .contact .map{background:linear-gradient(135deg,#1f2226,#15171a);position:relative;min-height:340px;display:flex;align-items:center;justify-content:center;color:#3a3f45}
+  .contact .map .pin{text-align:center}
+  .contact .map .pin .big{font-family:Anton,sans-serif;font-size:30px;color:var(--steel)}
+  @media(max-width:760px){.contact{grid-template-columns:1fr}}
+  .rate5{display:flex;align-items:center;gap:12px;margin:8px 0 30px}
+  .rate5 .stars{color:var(--acc);font-size:22px;letter-spacing:2px}
+  .rate5 .txt{color:var(--dim);font-size:14px}
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--dim);font-size:13.5px}
+  .foot{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .foot .rt{margin-left:auto;display:flex;align-items:center;gap:8px;opacity:.8}
+  .foot .rt svg{width:20px;height:20px}
+  .band{background:var(--acc);color:#fff;padding:9px 0;text-align:center;font-weight:600;font-size:13.5px;letter-spacing:.03em}
+</style>
+</head>
+<body>
+<div class="band">Запись онлайн круглосуточно · Нагорная 25, Сочи · сегодня есть свободные окна</div>
+<header>
+  <div class="wrap hd">
+    <a href="#" class="logo"><span class="sq"><b>И</b></span>ИНДУСТРИЯ</a>
+    <nav class="top">
+      <a href="#uslugi">Услуги</a>
+      <a href="#raboty">Работы</a>
+      <a href="#pochemu">Почему мы</a>
+      <a href="#mastera">Мастера</a>
+      <a href="#kontakty">Контакты</a>
+    </nav>
+    <a class="btn" href="https://n982442.yclients.com" target="_blank" rel="noopener">Записаться</a>
+  </div>
+</header>
+
+<section class="hero" style="padding:0">
+  <div class="bg" id="herobg"></div>
+  <div class="wrap">
+    <span class="kick">Барбершоп · Сочи, Нагорная 25</span>
+    <h1>Стрижка, которая <em>держит форму</em></h1>
+    <p class="sub">Мужские стрижки, борода и бритьё у мастеров, к которым записываются повторно. Без конвейера и очередей — по записи.</p>
+    <div class="cta">
+      <a class="btn" href="https://n982442.yclients.com" target="_blank" rel="noopener">Записаться онлайн →</a>
+      <a class="btn ghost" href="#uslugi">Услуги и цены</a>
+    </div>
+    <div class="stats">
+      <div class="s"><div class="n">5<small>.0</small></div><div class="l">на Яндекс.Картах</div></div>
+      <div class="s"><div class="n">162</div><div class="l">оценки</div></div>
+      <div class="s"><div class="n">111</div><div class="l">отзывов</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="uslugi">
+  <div class="wrap">
+    <div class="lbl">Прайс</div>
+    <h2 class="h2">Услуги и цены</h2>
+    <p class="lead">Ориентир по услугам. Актуальную стоимость и свободное время видно сразу в онлайн-записи.</p>
+    <div class="prices">
+      <div class="col">
+        <div class="prow"><span class="nm">Мужская стрижка</span><span class="ds">машинка + ножницы</span><span class="dots"></span><span class="pr">от 1200 <small>₽</small></span></div>
+        <div class="prow"><span class="nm">Стрижка + борода</span><span class="ds">комплекс</span><span class="dots"></span><span class="pr">от 1800 <small>₽</small></span></div>
+        <div class="prow"><span class="nm">Моделирование бороды</span><span class="ds">с уходом</span><span class="dots"></span><span class="pr">от 800 <small>₽</small></span></div>
+        <div class="prow"><span class="nm">Королевское бритьё</span><span class="ds">опасной бритвой</span><span class="dots"></span><span class="pr">от 1000 <small>₽</small></span></div>
+      </div>
+      <div class="col">
+        <div class="prow"><span class="nm">Стрижка машинкой</span><span class="ds">одна насадка</span><span class="dots"></span><span class="pr">от 700 <small>₽</small></span></div>
+        <div class="prow"><span class="nm">Камуфляж седины</span><span class="ds">волосы / борода</span><span class="dots"></span><span class="pr">от 700 <small>₽</small></span></div>
+        <div class="prow"><span class="nm">Детская стрижка</span><span class="ds">до 10 лет</span><span class="dots"></span><span class="pr">от 900 <small>₽</small></span></div>
+        <div class="prow"><span class="nm">Отец + сын</span><span class="ds">две стрижки</span><span class="dots"></span><span class="pr">от 1800 <small>₽</small></span></div>
+      </div>
+    </div>
+    <p class="pnote">Цены ориентировочные. Точный прайс и запись — <a href="https://n982442.yclients.com" target="_blank" rel="noopener" style="color:var(--acc);font-weight:600">в онлайн-записи</a>.</p>
+  </div>
+</section>
+
+<section id="raboty" style="background:var(--bg2);padding-top:78px">
+  <div class="wrap">
+    <div class="lbl">Работы</div>
+    <h2 class="h2">Как это выглядит</h2>
+    <p class="lead">Живые работы мастеров, а не стоковые картинки из интернета.</p>
+    <div class="gal">
+      <div class="g" id="g1"></div>
+      <div class="g" id="g2"></div>
+      <div class="g" id="g3"></div>
+      <div class="g" id="g4"></div>
+    </div>
+  </div>
+</section>
+
+<section id="pochemu">
+  <div class="wrap">
+    <div class="lbl">Почему сюда возвращаются</div>
+    <h2 class="h2" style="margin-bottom:38px">111 человек написали отзыв</h2>
+    <div class="grid3">
+      <div class="feat"><div class="ic">✂</div><h3>Один мастер ведёт</h3><p>Записываетесь к своему мастеру — он помнит вашу форму и не начинает каждый раз с нуля.</p></div>
+      <div class="feat"><div class="ic">⏱</div><h3>Строго по записи</h3><p>Пришли ко времени — сели в кресло. Без «подождите, там ещё один впереди».</p></div>
+      <div class="feat"><div class="ic">★</div><h3>5.0 и 162 оценки</h3><p>Оценку в городе такого уровня держат единицы. Это не накрутка, а повторные визиты.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="mastera" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="lbl">Команда</div>
+    <h2 class="h2">Мастера</h2>
+    <p class="lead">К каждому можно записаться напрямую в онлайн-записи.</p>
+    <div class="masters">
+      <div class="m"><div class="ph" id="m1"></div><div class="b"><div class="nm">Топ-барбер</div><div class="role">стрижки, борода</div></div></div>
+      <div class="m"><div class="ph" id="m2"></div><div class="b"><div class="nm">Барбер</div><div class="role">фейд, классика</div></div></div>
+      <div class="m"><div class="ph" id="m3"></div><div class="b"><div class="nm">Барбер</div><div class="role">бритьё, уход</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="kontakty">
+  <div class="wrap">
+    <div class="lbl">Контакты</div>
+    <h2 class="h2">Приходите</h2>
+    <div class="rate5"><span class="stars">★★★★★</span><span class="txt">5.0 · 162 оценки · 111 отзывов на Яндекс.Картах</span></div>
+    <div class="contact">
+      <div class="info">
+        <div class="row"><div class="k">Адрес</div><div class="v">Сочи, Нагорная 25</div></div>
+        <div class="row"><div class="k">Часы</div><div class="v">Ежедневно 10:00 – 21:00</div></div>
+        <div class="row"><div class="k">Запись</div><div class="v"><a href="https://n982442.yclients.com" target="_blank" rel="noopener" style="color:var(--acc)">онлайн, круглосуточно</a></div></div>
+        <div class="row"><div class="k">Оплата</div><div class="v">карта · наличные · перевод</div></div>
+        <div style="margin-top:26px"><a class="btn" href="https://n982442.yclients.com" target="_blank" rel="noopener">Выбрать время →</a></div>
+      </div>
+      <div class="map"><div class="pin"><div style="font-size:34px">📍</div><div class="big">Нагорная 25</div><div style="font-size:13px;margin-top:4px">Центр Сочи</div></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>Барбершоп «Индустрия» · Сочи, Нагорная 25 · запись через YCLIENTS</span>
+    <span class="rt" title="собрано в Retensy">
+      <svg viewBox="0 0 24 24" fill="#ff5a1f"><path d="M18.6 6.62c-1.44 0-2.8.56-3.77 1.53L12 10.66 10.48 12h.01L7.8 14.39c-.64.64-1.49.99-2.4.99-1.87 0-3.39-1.51-3.39-3.38S3.53 8.62 5.4 8.62c.91 0 1.76.35 2.44 1.03l1.13 1 1.51-1.34L9.22 8.2C8.2 7.18 6.84 6.62 5.4 6.62 2.42 6.62 0 9.04 0 12s2.42 5.38 5.4 5.38c1.44 0 2.8-.56 3.77-1.53l2.83-2.5.01.01L14.2 11l2.68-2.39c.64-.64 1.49-.99 2.4-.99 1.87 0 3.39 1.51 3.39 3.38s-1.52 3.38-3.39 3.38c-.9 0-1.76-.35-2.44-1.03l-1.14-1.01-1.51 1.34 1.27 1.12c1.02 1.02 2.38 1.58 3.82 1.58 2.98 0 5.4-2.42 5.4-5.38s-2.42-5.38-5.4-5.38z"/></svg>
+      собрано в Retensy
+    </span>
+  </div>
+</footer>
+
+<script>
+  // фоновые картинки через JS, чтобы легко инлайнить при заливке
+  document.getElementById('herobg').style.setProperty('--heroimg','url(img/h1.jpg)');
+  document.getElementById('herobg').style.backgroundImage='linear-gradient(90deg,rgba(20,21,23,.96) 0%,rgba(20,21,23,.72) 42%,rgba(20,21,23,.35) 100%),url(img/h1.jpg)';
+  var g={g1:'img/g1.jpg',g2:'img/g2.jpg',g3:'img/g3.jpg',g4:'img/g4.jpg',m1:'img/g1.jpg',m2:'img/g3.jpg',m3:'img/g2.jpg'};
+  for(var k in g){var el=document.getElementById(k);if(el)el.style.backgroundImage='url('+g[k]+')';}
+</script>
+</body>
+</html>
