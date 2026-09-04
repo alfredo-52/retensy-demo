@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Room 21 — мебель на заказ в Сочи</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f6f2ec;--cream:#fff;--ink:#292420;--dim:#8a8178;--line:#e7ded2;
+    --wood:#b07d4c;--wood2:#8a5e39;--acc:#c0813f;--warm:#f0e7db;--dark:#2b2620}
+  *{margin:0;padding:0;box-sizing:border-box}
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{line-height:1.05;letter-spacing:-.02em;font-weight:800}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 26px}
+  .btn{display:inline-flex;align-items:center;gap:9px;background:var(--dark);color:#fff;font-weight:700;padding:15px 28px;border:none;border-radius:8px;cursor:pointer;font-size:15px;transition:.16s;font-family:Manrope}
+  .btn:hover{background:#3f382f;transform:translateY(-1px)}
+  .btn.wood{background:var(--wood2)}.btn.wood:hover{background:#754d2d}
+  .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+  .btn.ghost:hover{border-color:var(--wood)}
+  header{position:sticky;top:0;z-index:40;background:rgba(246,242,236,.9);backdrop-filter:blur(9px);border-bottom:1px solid var(--line)}
+  .hd{display:flex;align-items:center;gap:24px;height:74px}
+  .logo{font-size:24px;font-weight:800;letter-spacing:-.03em;display:flex;align-items:center;gap:10px}
+  .logo .sq{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--wood),var(--wood2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800}
+  nav.top{display:flex;gap:24px;margin-left:auto;font-size:14px;color:var(--dim);font-weight:600}
+  nav.top a:hover{color:var(--ink)}
+  .hd .btn{margin-left:6px;padding:11px 20px}
+  @media(max-width:900px){nav.top{display:none}}
+  .hero{padding:70px 0 20px}
+  .hero .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:46px;align-items:center}
+  .kick{display:inline-flex;align-items:center;gap:10px;color:var(--wood2);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:18px}
+  .kick::before{content:"";width:34px;height:2px;background:var(--wood)}
+  .hero h1{font-size:clamp(40px,5.6vw,68px)}
+  .hero h1 em{color:var(--wood2);font-style:normal}
+  .hero p.sub{margin:22px 0 30px;font-size:18px;color:var(--dim);max-width:42ch}
+  .cta{display:flex;gap:13px;flex-wrap:wrap}
+  .stats{display:flex;gap:34px;margin-top:40px;flex-wrap:wrap}
+  .stats .n{font-size:34px;font-weight:800;color:var(--wood2)}
+  .stats .l{font-size:12.5px;color:var(--dim);font-weight:600}
+  .heroart{background:linear-gradient(160deg,#d8c3a6,var(--wood) 55%,var(--wood2));border-radius:16px;min-height:400px;position:relative;overflow:hidden;box-shadow:0 30px 60px -30px rgba(138,94,57,.5)}
+  .heroart .chip{position:absolute;background:rgba(255,255,255,.94);border-radius:11px;padding:12px 15px;font-size:13px;font-weight:700;box-shadow:0 12px 26px -12px rgba(0,0,0,.3)}
+  .heroart .c1{top:24px;left:24px}.heroart .c2{bottom:24px;right:24px}.heroart .c3{bottom:90px;left:30px;color:var(--wood2)}
+  @media(max-width:860px){.hero .grid{grid-template-columns:1fr}.heroart{min-height:280px}}
+  section{padding:78px 0}
+  .lbl{color:var(--wood2);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:12px}
+  .h2{font-size:clamp(30px,4.2vw,48px);margin-bottom:10px}
+  .lead{color:var(--dim);max-width:54ch;margin-bottom:40px}
+  .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .cat{border-radius:12px;aspect-ratio:3/4;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;font-weight:800;font-size:21px;position:relative;overflow:hidden}
+  .cat::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(0,0,0,.35)),linear-gradient(150deg,#c9ad86,var(--wood2))}
+  .cat:nth-child(2)::before{background:linear-gradient(180deg,transparent,rgba(0,0,0,.35)),linear-gradient(150deg,#b79b78,#6f4a2c)}
+  .cat:nth-child(3)::before{background:linear-gradient(180deg,transparent,rgba(0,0,0,.35)),linear-gradient(150deg,#cdb290,#8a5e39)}
+  .cat:nth-child(4)::before{background:linear-gradient(180deg,transparent,rgba(0,0,0,.35)),linear-gradient(150deg,#c0a079,#7a5230)}
+  .cat span{position:relative;z-index:1}
+  .cat small{position:relative;z-index:1;display:block;font-weight:600;font-size:12.5px;opacity:.9;margin-top:3px}
+  @media(max-width:760px){.cats{grid-template-columns:1fr 1fr}}
+  /* квиз */
+  .quiz-sec{background:var(--dark);color:#fff}
+  .quiz-sec .lbl{color:var(--wood)}
+  .quiz-sec .h2{color:#fff}.quiz-sec .lead{color:#c9bfb2}
+  .quiz{background:#332d26;border:1px solid #453d33;border-radius:16px;padding:34px;max-width:760px}
+  .qbar{display:flex;gap:8px;margin-bottom:26px}
+  .qbar .d{flex:1;height:5px;border-radius:3px;background:#4b4238}
+  .qbar .d.on{background:var(--wood)}
+  .qstep h3{font-size:24px;margin-bottom:20px}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .opt{background:#3d362d;border:1.5px solid #4b4238;border-radius:10px;padding:16px 18px;cursor:pointer;font-weight:700;font-size:15.5px;transition:.14s;display:flex;justify-content:space-between;align-items:center;color:#fff}
+  .opt small{color:#b7ab9b;font-weight:600;font-size:12.5px}
+  .opt:hover{border-color:var(--wood)}
+  .opt.on{border-color:var(--wood);background:#4a4034}
+  .qnav{display:flex;gap:12px;margin-top:24px;align-items:center}
+  .qnav .back{background:transparent;border:1.5px solid #4b4238;color:#c9bfb2}
+  .qnav .sp{flex:1}
+  .qresult{text-align:center;padding:10px 0}
+  .qresult .big{font-size:44px;font-weight:800;color:var(--wood)}
+  .qresult p{color:#c9bfb2;margin:10px auto 22px;max-width:40ch}
+  .qok{text-align:center;padding:20px 0}
+  .qok .ic{width:64px;height:64px;border-radius:50%;background:var(--wood);color:#fff;font-size:32px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+  @media(max-width:640px){.opts{grid-template-columns:1fr}}
+  .qnote{color:#8a8178;font-size:12.5px;margin-top:16px;max-width:760px}
+  .gal{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .tile{aspect-ratio:4/3;border-radius:10px;background:linear-gradient(150deg,#d8c3a6,var(--wood2));position:relative;display:flex;align-items:flex-end;padding:15px;color:#fff;font-weight:700}
+  .tile:nth-child(2n){background:linear-gradient(150deg,#c2a582,#6f4a2c)}
+  .tile:nth-child(3n){background:linear-gradient(150deg,#cdb290,#8a5e39)}
+  @media(max-width:760px){.gal{grid-template-columns:1fr 1fr}}
+  .note{color:var(--wood2);font-weight:600;margin-top:22px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .feat{background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:26px}
+  .feat .ic{width:48px;height:48px;border-radius:10px;background:var(--warm);color:var(--wood2);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:15px}
+  .feat h3{font-size:19px;margin-bottom:8px;letter-spacing:-.01em}
+  .feat p{color:var(--dim);font-size:14.5px}
+  @media(max-width:760px){.grid3{grid-template-columns:1fr}}
+  footer{border-top:1px solid var(--line);padding:32px 0;color:var(--dim);font-size:13.5px}
+  .foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .foot .rt{margin-left:auto;display:flex;align-items:center;gap:8px;opacity:.85}
+  .foot .rt svg{width:19px;height:19px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap hd">
+    <a href="#" class="logo"><span class="sq">21</span>Room 21</a>
+    <nav class="top">
+      <a href="#cats">Что делаем</a>
+      <a href="#quiz">Рассчитать</a>
+      <a href="#raboty">Работы</a>
+      <a href="#pochemu">Почему мы</a>
+    </nav>
+    <a class="btn" href="#quiz">Рассчитать стоимость</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap grid">
+    <div>
+      <div class="kick">Мебель на заказ · Сочи, Курортный 73</div>
+      <h1>Кухни и шкафы, <em>сделанные под ваши стены</em></h1>
+      <p class="sub">Замер, проект и сборка под ключ. Считаем стоимость по вашим размерам за пару минут, без звонка.</p>
+      <div class="cta">
+        <a class="btn wood" href="#quiz">Рассчитать за 2 минуты</a>
+        <a class="btn ghost" href="#raboty">Смотреть работы</a>
+      </div>
+      <div class="stats">
+        <div class="s"><div class="n">5.0</div><div class="l">на Яндекс.Картах</div></div>
+        <div class="s"><div class="n">156</div><div class="l">работ в галерее</div></div>
+        <div class="s"><div class="n">26</div><div class="l">отзывов</div></div>
+      </div>
+    </div>
+    <div class="heroart">
+      <div class="chip c1">Замер бесплатно</div>
+      <div class="chip c3">Кухни · Шкафы · Гардеробные</div>
+      <div class="chip c2">Свой проект за 2 мин →</div>
+    </div>
+  </div>
+</section>
+
+<section id="cats">
+  <div class="wrap">
+    <div class="lbl">Что делаем</div>
+    <h2 class="h2">Категории</h2>
+    <p class="lead">Каждый проект индивидуальный, под конкретное помещение и задачу.</p>
+    <div class="cats">
+      <div class="cat"><span>Кухни</span><small>прямые, угловые, П-образные</small></div>
+      <div class="cat"><span>Шкафы-купе</span><small>от прихожей до спальни</small></div>
+      <div class="cat"><span>Гардеробные</span><small>системы хранения под ключ</small></div>
+      <div class="cat"><span>Прихожие</span><small>и корпусная мебель на заказ</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz" class="quiz-sec">
+  <div class="wrap">
+    <div class="lbl">Калькулятор</div>
+    <h2 class="h2">Рассчитайте стоимость</h2>
+    <p class="lead">Три шага и вы видите ориентир по цене. Точную смету дадим после бесплатного замера.</p>
+    <div class="quiz" id="quiz">
+      <div class="qbar"><div class="d on"></div><div class="d"></div><div class="d"></div></div>
+      <div id="qbody"></div>
+    </div>
+    <p class="qnote">Расчёт ориентировочный, зависит от материалов, фурнитуры и сложности проекта. Финальная цена — после замера.</p>
+  </div>
+</section>
+
+<section id="raboty">
+  <div class="wrap">
+    <div class="lbl">Портфолио</div>
+    <h2 class="h2">Наши работы</h2>
+    <p class="lead">156 фотографий готовых проектов в карточке. Кухни, шкафы, гардеробные.</p>
+    <div class="gal">
+      <div class="tile"><span>Кухня прямая</span></div>
+      <div class="tile"><span>Гардеробная</span></div>
+      <div class="tile"><span>Шкаф-купе</span></div>
+      <div class="tile"><span>Кухня угловая</span></div>
+      <div class="tile"><span>Прихожая</span></div>
+      <div class="tile"><span>Кухня П-образная</span></div>
+      <div class="tile"><span>Детская</span></div>
+      <div class="tile"><span>ТВ-зона</span></div>
+    </div>
+    <div class="note">Здесь встают ваши реальные 156 фотографий — по категориям, с фильтром.</div>
+  </div>
+</section>
+
+<section id="pochemu" style="background:var(--warm)">
+  <div class="wrap">
+    <div class="lbl">Почему Room 21</div>
+    <h2 class="h2" style="margin-bottom:38px">26 отзывов и пятёрка</h2>
+    <div class="grid3">
+      <div class="feat"><div class="ic">📐</div><h3>Бесплатный замер</h3><p>Приезжаем, снимаем размеры, показываем материалы вживую. Проект — по факту, а не на глаз.</p></div>
+      <div class="feat"><div class="ic">🛠</div><h3>Своё производство</h3><p>Делаем сами, без посредников. Поэтому держим сроки и отвечаем за качество на каждом этапе.</p></div>
+      <div class="feat"><div class="ic">📄</div><h3>Договор и гарантия</h3><p>Фиксируем цену и сроки в договоре. Гарантия на изделие и фурнитуру.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>Room 21 · Мебель на заказ · Сочи, Курортный 73</span>
+    <span class="rt" title="собрано в Retensy">
+      <svg viewBox="0 0 24 24" fill="#b07d4c"><path d="M18.6 6.62c-1.44 0-2.8.56-3.77 1.53L12 10.66 10.48 12h.01L7.8 14.39c-.64.64-1.49.99-2.4.99-1.87 0-3.39-1.51-3.39-3.38S3.53 8.62 5.4 8.62c.91 0 1.76.35 2.44 1.03l1.13 1 1.51-1.34L9.22 8.2C8.2 7.18 6.84 6.62 5.4 6.62 2.42 6.62 0 9.04 0 12s2.42 5.38 5.4 5.38c1.44 0 2.8-.56 3.77-1.53l2.83-2.5.01.01L14.2 11l2.68-2.39c.64-.64 1.49-.99 2.4-.99 1.87 0 3.39 1.51 3.39 3.38s-1.52 3.38-3.39 3.38c-.9 0-1.76-.35-2.44-1.03l-1.14-1.01-1.51 1.34 1.27 1.12c1.02 1.02 2.38 1.58 3.82 1.58 2.98 0 5.4-2.42 5.4-5.38s-2.42-5.38-5.4-5.38z"/></svg>
+      собрано в Retensy
+    </span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var STEPS=[
+    {q:"Что нужно сделать?",k:"type",opts:[
+      {t:"Кухня",d:"прямая, угловая",v:70000},
+      {t:"Шкаф-купе",d:"любая комната",v:35000},
+      {t:"Гардеробная",d:"система хранения",v:45000},
+      {t:"Прихожая / другое",d:"корпусная мебель",v:30000}]},
+    {q:"Размер?",k:"size",opts:[
+      {t:"Компактный",d:"до 2 м",v:1},
+      {t:"Средний",d:"2–3 м",v:1.5},
+      {t:"Большой",d:"3–4 м",v:2.1},
+      {t:"Очень большой",d:"от 4 м",v:2.8}]},
+    {q:"Материал фасадов?",k:"mat",opts:[
+      {t:"ЛДСП",d:"практично и бюджетно",v:1},
+      {t:"МДФ плёнка",d:"золотая середина",v:1.35},
+      {t:"МДФ эмаль",d:"матовый премиум",v:1.7},
+      {t:"Массив / шпон",d:"натуральное дерево",v:2.2}]}
+  ];
+  var st=0, ans={};
+  var body=document.getElementById('qbody');
+  var bar=document.querySelectorAll('.qbar .d');
+  function money(n){return n.toLocaleString('ru-RU')+' ₽';}
+  function draw(){
+    bar.forEach(function(d,i){d.classList.toggle('on',i<=st);});
+    if(st<STEPS.length){
+      var s=STEPS[st];
+      body.innerHTML='<div class="qstep"><h3>'+s.q+'</h3><div class="opts">'+
+        s.opts.map(function(o,i){return '<div class="opt'+(ans[s.k]===i?' on':'')+'" data-i="'+i+'"><span>'+o.t+'</span><small>'+o.d+'</small></div>';}).join('')+
+        '</div><div class="qnav">'+(st>0?'<button class="btn ghost back">Назад</button>':'')+'<span class="sp"></span>'+
+        '<button class="btn wood next"'+(ans[s.k]===undefined?' disabled style="opacity:.5;cursor:default"':'')+'>'+(st===STEPS.length-1?'Показать расчёт':'Далее')+'</button></div></div>';
+      body.querySelectorAll('.opt').forEach(function(el){el.onclick=function(){ans[STEPS[st].k]=+el.getAttribute('data-i');draw();};});
+      var nx=body.querySelector('.next'); if(nx&&ans[s.k]!==undefined) nx.onclick=function(){st++;draw();};
+      var bk=body.querySelector('.back'); if(bk) bk.onclick=function(){st--;draw();};
+    } else {
+      var base=STEPS[0].opts[ans.type].v, sz=STEPS[1].opts[ans.size].v, mt=STEPS[2].opts[ans.mat].v;
+      var mid=Math.round(base*sz*mt/1000)*1000;
+      var lo=Math.round(mid*0.85/1000)*1000, hi=Math.round(mid*1.2/1000)*1000;
+      body.innerHTML='<div class="qresult"><div class="lbl" style="text-align:center;color:var(--wood)">Ориентир по вашему проекту</div>'+
+        '<div class="big">'+money(lo)+' – '+money(hi)+'</div>'+
+        '<p>Это вилка под '+STEPS[0].opts[ans.type].t.toLowerCase()+', материал «'+STEPS[2].opts[ans.mat].t+'». Точную смету посчитаем после бесплатного замера.</p>'+
+        '<button class="btn wood zayavka">Оставить заявку на замер</button> <button class="btn ghost again">Пересчитать</button></div>';
+      body.querySelector('.again').onclick=function(){st=0;ans={};draw();};
+      body.querySelector('.zayavka').onclick=function(){
+        body.innerHTML='<div class="qok"><div class="ic">✓</div><h3 style="color:#fff">Заявка принята</h3>'+
+          '<p style="color:#c9bfb2;max-width:36ch;margin:8px auto 0">Мастер свяжется, согласует время замера. Замер бесплатный и ни к чему не обязывает. Это демо-витрина.</p></div>';
+        bar.forEach(function(d){d.classList.add('on');});
+      };
+    }
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
